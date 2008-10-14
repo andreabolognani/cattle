@@ -1,0 +1,89 @@
+dnl ****************************************
+dnl *** Initialize autoconf and automake ***
+dnl ****************************************
+
+AC_PREREQ(2.54)
+AC_INIT(cattle, 0.9.2)
+AM_INIT_AUTOMAKE(AC_PACKAGE_NAME,
+                 AC_PACKAGE_VERSION)
+
+AM_CONFIG_HEADER(config.h)
+AM_MAINTAINER_MODE
+AC_PROG_MAKE_SET
+
+dnl ***********************
+dnl *** Release version ***
+dnl ***********************
+
+CATTLE_MAJOR_VERSION=0
+CATTLE_MINOR_VERSION=9
+CATTLE_MICRO_VERSION=2
+CATTLE_VERSION=$CATTLE_MAJOR_VERSION.$CATTLE_MINOR_VERSION.$CATTLE_MICRO_VERSION
+
+AC_SUBST(CATTLE_MAJOR_VERSION)
+AC_SUBST(CATTLE_MINOR_VERSION)
+AC_SUBST(CATTLE_MICRO_VERSION)
+AC_SUBST(CATTLE_VERSION)
+
+dnl **************************
+dnl *** Libtool versioning ***
+dnl **************************
+
+# Increment on interface add, remove, or change.
+CATTLE_CURRENT=0
+
+# Increment on source change. Reset when CURRENT changes.
+CATTLE_REVISION=0
+
+# Increment on interface addition. Reset on removal.
+CATTLE_AGE=0
+
+AC_SUBST(CATTLE_CURRENT)
+AC_SUBST(CATTLE_REVISION)
+AC_SUBST(CATTLE_AGE)
+
+dnl ********************************
+dnl *** Check for basic programs ***
+dnl ********************************
+
+AC_PROG_CC
+AM_PROG_CC_C_O
+
+AC_PROG_INSTALL
+AC_PROG_LIBTOOL
+
+dnl ********************************************
+dnl *** Check for header files and functions ***
+dnl ********************************************
+
+AC_HEADER_STDC
+
+dnl ***************************************
+dnl *** Check for required GLib modules ***
+dnl ***************************************
+
+GLIB_REQUIRED_VERSION=2.4.0
+GLIB_REQUIRED_MODULES=gobject
+
+AM_PATH_GLIB_2_0($GLIB_REQUIRED_VERSION,,
+                 AC_MSG_ERROR(GLib version $GLIB_REQUIRED_VERSION required),
+                 $GLIB_REQUIRED_MODULES)
+
+dnl *************************
+dnl *** Check for Gtk-Doc ***
+dnl *************************
+
+GTK_DOC_CHECK(1.9)
+
+dnl *******************************
+dnl *** Create the output files ***
+dnl *******************************
+
+AC_OUTPUT([Makefile
+           cattle/Makefile
+           cattle.pc
+           examples/Makefile
+		   tests/Makefile
+           docs/Makefile
+           docs/reference/Makefile
+           docs/reference/version.xml])

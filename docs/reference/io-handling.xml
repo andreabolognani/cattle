@@ -1,0 +1,109 @@
+<refentry id="io-handling">
+
+    <refmeta>
+        <refentrytitle>I/O handling</refentrytitle>
+        <manvolnum>3</manvolnum>
+        <refmiscinfo>CATTLE Library</refmiscinfo>
+    </refmeta>
+
+    <refnamediv>
+        <refname>I/O handling</refname>
+        <refpurpose>Conventions</refpurpose>
+    </refnamediv>
+
+    <refsect2>
+
+        <title>Basics</title>
+
+        <para>
+            Cattle doesn't deal directly with input and output; instead, it
+            requires the user to implement its own routines, which must
+            follow the conventions defined in this document in order to
+            work as expected.
+        </para>
+
+        <para>
+            Input, output and debug are triggered by a
+            <link linkend="CattleInterpreter">CattleInterpreter</link>
+            with the emission of a signal:
+            &quot;<link linkend="CattleInterpreter-input-request">input-request</link>&quot;,
+            &quot;<link linkend="CattleInterpreter-output-request">output-request</link>&quot;
+            and 
+            &quot;<link linkend="CattleInterpreter-debug-request">debug-request</link>&quot;
+            respectively. Suitable callbacks must be connected to the
+            emission of these signals by the user.
+        </para>
+
+        <para>
+            All signal handlers take a <link linkend="GError">GError</link>
+            as last argument, and are required to fill it with a detailed
+            error message in case of failed operation.
+        </para>
+
+    </refsect2>
+
+    <refsect2>
+
+        <title>Input</title>
+
+        <para>
+            Input works on a per-line basis; the signal handler must
+            retrieve a full, null-terminated line of input, including the
+            trailing newline character, and feed it to the interpreter.
+        </para>
+
+        <para>
+            The interpreter doesn't make a copy of the returned string, so
+            the handler must make sure it will be accessible as long as the
+            interpreter needs it.
+        </para>
+
+        <para>
+            No allocator choice is forced on the user: however, the handler
+            is responsible of releasing the allocated buffer when the
+            interpreter is done processing it. This condition is notified to
+            the handler passing a non-null pointer as the second argument.
+        </para>
+
+        <para>
+            When the whole input has been consumed, the handler must set to
+            NULL the pointer to let the interpreter know no more input is
+            available.
+        </para>
+
+    </refsect2>
+
+    <refsect2>
+
+        <title>Output</title>
+
+        <para>
+            Output is performed one character at time, even though the user
+            might choose to buffer a line or even the whole output if it
+            makes sense to do so.
+        </para>
+
+    </refsect2>
+
+    <refsect2>
+
+        <title>Debug</title>
+
+        <para>
+            The debug handler is required to dump the content of the tape;
+            the tape can be obtained from the interpreter using the
+            <link linkend="cattle-interpreter-get-tape">cattle_interpreter_get_tape()</link>
+            method.
+        </para>
+        <para>
+            After the handler has run, the tape must be in the same exact
+            state it was before the signal emission, including the position.
+            The best way to ensure it is to use
+            <link linkend="cattle-tape-push-bookmark">cattle_tape_push_bookmark()</link>
+            and
+            <link linkend="cattle-tape-pop-bookmark">cattle_tape_pop_bookmark()</link>.
+        </para>
+
+    </refsect2>
+
+</refentry>

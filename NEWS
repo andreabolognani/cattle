@@ -1,0 +1,33 @@
+Overview of changes from Cattle 0.9.1 to 0.9.2
+==============================================
+
+    * CattleTape: implemented bookmarks.
+
+    * CattleInterpreter: added the "debug-request" signal, which behaves like
+                         the existing I/O signals, and obsoletes the
+                         CattleTape.dump() method.
+
+    * Cache the object's private structure, to avoid looking it up for every
+      single method call.
+
+    * Various bug fixes.
+
+
+Overview of changes from Cattle 0.9.0 to 0.9.1
+==============================================
+
+    * CattleTape: use memory chunks instead of allocating each cell
+                  separately, reducing memory usage and improving
+                  performances.
+
+    * CattleInterpreter: support flexible I/O using signals and callbacks.
+
+    * Make all the structures completely opaque.
+
+    * Some bug fixes.
+
+
+Overview of changes in Cattle 0.9.0
+===================================
+
+    * First release.

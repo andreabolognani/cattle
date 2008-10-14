@@ -1,0 +1,55 @@
+<?xml version="1.0"?>
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN"
+               "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd" [
+<!ENTITY CattleInstruction SYSTEM "xml/cattle-instruction.xml">
+<!ENTITY CattleProgram SYSTEM "xml/cattle-program.xml">
+<!ENTITY CattleTape SYSTEM "xml/cattle-tape.xml">
+<!ENTITY CattleConfiguration SYSTEM "xml/cattle-configuration.xml">
+<!ENTITY CattleInterpreter SYSTEM "xml/cattle-interpreter.xml">
+<!ENTITY io-handling SYSTEM "io-handling.xml">
+<!ENTITY version SYSTEM "version.xml">
+]>
+<book id="index">
+
+    <bookinfo>
+        <title>Cattle Reference Manual</title>
+        <releaseinfo>for Cattle &version;</releaseinfo>
+    </bookinfo>
+
+    <chapter>
+        <title>Overview</title>
+        <para>
+            Cattle is a library implementing a flexible interpreter for the
+            Brainfuck programming language.
+        </para>
+        <para>
+            The library is quite complete, but it still lacks some features
+            and performs badly. You shouldn't be using it right now.
+        </para>
+    </chapter>
+
+    <chapter>
+        <title>API Reference</title>
+        &CattleInstruction;
+        &CattleProgram;
+        &CattleTape;
+        &CattleConfiguration;
+        &CattleInterpreter;
+    </chapter>
+
+    <chapter>
+        <title>Miscellaneous topics</title>
+        &io-handling;
+    </chapter>
+
+    <index>
+        <title>Index</title>
+    </index>
+	<index role="0.9.1">
+		<title>Index of new symbols in 0.9.1</title>
+	</index>
+	<index role="0.9.2">
+		<title>Index of new symbols in 0.9.2</title>
+	</index>
+
+</book>
