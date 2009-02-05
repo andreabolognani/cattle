@@ -12,7 +12,7 @@ if [ "$?" -ne 0 ]; then echo "aclocal failed" >&2; exit 1; fi
 autoheader
 if [ "$?" -ne 0 ]; then echo "autoheader failed" >&2; exit 1; fi
 
-automake --copy --add-missing
+automake --copy --add-missing --foreign
 if [ "$?" -ne 0 ]; then echo "automake failed" >&2; exit 1; fi
 
 autoconf
