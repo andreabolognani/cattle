@@ -7,6 +7,7 @@ examples/indent
 examples/interpreter
 
 tests/tape-tests
+tests/program-tests
 
 cattle.pc
 

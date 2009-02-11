@@ -1,5 +1,5 @@
-/* tape -- Check the tape reports the correct size limits
- * Copyright (C) 2008  Andrea Bolognani <eof@kiyuko.org>
+/* tape-tests -- Check the tape reports the correct size limits
+ * Copyright (C) 2008-2009  Andrea Bolognani <eof@kiyuko.org>
  * This file is part of Cattle
  *
  * This program is free software; you can redistribute it and/or modify
