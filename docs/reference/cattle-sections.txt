@@ -111,7 +111,6 @@ cattle_tape_is_at_beginning
 cattle_tape_is_at_end
 cattle_tape_push_bookmark
 cattle_tape_pop_bookmark
-cattle_tape_dump
 <SUBSECTION Standard>
 CATTLE_TAPE
 CATTLE_IS_TAPE
@@ -126,12 +125,14 @@ CattleTapePrivate
 
 <SECTION>
 <FILE>cattle-enums</FILE>
+<SUBSECTION Standard>
 cattle_instruction_value_get_type
 CATTLE_TYPE_INSTRUCTION_VALUE
 cattle_program_error_get_type
 CATTLE_TYPE_PROGRAM_ERROR
 cattle_on_eof_action_get_type
 CATTLE_TYPE_ON_EOF_ACTION
+</SUBSECTION>
 </SECTION>
 
 <SECTION>
