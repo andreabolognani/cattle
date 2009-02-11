@@ -103,81 +103,81 @@ output_handler (GObject     *object,
 static gboolean
 debug_handler (GObject     *object,
                GError     **error,
-			   gpointer     data)
+               gpointer     data)
 {
-	CattleInterpreter *self;
-	CattleTape *tape;
-	gchar value;
-	gint count;
+    CattleInterpreter *self;
+    CattleTape *tape;
+    gchar value;
+    gint count;
 
-	g_return_val_if_fail (error == NULL || *error == NULL, FALSE);
-	g_return_val_if_fail (CATTLE_IS_INTERPRETER (object), FALSE);
-	self = CATTLE_INTERPRETER (object);
+    g_return_val_if_fail (error == NULL || *error == NULL, FALSE);
+    g_return_val_if_fail (CATTLE_IS_INTERPRETER (object), FALSE);
+    self = CATTLE_INTERPRETER (object);
 
-	tape = cattle_interpreter_get_tape (self);
-	g_object_ref (G_OBJECT (tape));
+    tape = cattle_interpreter_get_tape (self);
+    g_object_ref (G_OBJECT (tape));
 
-	/* Save the current position */
-	cattle_tape_push_bookmark (tape);
+    /* Save the current position */
+    cattle_tape_push_bookmark (tape);
 
-	/* Move to the beginning of the tape, counting how many steps it takes
-	 * to get there. We will use this value later to mark the current
-	 * position */
-	count = 0;
-	while (TRUE) {
+    /* Move to the beginning of the tape, counting how many steps it takes
+     * to get there. We will use this value later to mark the current
+     * position */
+    count = 0;
+    while (TRUE) {
 
-		if (cattle_tape_is_at_beginning (tape)) {
-			break;
-		}
+        if (cattle_tape_is_at_beginning (tape)) {
+            break;
+        }
 
-		cattle_tape_move_left (tape);
-		count++;
-	}
+        cattle_tape_move_left (tape);
+        count++;
+    }
 
-	g_print ("[");
+    g_print ("[");
 
-	while (TRUE) {
+    while (TRUE) {
 
-		/* Mark the current position */
-		if (count == 0) {
-			g_print ("<");
-		}
+        /* Mark the current position */
+        if (count == 0) {
+            g_print ("<");
+        }
 
-		/* Get the value of the current cell, and print it if it's a
-		 * graphical character, or its hexadecimal value otherwise */
-		value = cattle_tape_get_current_value (tape);
+        /* Get the value of the current cell, and print it if it's a
+         * graphical character, or its hexadecimal value otherwise */
+        value = cattle_tape_get_current_value (tape);
 
-		if (g_ascii_isgraph (value)) {
-        	g_print ("%c", value);
+        if (g_ascii_isgraph (value)) {
+            g_print ("%c", value);
         }
         else {
             g_print ("\\%x", (gint) value);
         }
 
-		/* Mark the current position */
-		if (count == 0) {
-			g_print (">");
-		}
+        /* Mark the current position */
+        if (count == 0) {
+            g_print (">");
+        }
 
-		/* Exit after printing the last value */
-		if (cattle_tape_is_at_end (tape)) {
-			break;
-		}
+        /* Exit after printing the last value */
+        if (cattle_tape_is_at_end (tape)) {
+            break;
+        }
 
-		/* Print a space and move to the right */
-		g_print (" ");
-		cattle_tape_move_right (tape);
-		count--;
-	}
+        /* Print a space and move to the right */
+        g_print (" ");
+        cattle_tape_move_right (tape);
+        count--;
+    }
 
-	g_print ("]\n");
+    g_print ("]\n");
 
-	/* Restore the previously-saved position */
-	cattle_tape_pop_bookmark (tape);
+    /* Restore the previously-saved position */
+    cattle_tape_pop_bookmark (tape);
 
-	g_object_unref (G_OBJECT (tape));
+    g_object_unref (G_OBJECT (tape));
 
-	return TRUE;
+    return TRUE;
 }
 
 gint
@@ -185,7 +185,7 @@ main (gint argc, gchar **argv)
 {
     CattleInterpreter *interpreter;
     CattleProgram *program;
-	CattleConfiguration *configuration;
+    CattleConfiguration *configuration;
     GError *error = NULL;
 
     g_type_init ();
@@ -199,10 +199,10 @@ main (gint argc, gchar **argv)
     /* Create a new interpreter */
     interpreter = cattle_interpreter_new ();
 
-	configuration = cattle_interpreter_get_configuration (interpreter);
-	g_object_ref (G_OBJECT (configuration));
-	cattle_configuration_set_debug_is_enabled (configuration, TRUE);
-	g_object_unref (G_OBJECT (configuration));
+    configuration = cattle_interpreter_get_configuration (interpreter);
+    g_object_ref (G_OBJECT (configuration));
+    cattle_configuration_set_debug_is_enabled (configuration, TRUE);
+    g_object_unref (G_OBJECT (configuration));
 
     program = cattle_interpreter_get_program (interpreter);
     g_object_ref (G_OBJECT (program));
@@ -229,10 +229,10 @@ main (gint argc, gchar **argv)
                       "output-request",
                       G_CALLBACK (output_handler),
                       NULL);
-	g_signal_connect (G_OBJECT (interpreter),
-					  "debug-request",
-					  G_CALLBACK (debug_handler),
-					  NULL);
+    g_signal_connect (G_OBJECT (interpreter),
+                      "debug-request",
+                      G_CALLBACK (debug_handler),
+                      NULL);
 
     /* Start the execution */
     if (!cattle_interpreter_run (interpreter, &error)) {

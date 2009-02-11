@@ -90,7 +90,7 @@ static void   cattle_interpreter_get_property   (GObject        *object,
 enum {
     INPUT_REQUEST,
     OUTPUT_REQUEST,
-	DEBUG_REQUEST,
+    DEBUG_REQUEST,
     LAST_SIGNAL
 };
 
@@ -227,8 +227,8 @@ cattle_interpreter_class_init (CattleInterpreterClass *self)
      * information about the error.
      *
      * Return: #TRUE if the operation is successful, #FALSE otherwise.
-	 *
-	 * Since: 0.9.1
+     *
+     * Since: 0.9.1
      */
     signals[INPUT_REQUEST] = g_signal_new ("input-request",
                                            CATTLE_TYPE_INTERPRETER,
@@ -254,8 +254,8 @@ cattle_interpreter_class_init (CattleInterpreterClass *self)
      * information about the error.
      *
      * Return: #TRUE if the operation is successful, #FALSE otherwise.
-	 *
-	 * Since: 0.9.1
+     *
+     * Since: 0.9.1
      */
     signals[OUTPUT_REQUEST] = g_signal_new ("output-request",
                                             CATTLE_TYPE_INTERPRETER,
@@ -269,30 +269,30 @@ cattle_interpreter_class_init (CattleInterpreterClass *self)
                                             G_TYPE_CHAR,
                                             G_TYPE_POINTER);
 
-	/**
-	 * CattleInterpreter::debug-request:
-	 * @interpreter: a #CattleInterpreter
-	 * @error: a #GError used for error reporting, or %NULL
-	 *
-	 * Emitted whenever a tape dump is requested.
-	 *
-	 * If the operation fails, @error have to be filled with detailed
-	 * information about the error.
-	 *
-	 * Return: #TRUE if the operation is successful, #FALSE otherwise.
-	 *
-	 * Since: 0.9.2
-	 */
-	signals[DEBUG_REQUEST] = g_signal_new ("debug_request",
-										   CATTLE_TYPE_INTERPRETER,
-										   G_SIGNAL_RUN_LAST | G_SIGNAL_NO_RECURSE,
-										   G_STRUCT_OFFSET (CattleInterpreterClass, debug_request),
-										   g_signal_accumulator_true_handled,
-										   NULL,
-										   cattle_marshal_BOOLEAN__POINTER,
-										   G_TYPE_BOOLEAN,
-										   1,
-										   G_TYPE_POINTER);
+    /**
+     * CattleInterpreter::debug-request:
+     * @interpreter: a #CattleInterpreter
+     * @error: a #GError used for error reporting, or %NULL
+     *
+     * Emitted whenever a tape dump is requested.
+     *
+     * If the operation fails, @error have to be filled with detailed
+     * information about the error.
+     *
+     * Return: #TRUE if the operation is successful, #FALSE otherwise.
+     *
+     * Since: 0.9.2
+     */
+    signals[DEBUG_REQUEST] = g_signal_new ("debug_request",
+                                           CATTLE_TYPE_INTERPRETER,
+                                           G_SIGNAL_RUN_LAST | G_SIGNAL_NO_RECURSE,
+                                           G_STRUCT_OFFSET (CattleInterpreterClass, debug_request),
+                                           g_signal_accumulator_true_handled,
+                                           NULL,
+                                           cattle_marshal_BOOLEAN__POINTER,
+                                           G_TYPE_BOOLEAN,
+                                           1,
+                                           G_TYPE_POINTER);
 
     g_type_class_add_private (object_class, sizeof (CattleInterpreterPrivate));
 }
@@ -572,18 +572,18 @@ run_real (CattleInterpreter    *self,
                  * configuration */
                 if (cattle_configuration_get_debug_is_enabled (configuration)) {
 
-					for (i = 0; i < cattle_instruction_get_quantity (instruction); i++) {
+                    for (i = 0; i < cattle_instruction_get_quantity (instruction); i++) {
 
-						g_signal_emit (self,
-									   signals[DEBUG_REQUEST],
-									   0,
-									   error,
-									   &success);
+                        g_signal_emit (self,
+                                       signals[DEBUG_REQUEST],
+                                       0,
+                                       error,
+                                       &success);
 
-						if (success == FALSE) {
-							break;
-						}
-					}
+                        if (success == FALSE) {
+                            break;
+                        }
+                    }
                 }
                 break;
 

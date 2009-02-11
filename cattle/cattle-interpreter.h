@@ -53,8 +53,8 @@ struct _CattleInterpreterClass {
     gboolean   (*input_request)    (CattleInterpreter    *interpreter,
                                     gchar               **input,
                                     GError              **error);
-	gboolean   (*debug_request)    (CattleInterpreter    *interpreter,
-									GError              **error);
+    gboolean   (*debug_request)    (CattleInterpreter    *interpreter,
+                                    GError              **error);
 };
 
 CattleInterpreter*     cattle_interpreter_new                 (void);

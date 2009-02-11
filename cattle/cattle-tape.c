@@ -52,14 +52,14 @@ G_DEFINE_TYPE (CattleTape, cattle_tape, G_TYPE_OBJECT)
 struct _CattleTapePrivate {
     gboolean disposed;
 
-    GList   *current; 	   	/* Current chunk */
-    GList   *head;		   	/* First chunk */
+    GList    *current;      /* Current chunk */
+    GList    *head;         /* First chunk */
 
-    gint     offset;	   	/* Offset of the current cell */
-	gint 	 lower_limit;	/* Offset of the first valid byte inside the first chunk */
-	gint	 upper_limit;	/* Offset of the last valid byte inside the last chunk */
+    gint      offset;       /* Offset of the current cell */
+    gint      lower_limit;  /* Offset of the first valid byte inside the first chunk */
+    gint      upper_limit;  /* Offset of the last valid byte inside the last chunk */
 
-    GSList   *bookmarks; 	/* Bookmarks stack */
+    GSList   *bookmarks;    /* Bookmarks stack */
 };
 
 typedef struct _CattleTapeBookmark CattleTapeBookmark;
@@ -87,12 +87,12 @@ cattle_tape_init (CattleTape *self)
     self->priv->head = g_list_append (self->priv->head, (gpointer) chunk);
     self->priv->current = self->priv->head;
 
-	/* Set initial limits */
+    /* Set initial limits */
     self->priv->offset = 0;
-	self->priv->lower_limit = 0;
-	self->priv->upper_limit = 0;
+    self->priv->lower_limit = 0;
+    self->priv->upper_limit = 0;
 
-	/* Initialize the bookmarks stack */
+    /* Initialize the bookmarks stack */
     self->priv->bookmarks = NULL;
 
     self->priv->disposed = FALSE;
@@ -232,28 +232,28 @@ cattle_tape_move_left (CattleTape *self)
                 chunk = (gchar *) g_slice_alloc0 (CHUNK_SIZE * sizeof (gchar));
                 self->priv->head = g_list_prepend (self->priv->head, chunk);
 
-				/* Update the lower limit */
-				self->priv->lower_limit = CHUNK_SIZE - 1;
+                /* Update the lower limit */
+                self->priv->lower_limit = CHUNK_SIZE - 1;
             }
 
-			/* Move to the previous chunk and update the offset */
+            /* Move to the previous chunk and update the offset */
             self->priv->current = g_list_previous (self->priv->current);
             self->priv->offset = CHUNK_SIZE - 1;
         }
 
-		/* We are somewhere in the chunk */
+        /* We are somewhere in the chunk */
         else {
             (self->priv->offset)--;
 
-			/* If we are in the first chunk, we might need to update the
-			 * lower limit */
-			if (g_list_previous (self->priv->current) == NULL) {
+            /* If we are in the first chunk, we might need to update the
+             * lower limit */
+            if (g_list_previous (self->priv->current) == NULL) {
 
-				/* Update the lower limit */
-				if (self->priv->offset < self->priv->lower_limit) {
-					self->priv->lower_limit = self->priv->offset;
-				}
-			}
+                /* Update the lower limit */
+                if (self->priv->offset < self->priv->lower_limit) {
+                    self->priv->lower_limit = self->priv->offset;
+                }
+            }
         }
     }
 }
@@ -286,11 +286,11 @@ cattle_tape_move_right (CattleTape *self)
                 chunk = (gchar *) g_slice_alloc0 (CHUNK_SIZE * sizeof (gchar));
                 self->priv->head = g_list_append (self->priv->head, chunk);
 
-				/* Update the upper limit */
-				self->priv->upper_limit = 0;
+                /* Update the upper limit */
+                self->priv->upper_limit = 0;
             }
 
-			/* Move to the next chunk and update the offset */
+            /* Move to the next chunk and update the offset */
             self->priv->current = g_list_next (self->priv->current);
             self->priv->offset = 0;
         }
@@ -300,15 +300,15 @@ cattle_tape_move_right (CattleTape *self)
 
             (self->priv->offset)++;
 
-			/* If we are in the last chunk, we might need to update the
-			 * upper limit */
-			if (g_list_next (self->priv->current) == NULL) {
+            /* If we are in the last chunk, we might need to update the
+             * upper limit */
+            if (g_list_next (self->priv->current) == NULL) {
 
-				/* Update the upper limit */
-				if (self->priv->offset > self->priv->upper_limit) {
-					self->priv->upper_limit = self->priv->offset;
-				}
-			}
+                /* Update the upper limit */
+                if (self->priv->offset > self->priv->upper_limit) {
+                    self->priv->upper_limit = self->priv->offset;
+                }
+            }
         }
     }
 }
@@ -333,8 +333,8 @@ cattle_tape_is_at_beginning (CattleTape *self)
 
     if (G_LIKELY (!self->priv->disposed)) {
 
-		/* If the current chunk is the first one and the current offset is
-		 * equal to the lower limit, we are at the beginning of the tape */
+        /* If the current chunk is the first one and the current offset is
+         * equal to the lower limit, we are at the beginning of the tape */
         if (g_list_previous (self->priv->current) == NULL && (self->priv->offset == self->priv->lower_limit)) {
             check = TRUE;
         }
@@ -363,8 +363,8 @@ cattle_tape_is_at_end (CattleTape *self)
 
     if (G_LIKELY (!self->priv->disposed)) {
 
-		/* If we are in the last chunk and the current offset is equal to the
-		 * upper limit, we are in the last valid position */
+        /* If we are in the last chunk and the current offset is equal to the
+         * upper limit, we are in the last valid position */
         if (g_list_next (self->priv->current) == NULL && (self->priv->offset == self->priv->upper_limit)) {
             check = TRUE;
         }
@@ -389,15 +389,15 @@ cattle_tape_push_bookmark (CattleTape *self)
 
     g_return_if_fail (CATTLE_IS_TAPE (self));
 
-	if (G_LIKELY (!self->priv->disposed)) {
+    if (G_LIKELY (!self->priv->disposed)) {
 
-		/* Create a new bookmark and store the current position */
-		bookmark = g_new0 (CattleTapeBookmark, 1);
-		bookmark->chunk = self->priv->current;
-		bookmark->offset = self->priv->offset;
+        /* Create a new bookmark and store the current position */
+        bookmark = g_new0 (CattleTapeBookmark, 1);
+        bookmark->chunk = self->priv->current;
+        bookmark->offset = self->priv->offset;
 
-		self->priv->bookmarks = g_slist_prepend (self->priv->bookmarks, bookmark);
-	}
+        self->priv->bookmarks = g_slist_prepend (self->priv->bookmarks, bookmark);
+    }
 }
 
 /**
@@ -414,28 +414,28 @@ gboolean
 cattle_tape_pop_bookmark (CattleTape *self)
 {
     CattleTapeBookmark *bookmark;
-	gboolean check = FALSE;
+    gboolean check = FALSE;
 
     g_return_val_if_fail (CATTLE_IS_TAPE (self), FALSE);
 
-	if (G_LIKELY (!self->priv->disposed)) {
+    if (G_LIKELY (!self->priv->disposed)) {
 
-		if (self->priv->bookmarks != NULL) {
+        if (self->priv->bookmarks != NULL) {
 
-			/* Get the bookmark and remove it from the stack */
-			bookmark = self->priv->bookmarks->data;
-			self->priv->bookmarks = g_slist_remove (self->priv->bookmarks, bookmark);
+            /* Get the bookmark and remove it from the stack */
+            bookmark = self->priv->bookmarks->data;
+            self->priv->bookmarks = g_slist_remove (self->priv->bookmarks, bookmark);
 
-			/* Restore the position */
-			self->priv->current = bookmark->chunk;
-			self->priv->offset = bookmark->offset;
+            /* Restore the position */
+            self->priv->current = bookmark->chunk;
+            self->priv->offset = bookmark->offset;
 
-			/* Delete the bookmark */
-			g_free (bookmark);
+            /* Delete the bookmark */
+            g_free (bookmark);
 
-			check = TRUE;
-		}
-	}
+            check = TRUE;
+        }
+    }
 
-	return check;
+    return check;
 }
