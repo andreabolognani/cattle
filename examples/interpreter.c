@@ -115,7 +115,6 @@ debug_handler (GObject     *object,
     self = CATTLE_INTERPRETER (object);
 
     tape = cattle_interpreter_get_tape (self);
-    g_object_ref (G_OBJECT (tape));
 
     /* Save the current position */
     cattle_tape_push_bookmark (tape);
@@ -175,7 +174,7 @@ debug_handler (GObject     *object,
     /* Restore the previously-saved position */
     cattle_tape_pop_bookmark (tape);
 
-    g_object_unref (G_OBJECT (tape));
+    g_object_unref (tape);
 
     return TRUE;
 }
@@ -200,7 +199,6 @@ main (gint argc, gchar **argv)
     interpreter = cattle_interpreter_new ();
 
     configuration = cattle_interpreter_get_configuration (interpreter);
-    g_object_ref (G_OBJECT (configuration));
     cattle_configuration_set_debug_is_enabled (configuration, TRUE);
     g_object_unref (G_OBJECT (configuration));
 

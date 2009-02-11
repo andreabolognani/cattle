@@ -140,9 +140,10 @@ cattle_interpreter_dispose (GObject *object)
             self->priv->tape = NULL;
         }
 
-        /* FIXME We would also need to release the input, but we don't
-         *       currently do it because it would be really tricky: we have
-         *       no way to know how to release it */
+        /* FIXME
+         * We would also need to release the input, but we don't currently
+         * do it because it would be really tricky: since the allocator is
+         * chosen by the user, we have no way to know how to release it */
 
         G_OBJECT_CLASS (cattle_interpreter_parent_class)->dispose (G_OBJECT (self));
     }
@@ -223,7 +224,7 @@ cattle_interpreter_class_init (CattleInterpreterClass *self)
      *
      * Emitted  whenever the interpreter needs some input.
      *
-     * If the operation fails, @error have to be filled with detailed
+     * If the operation fails, @error has to be filled with detailed
      * information about the error.
      *
      * Return: #TRUE if the operation is successful, #FALSE otherwise.
@@ -250,7 +251,7 @@ cattle_interpreter_class_init (CattleInterpreterClass *self)
      *
      * Emitted whenever the interpreter needs to perform some output.
      *
-     * If the operation fails, @error have to be filled with detailed
+     * If the operation fails, @error has to be filled with detailed
      * information about the error.
      *
      * Return: #TRUE if the operation is successful, #FALSE otherwise.
@@ -276,7 +277,7 @@ cattle_interpreter_class_init (CattleInterpreterClass *self)
      *
      * Emitted whenever a tape dump is requested.
      *
-     * If the operation fails, @error have to be filled with detailed
+     * If the operation fails, @error has to be filled with detailed
      * information about the error.
      *
      * Return: #TRUE if the operation is successful, #FALSE otherwise.
@@ -392,6 +393,8 @@ run_real (CattleInterpreter    *self,
                                             loop,
                                             error);
                     }
+
+                    g_object_unref (loop);
                 }
                 break;
 
@@ -444,7 +447,8 @@ run_real (CattleInterpreter    *self,
                      *
                      *     3) Perform the actual operation: the easy part ;)
                      *
-                     * TODO This step can probably be semplified.
+                     * TODO
+                     * This step can probably be semplified.
                      */
 
                     /* STEP 1: Fetch more input if needed */
@@ -592,10 +596,13 @@ run_real (CattleInterpreter    *self,
                 break;
         }
 
-        /* Go to the next instruction */
         instruction = cattle_instruction_get_next (instruction);
 
     } while (CATTLE_IS_INSTRUCTION (instruction) && success);
+
+    g_object_unref (tape);
+    g_object_unref (program);
+    g_object_unref (configuration);
 
     return success;
 }
@@ -634,6 +641,7 @@ cattle_interpreter_run (CattleInterpreter    *self,
 {
     CattleProgram *program;
     CattleInstruction *instruction;
+    gboolean success = FALSE;
 
     g_return_val_if_fail (CATTLE_IS_INTERPRETER (self), FALSE);
     g_return_val_if_fail (error == NULL || *error == NULL, FALSE);
@@ -648,12 +656,15 @@ cattle_interpreter_run (CattleInterpreter    *self,
             self->priv->had_input = TRUE;
         }
 
-        return run_real (self,
-                         instruction,
-                         error);
+        success = run_real (self,
+                            instruction,
+                            error);
+
+        g_object_unref (instruction);
+        g_object_unref (program);
     }
 
-    return FALSE;
+    return success;
 }
 
 /**
@@ -693,8 +704,7 @@ cattle_interpreter_set_configuration (CattleInterpreter     *self,
  * Get the configuration for @interpreter.
  * See cattle_interpreter_set_configuration().
  *
- * The returned object is owned by @interpreter and must not be modified or
- * freed.
+ * The returned object must be unreferenced when no longer needed.
  *
  * Return: configuration for @interpreter.
  */
@@ -706,7 +716,11 @@ cattle_interpreter_get_configuration (CattleInterpreter *self)
     g_return_val_if_fail (CATTLE_IS_INTERPRETER (self), NULL);
 
     if (G_LIKELY (!self->priv->disposed)) {
+
         configuration = self->priv->configuration;
+        if (G_IS_OBJECT (configuration)) {
+            configuration = g_object_ref (configuration);
+        }
     }
 
     return configuration;
@@ -748,8 +762,7 @@ cattle_interpreter_set_program (CattleInterpreter   *self,
  * Get the current program for @interpreter.
  * See cattle_interpreter_set_program().
  *
- * The returned object is owned by @interpreter and must not be modified or
- * freed.
+ * The returned object must be unreferenced when no longer needed.
  *
  * Return: the program @interpreter will run.
  */
@@ -761,7 +774,11 @@ cattle_interpreter_get_program (CattleInterpreter *self)
     g_return_val_if_fail (CATTLE_IS_INTERPRETER (self), NULL);
 
     if (G_LIKELY (!self->priv->disposed)) {
+
         program = self->priv->program;
+        if (G_IS_OBJECT (program)) {
+            program = g_object_ref (program);
+        }
     }
 
     return program;
@@ -800,8 +817,7 @@ cattle_interpreter_set_tape (CattleInterpreter   *self,
  * Get the memory tape used by @interpreter.
  * See cattle_interpreter_set_tape().
  *
- * The returned object is owned by @interpreter and must not be modified
- * of freed.
+ * The returned object must be unreferenced when no longer needed.
  *
  * Return: the memory tape for @interpreter.
  */
@@ -813,7 +829,11 @@ cattle_interpreter_get_tape (CattleInterpreter *self)
     g_return_val_if_fail (CATTLE_IS_INTERPRETER (self), NULL);
 
     if (G_LIKELY (!self->priv->disposed)) {
+
         tape = self->priv->tape;
+        if (G_IS_OBJECT (tape)) {
+            tape = g_object_ref (tape);
+        }
     }
 
     return tape;

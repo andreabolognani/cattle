@@ -20,6 +20,7 @@
  */
 
 #include <glib.h>
+#include <glib-object.h>
 #include <cattle/cattle.h>
 
 /* Each time a loop is started, its content is indented by INDENT_STEP */
@@ -36,9 +37,6 @@ indent_real (CattleInstruction *instruction, gint level)
     g_return_if_fail (CATTLE_IS_INSTRUCTION (instruction));
 
     do {
-
-        /* Get a reference to the instruction */
-        g_object_ref (G_OBJECT (instruction));
 
         value = cattle_instruction_get_value (instruction);
         quantity = cattle_instruction_get_quantity (instruction);

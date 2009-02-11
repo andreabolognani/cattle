@@ -143,7 +143,8 @@ cattle_instruction_dispose (GObject *object)
         if (G_IS_OBJECT (self->priv->loop)) {
 
             /* Releasing the first instruction in the loop causes all the
-             * instructions in the loop to be disposed */
+             * instructions in the loop to be released as well, so we can
+             * safely release just the first one */
             g_object_unref (G_OBJECT (self->priv->loop));
             self->priv->loop = NULL;
         }
@@ -466,8 +467,7 @@ cattle_instruction_set_next (CattleInstruction   *self,
  * (i.e. its value is #CATTLE_INSTRUCTION_LOOP_BEGIN), the instruction returned
  * will be executed only after the loop has returned.
  *
- * The returned object is owned by @instruction and must not be modified or
- * freed.
+ * The returned object must be unreferenced when no longer needed.
  *
  * Return: the next instruction, or %NULL.
  */
@@ -479,7 +479,12 @@ cattle_instruction_get_next (CattleInstruction *self)
     g_return_val_if_fail (CATTLE_IS_INSTRUCTION (self), NULL);
 
     if (G_LIKELY (!self->priv->disposed)) {
+
         next = self->priv->next;
+
+        if (G_IS_OBJECT (next)) {
+            next = g_object_ref (next);
+        }
     }
 
     return next;
@@ -523,8 +528,7 @@ cattle_instruction_set_loop (CattleInstruction   *self,
  *
  * Get the first instruction of the loop.
  *
- * The returned object is owned by @instruction and must not be modified or
- * freed.
+ * The returned object must be unreferenced when no longer needed.
  *
  * Return: a #CattleInstruction.
  */
@@ -536,7 +540,12 @@ cattle_instruction_get_loop (CattleInstruction *self)
     g_return_val_if_fail (CATTLE_IS_INSTRUCTION (self), NULL);
 
     if (G_LIKELY (!self->priv->disposed)) {
+
         loop = self->priv->loop;
+
+        if (G_IS_OBJECT (loop)) {
+            loop = g_object_ref (loop);
+        }
     }
 
     return loop;

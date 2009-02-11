@@ -34,23 +34,18 @@ test_references_program_owns_instructions (void)
 {
     CattleProgram *program;
     CattleInstruction *first;
-    CattleInstruction *last;
 
     program = cattle_program_new ();
     cattle_program_load_from_string (program, "++[-]", NULL);
 
     first = cattle_program_get_instructions (program);
-    last = cattle_instruction_get_next (first);
-    last = cattle_instruction_get_loop (last);
-    last = cattle_instruction_get_next (last);
 
     g_assert (G_IS_OBJECT (first));
-    g_assert (G_IS_OBJECT (last));
 
     g_object_unref (program);
+    g_object_unref (first);
 
     g_assert (!G_IS_OBJECT (first));
-    g_assert (!G_IS_OBJECT (last));
 }
 
 gint

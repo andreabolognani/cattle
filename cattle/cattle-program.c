@@ -617,8 +617,7 @@ cattle_program_set_instructions (CattleProgram       *self,
  *
  * Get the instructions for @program.
  *
- * The returned object is owned by @program and must not be modified or
- * freed.
+ * The returned object must be unreferenced when no longer needed.
  *
  * Return: a #CattleInstruction.
  */
@@ -630,7 +629,11 @@ cattle_program_get_instructions (CattleProgram *self)
     g_return_val_if_fail (CATTLE_IS_PROGRAM (self), NULL);
 
     if (G_LIKELY (!self->priv->disposed)) {
+
         instructions = self->priv->instructions;
+        if (G_IS_OBJECT (instructions)) {
+            instructions = g_object_ref (instructions);
+        }
     }
 
     return instructions;
