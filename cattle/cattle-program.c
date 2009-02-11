@@ -131,7 +131,7 @@ cattle_program_dispose (GObject *object)
 
     if (G_LIKELY (!self->priv->disposed)) {
 
-        g_object_unref (G_OBJECT (self->priv->instructions));
+        g_object_unref (self->priv->instructions);
         self->priv->instructions = NULL;
 
         self->priv->disposed = TRUE;
@@ -298,7 +298,7 @@ load_from_string_real (gchar    **program,
 
                 cattle_instruction_set_value (current, CATTLE_INSTRUCTION_LOOP_BEGIN);
                 cattle_instruction_set_loop (current, loop);
-                g_object_unref (G_OBJECT (loop));
+                g_object_unref (loop);
             break;
 
             case CATTLE_INSTRUCTION_LOOP_END:
@@ -473,7 +473,7 @@ cattle_program_load_from_string (CattleProgram   *self,
 
         /* Set the instructions for the program */
         cattle_program_set_instructions (self, instructions);
-        g_object_unref (G_OBJECT (instructions));
+        g_object_unref (instructions);
 
         /* Set the input for the program, if present; otherwise, reset it */
         if (g_utf8_strlen (position, -1) > 0) {
@@ -604,10 +604,10 @@ cattle_program_set_instructions (CattleProgram       *self,
     if (G_LIKELY (!self->priv->disposed)) {
 
         /* Release the reference held on the current instructions */
-        g_object_unref (G_OBJECT (self->priv->instructions));
+        g_object_unref (self->priv->instructions);
 
         self->priv->instructions = instructions;
-        g_object_ref (G_OBJECT (self->priv->instructions));
+        g_object_ref (self->priv->instructions);
     }
 }
 
@@ -632,7 +632,7 @@ cattle_program_get_instructions (CattleProgram *self)
 
         instructions = self->priv->instructions;
         if (G_IS_OBJECT (instructions)) {
-            instructions = g_object_ref (instructions);
+            g_object_ref (instructions);
         }
     }
 
@@ -680,7 +680,7 @@ cattle_program_get_input (CattleProgram *self)
     g_return_val_if_fail (CATTLE_IS_PROGRAM (self), NULL);
 
     if (G_LIKELY (!self->priv->disposed)) {
-        input = self->priv->input;
+        self->priv->input;
     }
 
     return input;

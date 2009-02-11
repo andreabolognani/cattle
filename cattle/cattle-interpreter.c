@@ -128,15 +128,15 @@ cattle_interpreter_dispose (GObject *object)
         self->priv->disposed = TRUE;
 
         if (G_IS_OBJECT (self->priv->configuration)) {
-            g_object_unref (G_OBJECT (self->priv->configuration));
+            g_object_unref (self->priv->configuration);
             self->priv->configuration = NULL;
         }
         if (G_IS_OBJECT (self->priv->program)) {
-            g_object_unref (G_OBJECT (self->priv->program));
+            g_object_unref (self->priv->program);
             self->priv->program = NULL;
         }
         if (G_IS_OBJECT (self->priv->tape)) {
-            g_object_unref (G_OBJECT (self->priv->tape));
+            g_object_unref (self->priv->tape);
             self->priv->tape = NULL;
         }
 
@@ -689,11 +689,11 @@ cattle_interpreter_set_configuration (CattleInterpreter     *self,
 
         /* Release the reference held on the previous configuration */
         if (G_IS_OBJECT (self->priv->configuration)) {
-            g_object_unref (G_OBJECT (self->priv->configuration));
+            g_object_unref (self->priv->configuration);
         }
 
         self->priv->configuration = configuration;
-        g_object_ref (G_OBJECT (self->priv->configuration));
+        g_object_ref (self->priv->configuration);
     }
 }
 
@@ -719,7 +719,7 @@ cattle_interpreter_get_configuration (CattleInterpreter *self)
 
         configuration = self->priv->configuration;
         if (G_IS_OBJECT (configuration)) {
-            configuration = g_object_ref (configuration);
+            g_object_ref (configuration);
         }
     }
 
@@ -747,11 +747,11 @@ cattle_interpreter_set_program (CattleInterpreter   *self,
 
         /* Release the reference held to the previous program, if any */
         if (G_IS_OBJECT (self->priv->program)) {
-            g_object_unref (G_OBJECT (self->priv->program));
+            g_object_unref (self->priv->program);
         }
 
         self->priv->program = program;
-        g_object_ref (G_OBJECT (self->priv->program));
+        g_object_ref (self->priv->program);
     }
 }
 
@@ -777,7 +777,7 @@ cattle_interpreter_get_program (CattleInterpreter *self)
 
         program = self->priv->program;
         if (G_IS_OBJECT (program)) {
-            program = g_object_ref (program);
+            g_object_ref (program);
         }
     }
 
@@ -802,11 +802,11 @@ cattle_interpreter_set_tape (CattleInterpreter   *self,
 
         /* Release the reference held to the previous tape */
         if (G_IS_OBJECT (self->priv->tape)) {
-            g_object_unref (G_OBJECT (self->priv->tape));
+            g_object_unref (self->priv->tape);
         }
 
         self->priv->tape = tape;
-        g_object_ref (G_OBJECT (self->priv->tape));
+        g_object_ref (self->priv->tape);
     }
 }
 
@@ -832,7 +832,7 @@ cattle_interpreter_get_tape (CattleInterpreter *self)
 
         tape = self->priv->tape;
         if (G_IS_OBJECT (tape)) {
-            tape = g_object_ref (tape);
+            g_object_ref (tape);
         }
     }
 

@@ -65,9 +65,10 @@ input_handler (GObject     *object,
          * means an I/O error occurred. In this case, we need to report
          * it to the caller.
          *
-         * FIXME G_FILE_ERROR is used as error domain, but it's not really
-         *       correct in this case. A generic error domain is probably
-         *       needed for situations like this.
+         * FIXME
+         * G_FILE_ERROR is used as error domain, but it's not really correct
+         * in this case. A generic error domain is probably needed for
+         * similar situations.
          */
         g_set_error (error,
                      G_FILE_ERROR,
@@ -200,10 +201,9 @@ main (gint argc, gchar **argv)
 
     configuration = cattle_interpreter_get_configuration (interpreter);
     cattle_configuration_set_debug_is_enabled (configuration, TRUE);
-    g_object_unref (G_OBJECT (configuration));
+    g_object_unref (configuration);
 
     program = cattle_interpreter_get_program (interpreter);
-    g_object_ref (G_OBJECT (program));
 
     /* Load the program, aborting on failure */
     if (!cattle_program_load_from_file (program, argv[1], &error)) {
@@ -211,12 +211,12 @@ main (gint argc, gchar **argv)
         g_warning ("Cannot load program: %s", error->message);
 
         g_error_free (error);
-        g_object_unref (G_OBJECT (program));
-        g_object_unref (G_OBJECT (interpreter));
+        g_object_unref (program);
+        g_object_unref (interpreter);
 
         return 1;
     }
-    g_object_unref (G_OBJECT (program));
+    g_object_unref (program);
 
     /* Connect the input/output and debug signal handlers */
     g_signal_connect (G_OBJECT (interpreter),
@@ -238,11 +238,11 @@ main (gint argc, gchar **argv)
         g_warning ("Cannot run program: %s", error->message);
 
         g_error_free (error);
-        g_object_unref (G_OBJECT (interpreter));
+        g_object_unref (interpreter);
 
         return 1;
     }
-    g_object_unref (G_OBJECT (interpreter));
+    g_object_unref (interpreter);
 
     return 0;
 }

@@ -137,7 +137,7 @@ cattle_instruction_dispose (GObject *object)
         self->priv->disposed = TRUE;
 
         if (G_IS_OBJECT (self->priv->next)) {
-            g_object_unref (G_OBJECT (self->priv->next));
+            g_object_unref (self->priv->next);
             self->priv->next = NULL;
         }
         if (G_IS_OBJECT (self->priv->loop)) {
@@ -145,7 +145,7 @@ cattle_instruction_dispose (GObject *object)
             /* Releasing the first instruction in the loop causes all the
              * instructions in the loop to be released as well, so we can
              * safely release just the first one */
-            g_object_unref (G_OBJECT (self->priv->loop));
+            g_object_unref (self->priv->loop);
             self->priv->loop = NULL;
         }
 
@@ -445,13 +445,13 @@ cattle_instruction_set_next (CattleInstruction   *self,
 
         /* Release the reference held on the previous value */
         if (G_IS_OBJECT (self->priv->next)) {
-            g_object_unref (G_OBJECT (self->priv->next));
+            g_object_unref (self->priv->next);
         }
 
         /* Set the new instruction and acquire a reference to it */
         self->priv->next = next;
         if (G_IS_OBJECT (self->priv->next)) {
-            g_object_ref (G_OBJECT (self->priv->next));
+            g_object_ref (self->priv->next);
         }
     }
 }
@@ -483,7 +483,7 @@ cattle_instruction_get_next (CattleInstruction *self)
         next = self->priv->next;
 
         if (G_IS_OBJECT (next)) {
-            next = g_object_ref (next);
+            g_object_ref (next);
         }
     }
 
@@ -511,13 +511,13 @@ cattle_instruction_set_loop (CattleInstruction   *self,
 
             /* Releasing the first instruction in the loop causes all the
              * instructions to be disposed */
-            g_object_unref (G_OBJECT (self->priv->loop));
+            g_object_unref (self->priv->loop);
         }
 
         /* Get a reference to the new instructions */
         self->priv->loop = loop;
         if (G_IS_OBJECT (self->priv->loop)) {
-            g_object_ref (G_OBJECT (self->priv->loop));
+            g_object_ref (self->priv->loop);
         }
     }
 }
@@ -544,7 +544,7 @@ cattle_instruction_get_loop (CattleInstruction *self)
         loop = self->priv->loop;
 
         if (G_IS_OBJECT (loop)) {
-            loop = g_object_ref (loop);
+            g_object_ref (loop);
         }
     }
 

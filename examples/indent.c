@@ -65,7 +65,7 @@ indent_real (CattleInstruction *instruction, gint level)
 
         /* Drop the reference to the current instruction */
         temp = cattle_instruction_get_next (instruction);
-        g_object_unref (G_OBJECT (instruction));
+        g_object_unref (instruction);
 
         instruction = temp;
     }
@@ -105,14 +105,14 @@ main (gint argc, gchar **argv)
     if (!cattle_program_load_from_file (program, argv[1], &error)) {
         g_warning ("Cannot load program: %s", error->message);
         g_error_free (error);
-        g_object_unref (G_OBJECT (program));
+        g_object_unref (program);
         return 1;
     }
 
     /* Indent the program */
     indent (program);
 
-    g_object_unref (G_OBJECT (program)); 
+    g_object_unref (program); 
 
     return 0;
 }
