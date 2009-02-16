@@ -147,7 +147,7 @@ debug_handler (GObject     *object,
             g_print ("%c", value);
         }
         else {
-            g_print ("\\%x", (gint) value);
+            g_print ("\\0x%X", (gint) value);
         }
 
         /* Mark the current position */
