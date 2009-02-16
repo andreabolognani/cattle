@@ -83,15 +83,6 @@ enum {
     PROP_INPUT
 };
 
-static void   cattle_program_set_property   (GObject        *object,
-                                             guint           property_id,
-                                             const GValue   *value,
-                                             GParamSpec     *pspec);
-static void   cattle_program_get_property   (GObject        *object,
-                                             guint           property_id,
-                                             GValue         *value,
-                                             GParamSpec     *pspec);
-
 /* Internal functions */
 static CattleInstruction*   load_from_string_real   (gchar    **program,
                                                      GError   **error);
@@ -149,107 +140,6 @@ cattle_program_finalize (GObject *object)
     self->priv->input = NULL;
 
     G_OBJECT_CLASS (cattle_program_parent_class)->finalize (object);
-}
-
-static void
-cattle_program_class_init (CattleProgramClass *self)
-{
-    GObjectClass *object_class = G_OBJECT_CLASS (self);
-    GParamSpec *pspec;
-
-    object_class->set_property = cattle_program_set_property;
-    object_class->get_property = cattle_program_get_property;
-    object_class->dispose = cattle_program_dispose;
-    object_class->finalize = cattle_program_finalize;
-
-    /**
-     * CattleProgram:instructions:
-     *
-     * Instructions to be executed.
-     *
-     * Changes to this property are not notified.
-     */
-    pspec = g_param_spec_object ("instructions",
-                                 "Instructions to be executed",
-                                 "Get/set instruction",
-                                 CATTLE_TYPE_INSTRUCTION,
-                                 G_PARAM_READWRITE);
-    g_object_class_install_property (object_class,
-                                     PROP_INSTRUCTIONS,
-                                     pspec);
-
-    /**
-     * CattleProgram:input:
-     *
-     * Input for this program, or %NULL if no input is available at the
-     * moment of loading.
-     *
-     * Changes to this property are not notified.
-     */
-    pspec = g_param_spec_string ("input",
-                                 "Input for this program",
-                                 "Get/set input",
-                                 NULL,
-                                 G_PARAM_READWRITE);
-    g_object_class_install_property (object_class,
-                                     PROP_INPUT,
-                                     pspec);
-
-    g_type_class_add_private (object_class, sizeof (CattleProgramPrivate));
-}
-
-static void
-cattle_program_set_property (GObject        *object,
-                             guint           property_id,
-                             const GValue   *value,
-                             GParamSpec     *pspec)
-{
-    CattleProgram *self = CATTLE_PROGRAM (object);
-
-    if (G_LIKELY (!self->priv->disposed)) {
-
-        switch (property_id) {
-
-            case PROP_INSTRUCTIONS:
-                cattle_program_set_instructions (self, g_value_get_object (value));
-                break;
-
-            case PROP_INPUT:
-                cattle_program_set_input (self, g_value_get_string (value));
-                break;
-
-            default:
-                G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
-                break;
-        }
-    }
-}
-
-static void
-cattle_program_get_property (GObject      *object,
-                             guint         property_id,
-                             GValue       *value,
-                             GParamSpec   *pspec)
-{
-    CattleProgram *self = CATTLE_PROGRAM (object);
-
-    if (G_LIKELY (!self->priv->disposed)) {
-
-        switch (property_id) {
-
-            case PROP_INSTRUCTIONS:
-                g_value_set_object (value, cattle_program_get_instructions (self));
-                break;
-
-            case PROP_INPUT:
-                g_value_set_string (value, cattle_program_get_input (self));
-                break;
-
-            default:
-                G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
-                break;
-        }
-    }
 }
 
 static CattleInstruction*
@@ -682,4 +572,105 @@ cattle_program_get_input (CattleProgram *self)
     }
 
     return input;
+}
+
+static void
+cattle_program_set_property (GObject        *object,
+                             guint           property_id,
+                             const GValue   *value,
+                             GParamSpec     *pspec)
+{
+    CattleProgram *self = CATTLE_PROGRAM (object);
+
+    if (G_LIKELY (!self->priv->disposed)) {
+
+        switch (property_id) {
+
+            case PROP_INSTRUCTIONS:
+                cattle_program_set_instructions (self, g_value_get_object (value));
+                break;
+
+            case PROP_INPUT:
+                cattle_program_set_input (self, g_value_get_string (value));
+                break;
+
+            default:
+                G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
+                break;
+        }
+    }
+}
+
+static void
+cattle_program_get_property (GObject      *object,
+                             guint         property_id,
+                             GValue       *value,
+                             GParamSpec   *pspec)
+{
+    CattleProgram *self = CATTLE_PROGRAM (object);
+
+    if (G_LIKELY (!self->priv->disposed)) {
+
+        switch (property_id) {
+
+            case PROP_INSTRUCTIONS:
+                g_value_set_object (value, cattle_program_get_instructions (self));
+                break;
+
+            case PROP_INPUT:
+                g_value_set_string (value, cattle_program_get_input (self));
+                break;
+
+            default:
+                G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
+                break;
+        }
+    }
+}
+
+static void
+cattle_program_class_init (CattleProgramClass *self)
+{
+    GObjectClass *object_class = G_OBJECT_CLASS (self);
+    GParamSpec *pspec;
+
+    object_class->set_property = cattle_program_set_property;
+    object_class->get_property = cattle_program_get_property;
+    object_class->dispose = cattle_program_dispose;
+    object_class->finalize = cattle_program_finalize;
+
+    /**
+     * CattleProgram:instructions:
+     *
+     * Instructions to be executed.
+     *
+     * Changes to this property are not notified.
+     */
+    pspec = g_param_spec_object ("instructions",
+                                 "Instructions to be executed",
+                                 "Get/set instruction",
+                                 CATTLE_TYPE_INSTRUCTION,
+                                 G_PARAM_READWRITE);
+    g_object_class_install_property (object_class,
+                                     PROP_INSTRUCTIONS,
+                                     pspec);
+
+    /**
+     * CattleProgram:input:
+     *
+     * Input for this program, or %NULL if no input is available at the
+     * moment of loading.
+     *
+     * Changes to this property are not notified.
+     */
+    pspec = g_param_spec_string ("input",
+                                 "Input for this program",
+                                 "Get/set input",
+                                 NULL,
+                                 G_PARAM_READWRITE);
+    g_object_class_install_property (object_class,
+                                     PROP_INPUT,
+                                     pspec);
+
+    g_type_class_add_private (object_class, sizeof (CattleProgramPrivate));
 }

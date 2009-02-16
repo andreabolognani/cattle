@@ -77,15 +77,6 @@ enum {
     PROP_TAPE
 };
 
-static void   cattle_interpreter_set_property   (GObject        *object,
-                                                 guint           property_id,
-                                                 const GValue   *value,
-                                                 GParamSpec     *pspec);
-static void   cattle_interpreter_get_property   (GObject        *object,
-                                                 guint           property_id,
-                                                 GValue         *value,
-                                                 GParamSpec     *pspec);
-
 /* Signals */
 enum {
     INPUT_REQUEST,
@@ -153,209 +144,6 @@ cattle_interpreter_finalize (GObject *object)
      * no way to know how to release it */
 
     G_OBJECT_CLASS (cattle_interpreter_parent_class)->finalize (object);
-}
-
-static void
-cattle_interpreter_class_init (CattleInterpreterClass *self)
-{
-    GObjectClass *object_class = G_OBJECT_CLASS (self);
-    GParamSpec *pspec;
-
-    object_class->set_property = cattle_interpreter_set_property;
-    object_class->get_property = cattle_interpreter_get_property;
-    object_class->dispose = cattle_interpreter_dispose;
-    object_class->finalize = cattle_interpreter_finalize;
-
-    /**
-     * CattleInterpreter:configuration:
-     *
-     * Configuration used by the interpreter.
-     *
-     * Changes to this property are not notified.
-     */
-    pspec = g_param_spec_object ("configuration",
-                                 "Configuration for the interpreter",
-                                 "Get/set interpreter's configuration",
-                                 CATTLE_TYPE_CONFIGURATION,
-                                 G_PARAM_READWRITE);
-    g_object_class_install_property (object_class,
-                                     PROP_CONFIGURATION,
-                                     pspec);
-
-    /**
-     * CattleInterpreter:program:
-     *
-     * Program executed by the interpreter.
-     *
-     * Changes to this property are not notified.
-     */
-    pspec = g_param_spec_object ("program",
-                                 "Program to be executed by the interpreter",
-                                 "Get/set interpreter's program",
-                                 CATTLE_TYPE_PROGRAM,
-                                 G_PARAM_READWRITE);
-    g_object_class_install_property (object_class,
-                                     PROP_PROGRAM,
-                                     pspec);
-
-    /**
-     * CattleInterpreter:tape:
-     *
-     * Tape used to store the data needed by the program.
-     *
-     * Changes to this property are not notified.
-     */
-    pspec = g_param_spec_object ("tape",
-                                 "Tape used by the interpreter",
-                                 "Get/set interpreter's tape",
-                                 CATTLE_TYPE_TAPE,
-                                 G_PARAM_READWRITE);
-    g_object_class_install_property (object_class,
-                                     PROP_TAPE,
-                                     pspec);
-
-    /**
-     * CattleInterpreter::input-request:
-     * @interpreter: a #CattleInterpreter
-     * @input: return location for the input
-     * @error: a #GError to be used for reporting, or %NULL
-     *
-     * Emitted  whenever the interpreter needs some input.
-     *
-     * If the operation fails, @error has to be filled with detailed
-     * information about the error.
-     *
-     * Return: #TRUE if the operation is successful, #FALSE otherwise.
-     *
-     * Since: 0.9.1
-     */
-    signals[INPUT_REQUEST] = g_signal_new ("input-request",
-                                           CATTLE_TYPE_INTERPRETER,
-                                           G_SIGNAL_RUN_LAST | G_SIGNAL_NO_RECURSE,
-                                           G_STRUCT_OFFSET (CattleInterpreterClass, input_request),
-                                           g_signal_accumulator_true_handled,
-                                           NULL,
-                                           cattle_marshal_BOOLEAN__POINTER_POINTER,
-                                           G_TYPE_BOOLEAN,
-                                           2,
-                                           G_TYPE_POINTER,
-                                           G_TYPE_POINTER);
-
-    /**
-     * CattleInterpreter::output-request:
-     * @interpreter: a #CattleInterpreter
-     * @output: the character that needs to be printed
-     * @error: a #GError to be used for reporting, or %NULL
-     *
-     * Emitted whenever the interpreter needs to perform some output.
-     *
-     * If the operation fails, @error has to be filled with detailed
-     * information about the error.
-     *
-     * Return: #TRUE if the operation is successful, #FALSE otherwise.
-     *
-     * Since: 0.9.1
-     */
-    signals[OUTPUT_REQUEST] = g_signal_new ("output-request",
-                                            CATTLE_TYPE_INTERPRETER,
-                                            G_SIGNAL_RUN_LAST | G_SIGNAL_NO_RECURSE,
-                                            G_STRUCT_OFFSET (CattleInterpreterClass, output_request),
-                                            g_signal_accumulator_true_handled,
-                                            NULL,
-                                            cattle_marshal_BOOLEAN__CHAR_POINTER,
-                                            G_TYPE_BOOLEAN,
-                                            2,
-                                            G_TYPE_CHAR,
-                                            G_TYPE_POINTER);
-
-    /**
-     * CattleInterpreter::debug-request:
-     * @interpreter: a #CattleInterpreter
-     * @error: a #GError used for error reporting, or %NULL
-     *
-     * Emitted whenever a tape dump is requested.
-     *
-     * If the operation fails, @error has to be filled with detailed
-     * information about the error.
-     *
-     * Return: #TRUE if the operation is successful, #FALSE otherwise.
-     *
-     * Since: 0.9.2
-     */
-    signals[DEBUG_REQUEST] = g_signal_new ("debug_request",
-                                           CATTLE_TYPE_INTERPRETER,
-                                           G_SIGNAL_RUN_LAST | G_SIGNAL_NO_RECURSE,
-                                           G_STRUCT_OFFSET (CattleInterpreterClass, debug_request),
-                                           g_signal_accumulator_true_handled,
-                                           NULL,
-                                           cattle_marshal_BOOLEAN__POINTER,
-                                           G_TYPE_BOOLEAN,
-                                           1,
-                                           G_TYPE_POINTER);
-
-    g_type_class_add_private (object_class, sizeof (CattleInterpreterPrivate));
-}
-
-static void
-cattle_interpreter_set_property (GObject        *object,
-                                 guint           property_id,
-                                 const GValue   *value,
-                                 GParamSpec     *pspec)
-{
-    CattleInterpreter *self = CATTLE_INTERPRETER (object);
-
-    if (G_LIKELY (!self->priv->disposed)) {
-
-        switch (property_id) {
-
-            case PROP_CONFIGURATION:
-                cattle_interpreter_set_configuration (self, g_value_get_object (value));
-                break;
-
-            case PROP_PROGRAM:
-                cattle_interpreter_set_program (self, g_value_get_object (value));
-                break;
-
-            case PROP_TAPE:
-                cattle_interpreter_set_tape (self, g_value_get_object (value));
-                break;
-
-            default:
-                G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
-                break;
-        }
-    }
-}
-
-static void
-cattle_interpreter_get_property (GObject      *object,
-                                 guint         property_id,
-                                 GValue       *value,
-                                 GParamSpec   *pspec)
-{
-    CattleInterpreter *self = CATTLE_INTERPRETER (object);
-
-    if (G_LIKELY (!self->priv->disposed)) {
-
-        switch (property_id) {
-
-            case PROP_CONFIGURATION:
-                g_value_set_object (value, cattle_interpreter_get_configuration (self));
-                break;
-
-            case PROP_PROGRAM:
-                g_value_set_object (value, cattle_interpreter_get_program (self));
-                break;
-
-            case PROP_TAPE:
-                g_value_set_object (value, cattle_interpreter_get_tape (self));
-                break;
-
-            default:
-                G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
-                break;
-        }
-    }
 }
 
 static gboolean
@@ -835,4 +623,207 @@ cattle_interpreter_get_tape (CattleInterpreter *self)
     }
 
     return tape;
+}
+
+static void
+cattle_interpreter_set_property (GObject        *object,
+                                 guint           property_id,
+                                 const GValue   *value,
+                                 GParamSpec     *pspec)
+{
+    CattleInterpreter *self = CATTLE_INTERPRETER (object);
+
+    if (G_LIKELY (!self->priv->disposed)) {
+
+        switch (property_id) {
+
+            case PROP_CONFIGURATION:
+                cattle_interpreter_set_configuration (self, g_value_get_object (value));
+                break;
+
+            case PROP_PROGRAM:
+                cattle_interpreter_set_program (self, g_value_get_object (value));
+                break;
+
+            case PROP_TAPE:
+                cattle_interpreter_set_tape (self, g_value_get_object (value));
+                break;
+
+            default:
+                G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
+                break;
+        }
+    }
+}
+
+static void
+cattle_interpreter_get_property (GObject      *object,
+                                 guint         property_id,
+                                 GValue       *value,
+                                 GParamSpec   *pspec)
+{
+    CattleInterpreter *self = CATTLE_INTERPRETER (object);
+
+    if (G_LIKELY (!self->priv->disposed)) {
+
+        switch (property_id) {
+
+            case PROP_CONFIGURATION:
+                g_value_set_object (value, cattle_interpreter_get_configuration (self));
+                break;
+
+            case PROP_PROGRAM:
+                g_value_set_object (value, cattle_interpreter_get_program (self));
+                break;
+
+            case PROP_TAPE:
+                g_value_set_object (value, cattle_interpreter_get_tape (self));
+                break;
+
+            default:
+                G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
+                break;
+        }
+    }
+}
+
+static void
+cattle_interpreter_class_init (CattleInterpreterClass *self)
+{
+    GObjectClass *object_class = G_OBJECT_CLASS (self);
+    GParamSpec *pspec;
+
+    object_class->set_property = cattle_interpreter_set_property;
+    object_class->get_property = cattle_interpreter_get_property;
+    object_class->dispose = cattle_interpreter_dispose;
+    object_class->finalize = cattle_interpreter_finalize;
+
+    /**
+     * CattleInterpreter:configuration:
+     *
+     * Configuration used by the interpreter.
+     *
+     * Changes to this property are not notified.
+     */
+    pspec = g_param_spec_object ("configuration",
+                                 "Configuration for the interpreter",
+                                 "Get/set interpreter's configuration",
+                                 CATTLE_TYPE_CONFIGURATION,
+                                 G_PARAM_READWRITE);
+    g_object_class_install_property (object_class,
+                                     PROP_CONFIGURATION,
+                                     pspec);
+
+    /**
+     * CattleInterpreter:program:
+     *
+     * Program executed by the interpreter.
+     *
+     * Changes to this property are not notified.
+     */
+    pspec = g_param_spec_object ("program",
+                                 "Program to be executed by the interpreter",
+                                 "Get/set interpreter's program",
+                                 CATTLE_TYPE_PROGRAM,
+                                 G_PARAM_READWRITE);
+    g_object_class_install_property (object_class,
+                                     PROP_PROGRAM,
+                                     pspec);
+
+    /**
+     * CattleInterpreter:tape:
+     *
+     * Tape used to store the data needed by the program.
+     *
+     * Changes to this property are not notified.
+     */
+    pspec = g_param_spec_object ("tape",
+                                 "Tape used by the interpreter",
+                                 "Get/set interpreter's tape",
+                                 CATTLE_TYPE_TAPE,
+                                 G_PARAM_READWRITE);
+    g_object_class_install_property (object_class,
+                                     PROP_TAPE,
+                                     pspec);
+
+    /**
+     * CattleInterpreter::input-request:
+     * @interpreter: a #CattleInterpreter
+     * @input: return location for the input
+     * @error: a #GError to be used for reporting, or %NULL
+     *
+     * Emitted  whenever the interpreter needs some input.
+     *
+     * If the operation fails, @error has to be filled with detailed
+     * information about the error.
+     *
+     * Return: #TRUE if the operation is successful, #FALSE otherwise.
+     *
+     * Since: 0.9.1
+     */
+    signals[INPUT_REQUEST] = g_signal_new ("input-request",
+                                           CATTLE_TYPE_INTERPRETER,
+                                           G_SIGNAL_RUN_LAST | G_SIGNAL_NO_RECURSE,
+                                           G_STRUCT_OFFSET (CattleInterpreterClass, input_request),
+                                           g_signal_accumulator_true_handled,
+                                           NULL,
+                                           cattle_marshal_BOOLEAN__POINTER_POINTER,
+                                           G_TYPE_BOOLEAN,
+                                           2,
+                                           G_TYPE_POINTER,
+                                           G_TYPE_POINTER);
+
+    /**
+     * CattleInterpreter::output-request:
+     * @interpreter: a #CattleInterpreter
+     * @output: the character that needs to be printed
+     * @error: a #GError to be used for reporting, or %NULL
+     *
+     * Emitted whenever the interpreter needs to perform some output.
+     *
+     * If the operation fails, @error has to be filled with detailed
+     * information about the error.
+     *
+     * Return: #TRUE if the operation is successful, #FALSE otherwise.
+     *
+     * Since: 0.9.1
+     */
+    signals[OUTPUT_REQUEST] = g_signal_new ("output-request",
+                                            CATTLE_TYPE_INTERPRETER,
+                                            G_SIGNAL_RUN_LAST | G_SIGNAL_NO_RECURSE,
+                                            G_STRUCT_OFFSET (CattleInterpreterClass, output_request),
+                                            g_signal_accumulator_true_handled,
+                                            NULL,
+                                            cattle_marshal_BOOLEAN__CHAR_POINTER,
+                                            G_TYPE_BOOLEAN,
+                                            2,
+                                            G_TYPE_CHAR,
+                                            G_TYPE_POINTER);
+
+    /**
+     * CattleInterpreter::debug-request:
+     * @interpreter: a #CattleInterpreter
+     * @error: a #GError used for error reporting, or %NULL
+     *
+     * Emitted whenever a tape dump is requested.
+     *
+     * If the operation fails, @error has to be filled with detailed
+     * information about the error.
+     *
+     * Return: #TRUE if the operation is successful, #FALSE otherwise.
+     *
+     * Since: 0.9.2
+     */
+    signals[DEBUG_REQUEST] = g_signal_new ("debug_request",
+                                           CATTLE_TYPE_INTERPRETER,
+                                           G_SIGNAL_RUN_LAST | G_SIGNAL_NO_RECURSE,
+                                           G_STRUCT_OFFSET (CattleInterpreterClass, debug_request),
+                                           g_signal_accumulator_true_handled,
+                                           NULL,
+                                           cattle_marshal_BOOLEAN__POINTER,
+                                           G_TYPE_BOOLEAN,
+                                           1,
+                                           G_TYPE_POINTER);
+
+    g_type_class_add_private (object_class, sizeof (CattleInterpreterPrivate));
 }

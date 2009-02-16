@@ -65,15 +65,6 @@ enum {
     PROP_DEBUG_IS_ENABLED
 };
 
-static void   cattle_configuration_set_property   (GObject        *object,
-                                                   guint           property_id,
-                                                   const GValue   *value,
-                                                   GParamSpec     *pspec);
-static void   cattle_configuration_get_property   (GObject        *object,
-                                                   guint           property_id,
-                                                   GValue         *value,
-                                                   GParamSpec     *pspec);
-
 static void
 cattle_configuration_init (CattleConfiguration *self)
 {
@@ -102,108 +93,6 @@ static void
 cattle_configuration_finalize (GObject *object)
 {
     G_OBJECT_CLASS (cattle_configuration_parent_class)->finalize (object);
-}
-
-static void
-cattle_configuration_class_init (CattleConfigurationClass *self)
-{
-    GObjectClass *object_class = G_OBJECT_CLASS (self);
-    GParamSpec *pspec;
-
-    object_class->set_property = cattle_configuration_set_property;
-    object_class->get_property = cattle_configuration_get_property;
-    object_class->dispose = cattle_configuration_dispose;
-    object_class->finalize = cattle_configuration_finalize;
-
-    /**
-     * CattleConfiguration:on-eof-action:
-     *
-     * Action to be performed when an EOF character is found in the input.
-     *
-     * Changes to this property are not notified.
-     */
-    pspec = g_param_spec_enum ("on-eof-action",
-                               "Action to be performed when reading an EOF character",
-                               "Get/set on EOF action",
-                               CATTLE_TYPE_ON_EOF_ACTION,
-                               CATTLE_ON_EOF_STORE_ZERO,
-                               G_PARAM_READWRITE);
-    g_object_class_install_property (object_class,
-                                     PROP_ON_EOF_ACTION,
-                                     pspec);
-
-    /**
-     * CattleConfiguration:debug-is-enabled:
-     *
-     * Whether or not a #CATTLE_INSTRUCTION_DUMP_TAPE instruction should be
-     * executed by the interpreter.
-     *
-     * Changes to this property are not notified.
-     */
-    pspec = g_param_spec_boolean ("debug-is-enabled",
-                                  "Whether or not debugging is enabled",
-                                  "Get/set debug support",
-                                  FALSE,
-                                  G_PARAM_READWRITE);
-    g_object_class_install_property (object_class,
-                                     PROP_DEBUG_IS_ENABLED,
-                                     pspec);
-
-    g_type_class_add_private (object_class, sizeof (CattleConfigurationPrivate));
-}
-
-static void
-cattle_configuration_set_property (GObject        *object,
-                                   guint           property_id,
-                                   const GValue   *value,
-                                   GParamSpec     *pspec)
-{
-    CattleConfiguration *self = CATTLE_CONFIGURATION (object);
-
-    if (G_LIKELY (!self->priv->disposed)) {
-
-        switch (property_id) {
-
-            case PROP_ON_EOF_ACTION:
-                cattle_configuration_set_on_eof_action (self, g_value_get_enum (value));
-                break;
-
-            case PROP_DEBUG_IS_ENABLED:
-                cattle_configuration_set_debug_is_enabled (self, g_value_get_boolean (value));
-                break;
-
-            default:
-                G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
-                break;
-        }
-    }
-}
-
-static void
-cattle_configuration_get_property (GObject      *object,
-                                   guint         property_id,
-                                   GValue       *value,
-                                   GParamSpec   *pspec)
-{
-    CattleConfiguration *self = CATTLE_CONFIGURATION (object);
-
-    if (G_LIKELY (!self->priv->disposed)) {
-
-        switch (property_id) {
-
-            case PROP_ON_EOF_ACTION:
-                g_value_set_enum (value, cattle_configuration_get_on_eof_action (self));
-                break;
-
-            case PROP_DEBUG_IS_ENABLED:
-                g_value_set_boolean (value, cattle_configuration_get_debug_is_enabled (self));
-                break;
-
-            default:
-                G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
-                break;
-        }
-    }
 }
 
 /**
@@ -322,4 +211,106 @@ cattle_configuration_get_debug_is_enabled (CattleConfiguration *self)
     }
 
     return enabled;
+}
+
+static void
+cattle_configuration_set_property (GObject        *object,
+                                   guint           property_id,
+                                   const GValue   *value,
+                                   GParamSpec     *pspec)
+{
+    CattleConfiguration *self = CATTLE_CONFIGURATION (object);
+
+    if (G_LIKELY (!self->priv->disposed)) {
+
+        switch (property_id) {
+
+            case PROP_ON_EOF_ACTION:
+                cattle_configuration_set_on_eof_action (self, g_value_get_enum (value));
+                break;
+
+            case PROP_DEBUG_IS_ENABLED:
+                cattle_configuration_set_debug_is_enabled (self, g_value_get_boolean (value));
+                break;
+
+            default:
+                G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
+                break;
+        }
+    }
+}
+
+static void
+cattle_configuration_get_property (GObject      *object,
+                                   guint         property_id,
+                                   GValue       *value,
+                                   GParamSpec   *pspec)
+{
+    CattleConfiguration *self = CATTLE_CONFIGURATION (object);
+
+    if (G_LIKELY (!self->priv->disposed)) {
+
+        switch (property_id) {
+
+            case PROP_ON_EOF_ACTION:
+                g_value_set_enum (value, cattle_configuration_get_on_eof_action (self));
+                break;
+
+            case PROP_DEBUG_IS_ENABLED:
+                g_value_set_boolean (value, cattle_configuration_get_debug_is_enabled (self));
+                break;
+
+            default:
+                G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
+                break;
+        }
+    }
+}
+
+static void
+cattle_configuration_class_init (CattleConfigurationClass *self)
+{
+    GObjectClass *object_class = G_OBJECT_CLASS (self);
+    GParamSpec *pspec;
+
+    object_class->set_property = cattle_configuration_set_property;
+    object_class->get_property = cattle_configuration_get_property;
+    object_class->dispose = cattle_configuration_dispose;
+    object_class->finalize = cattle_configuration_finalize;
+
+    /**
+     * CattleConfiguration:on-eof-action:
+     *
+     * Action to be performed when an EOF character is found in the input.
+     *
+     * Changes to this property are not notified.
+     */
+    pspec = g_param_spec_enum ("on-eof-action",
+                               "Action to be performed when reading an EOF character",
+                               "Get/set on EOF action",
+                               CATTLE_TYPE_ON_EOF_ACTION,
+                               CATTLE_ON_EOF_STORE_ZERO,
+                               G_PARAM_READWRITE);
+    g_object_class_install_property (object_class,
+                                     PROP_ON_EOF_ACTION,
+                                     pspec);
+
+    /**
+     * CattleConfiguration:debug-is-enabled:
+     *
+     * Whether or not a #CATTLE_INSTRUCTION_DUMP_TAPE instruction should be
+     * executed by the interpreter.
+     *
+     * Changes to this property are not notified.
+     */
+    pspec = g_param_spec_boolean ("debug-is-enabled",
+                                  "Whether or not debugging is enabled",
+                                  "Get/set debug support",
+                                  FALSE,
+                                  G_PARAM_READWRITE);
+    g_object_class_install_property (object_class,
+                                     PROP_DEBUG_IS_ENABLED,
+                                     pspec);
+
+    g_type_class_add_private (object_class, sizeof (CattleConfigurationPrivate));
 }

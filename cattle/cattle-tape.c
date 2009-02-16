@@ -132,18 +132,6 @@ cattle_tape_finalize (GObject *object)
     G_OBJECT_CLASS (cattle_tape_parent_class)->finalize (object);
 }
 
-static void
-cattle_tape_class_init (CattleTapeClass *self)
-{
-    GObjectClass *object_class = G_OBJECT_CLASS (self);
-    GParamSpec *pspec;
-
-    object_class->dispose = cattle_tape_dispose;
-    object_class->finalize = cattle_tape_finalize;
-
-    g_type_class_add_private (object_class, sizeof (CattleTapePrivate));
-}
-
 /**
  * cattle_tape_new:
  *
@@ -438,4 +426,16 @@ cattle_tape_pop_bookmark (CattleTape *self)
     }
 
     return check;
+}
+
+static void
+cattle_tape_class_init (CattleTapeClass *self)
+{
+    GObjectClass *object_class = G_OBJECT_CLASS (self);
+    GParamSpec *pspec;
+
+    object_class->dispose = cattle_tape_dispose;
+    object_class->finalize = cattle_tape_finalize;
+
+    g_type_class_add_private (object_class, sizeof (CattleTapePrivate));
 }

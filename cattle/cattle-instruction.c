@@ -105,15 +105,6 @@ enum {
     PROP_LOOP
 };
 
-static void   cattle_instruction_set_property   (GObject        *object,
-                                                 guint           property_id,
-                                                 const GValue   *value,
-                                                 GParamSpec     *pspec);
-static void   cattle_instruction_get_property   (GObject        *object,
-                                                 guint           property_id,
-                                                 GValue         *value,
-                                                 GParamSpec     *pspec);
-
 static void
 cattle_instruction_init (CattleInstruction *self)
 {
@@ -158,158 +149,6 @@ static void
 cattle_instruction_finalize (GObject *object)
 {
     G_OBJECT_CLASS (cattle_instruction_parent_class)->finalize (object);
-}
-
-static void
-cattle_instruction_class_init (CattleInstructionClass *self)
-{
-    GObjectClass *object_class = G_OBJECT_CLASS (self);
-    GParamSpec *pspec;
-
-    object_class->set_property = cattle_instruction_set_property;
-    object_class->get_property = cattle_instruction_get_property;
-    object_class->dispose = cattle_instruction_dispose;
-    object_class->finalize = cattle_instruction_finalize;
-
-    /**
-     * CattleInstruction:value:
-     *
-     * Value of the instruction. Accepted values are in the
-     * #CattleInstructionValue enumeration.
-     *
-     * Changes to this property are not notified.
-     */
-    pspec = g_param_spec_enum ("value",
-                               "Value of the instruction",
-                               "Get/set instruction's value",
-                               CATTLE_TYPE_INSTRUCTION_VALUE,
-                               CATTLE_INSTRUCTION_NONE,
-                               G_PARAM_READWRITE);
-    g_object_class_install_property (object_class,
-                                     PROP_VALUE,
-                                     pspec);
-
-    /**
-     * CattleInstruction:quantity:
-     *
-     * Number of times the instruction has to be executed.
-     *
-     * Changes to this property are not notified.
-     */
-    pspec = g_param_spec_int ("quantity",
-                              "Number of times the instruction has to be executed",
-                              "Get/set instruction's quantity",
-                              0,
-                              G_MAXINT,
-                              1,
-                              G_PARAM_READWRITE);
-    g_object_class_install_property (object_class,
-                                     PROP_QUANTITY,
-                                     pspec);
-
-    /**
-     * CattleInstruction:next:
-     *
-     * Next instruction in the execution flow. Can be %NULL if there are no
-     * more instructions to be executed.
-     *
-     * Changes to this property are not notified.
-     */
-    pspec = g_param_spec_object ("next",
-                                 "Next instruction to be executed",
-                                 "Get/set next instruction",
-                                 CATTLE_TYPE_INSTRUCTION,
-                                 G_PARAM_READWRITE);
-    g_object_class_install_property (object_class,
-                                     PROP_NEXT,
-                                     pspec);
-
-    /**
-     * CattleInstruction:loop:
-     *
-     * Instructions to be executed in the loop. Should be %NULL unless the
-     * value of the instruction is #CATTLE_INSTRUCTION_LOOP_BEGIN.
-     *
-     * Changes to this property are not notified.
-     */
-    pspec = g_param_spec_object ("loop",
-                                 "Instructions executed in the loop",
-                                 "Get/set loop code",
-                                 CATTLE_TYPE_INSTRUCTION,
-                                 G_PARAM_READWRITE);
-    g_object_class_install_property (object_class,
-                                     PROP_LOOP,
-                                     pspec);
-
-    g_type_class_add_private (object_class, sizeof (CattleInstructionPrivate));
-}
-
-static void
-cattle_instruction_set_property (GObject        *object,
-                                 guint           property_id,
-                                 const GValue   *value,
-                                 GParamSpec     *pspec)
-{
-    CattleInstruction *self = CATTLE_INSTRUCTION (object);
-
-    if (G_LIKELY (!self->priv->disposed)) {
-
-        switch (property_id) {
-
-            case PROP_VALUE:
-                cattle_instruction_set_value (self, g_value_get_enum (value));
-                break;
-
-            case PROP_QUANTITY:
-                cattle_instruction_set_quantity (self, g_value_get_int (value));
-                break;
-
-            case PROP_NEXT:
-                cattle_instruction_set_next (self, g_value_get_object (value));
-                break;
-
-            case PROP_LOOP:
-                cattle_instruction_set_loop (self, g_value_get_object (value));
-                break;
-
-            default:
-                G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
-        }
-    }
-}
-
-static void
-cattle_instruction_get_property (GObject      *object,
-                                 guint         property_id,
-                                 GValue       *value,
-                                 GParamSpec   *pspec)
-{
-    CattleInstruction *self = CATTLE_INSTRUCTION (object);
-
-    if (G_LIKELY (!self->priv->disposed)) {
-
-        switch (property_id) {
-
-            case PROP_VALUE:
-                g_value_set_enum (value, cattle_instruction_get_value (self));
-                break;
-
-            case PROP_QUANTITY:
-                g_value_set_int (value, cattle_instruction_get_quantity (self));
-                break;
-
-            case PROP_NEXT:
-                g_value_set_object (value, cattle_instruction_get_next (self));
-                break;
-
-            case PROP_LOOP:
-                g_value_set_object (value, cattle_instruction_get_loop (self));
-                break;
-
-            default:
-                G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
-        }
-    }
 }
 
 /**
@@ -548,4 +387,156 @@ cattle_instruction_get_loop (CattleInstruction *self)
     }
 
     return loop;
+}
+
+static void
+cattle_instruction_set_property (GObject        *object,
+                                 guint           property_id,
+                                 const GValue   *value,
+                                 GParamSpec     *pspec)
+{
+    CattleInstruction *self = CATTLE_INSTRUCTION (object);
+
+    if (G_LIKELY (!self->priv->disposed)) {
+
+        switch (property_id) {
+
+            case PROP_VALUE:
+                cattle_instruction_set_value (self, g_value_get_enum (value));
+                break;
+
+            case PROP_QUANTITY:
+                cattle_instruction_set_quantity (self, g_value_get_int (value));
+                break;
+
+            case PROP_NEXT:
+                cattle_instruction_set_next (self, g_value_get_object (value));
+                break;
+
+            case PROP_LOOP:
+                cattle_instruction_set_loop (self, g_value_get_object (value));
+                break;
+
+            default:
+                G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
+        }
+    }
+}
+
+static void
+cattle_instruction_get_property (GObject      *object,
+                                 guint         property_id,
+                                 GValue       *value,
+                                 GParamSpec   *pspec)
+{
+    CattleInstruction *self = CATTLE_INSTRUCTION (object);
+
+    if (G_LIKELY (!self->priv->disposed)) {
+
+        switch (property_id) {
+
+            case PROP_VALUE:
+                g_value_set_enum (value, cattle_instruction_get_value (self));
+                break;
+
+            case PROP_QUANTITY:
+                g_value_set_int (value, cattle_instruction_get_quantity (self));
+                break;
+
+            case PROP_NEXT:
+                g_value_set_object (value, cattle_instruction_get_next (self));
+                break;
+
+            case PROP_LOOP:
+                g_value_set_object (value, cattle_instruction_get_loop (self));
+                break;
+
+            default:
+                G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
+        }
+    }
+}
+
+static void
+cattle_instruction_class_init (CattleInstructionClass *self)
+{
+    GObjectClass *object_class = G_OBJECT_CLASS (self);
+    GParamSpec *pspec;
+
+    object_class->set_property = cattle_instruction_set_property;
+    object_class->get_property = cattle_instruction_get_property;
+    object_class->dispose = cattle_instruction_dispose;
+    object_class->finalize = cattle_instruction_finalize;
+
+    /**
+     * CattleInstruction:value:
+     *
+     * Value of the instruction. Accepted values are in the
+     * #CattleInstructionValue enumeration.
+     *
+     * Changes to this property are not notified.
+     */
+    pspec = g_param_spec_enum ("value",
+                               "Value of the instruction",
+                               "Get/set instruction's value",
+                               CATTLE_TYPE_INSTRUCTION_VALUE,
+                               CATTLE_INSTRUCTION_NONE,
+                               G_PARAM_READWRITE);
+    g_object_class_install_property (object_class,
+                                     PROP_VALUE,
+                                     pspec);
+
+    /**
+     * CattleInstruction:quantity:
+     *
+     * Number of times the instruction has to be executed.
+     *
+     * Changes to this property are not notified.
+     */
+    pspec = g_param_spec_int ("quantity",
+                              "Number of times the instruction has to be executed",
+                              "Get/set instruction's quantity",
+                              0,
+                              G_MAXINT,
+                              1,
+                              G_PARAM_READWRITE);
+    g_object_class_install_property (object_class,
+                                     PROP_QUANTITY,
+                                     pspec);
+
+    /**
+     * CattleInstruction:next:
+     *
+     * Next instruction in the execution flow. Can be %NULL if there are no
+     * more instructions to be executed.
+     *
+     * Changes to this property are not notified.
+     */
+    pspec = g_param_spec_object ("next",
+                                 "Next instruction to be executed",
+                                 "Get/set next instruction",
+                                 CATTLE_TYPE_INSTRUCTION,
+                                 G_PARAM_READWRITE);
+    g_object_class_install_property (object_class,
+                                     PROP_NEXT,
+                                     pspec);
+
+    /**
+     * CattleInstruction:loop:
+     *
+     * Instructions to be executed in the loop. Should be %NULL unless the
+     * value of the instruction is #CATTLE_INSTRUCTION_LOOP_BEGIN.
+     *
+     * Changes to this property are not notified.
+     */
+    pspec = g_param_spec_object ("loop",
+                                 "Instructions executed in the loop",
+                                 "Get/set loop code",
+                                 CATTLE_TYPE_INSTRUCTION,
+                                 G_PARAM_READWRITE);
+    g_object_class_install_property (object_class,
+                                     PROP_LOOP,
+                                     pspec);
+
+    g_type_class_add_private (object_class, sizeof (CattleInstructionPrivate));
 }
