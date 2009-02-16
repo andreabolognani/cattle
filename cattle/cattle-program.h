@@ -66,7 +66,7 @@ void                 cattle_program_set_instructions   (CattleProgram        *pr
 CattleInstruction*   cattle_program_get_instructions   (CattleProgram        *program);
 void                 cattle_program_set_input          (CattleProgram        *program,
                                                         const gchar          *input);
-const gchar*         cattle_program_get_input          (CattleProgram        *program);
+gchar*               cattle_program_get_input          (CattleProgram        *program);
 
 GQuark               cattle_program_error_quark        (void) G_GNUC_CONST;
 GType                cattle_program_get_type           (void) G_GNUC_CONST;

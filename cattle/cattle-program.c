@@ -555,12 +555,11 @@ cattle_program_set_input (CattleProgram   *self,
  *
  * Get the input for the program.
  *
- * The returned string is owned by @program and must not be modified or
- * freed.
+ * The returned string must be freed after use.
  *
  * Return: input for the program, or %NULL.
  */
-const gchar*
+gchar*
 cattle_program_get_input (CattleProgram *self)
 {
     gchar *input = NULL;
@@ -568,7 +567,8 @@ cattle_program_get_input (CattleProgram *self)
     g_return_val_if_fail (CATTLE_IS_PROGRAM (self), NULL);
 
     if (G_LIKELY (!self->priv->disposed)) {
-        self->priv->input;
+
+        input = g_strdup (self->priv->input);
     }
 
     return input;

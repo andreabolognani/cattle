@@ -292,7 +292,7 @@ run_real (CattleInterpreter    *self,
                          * input */
                         if (temp == 0) {
 
-                            if (cattle_program_get_input (self->priv->program) == NULL) { 
+                            if (self->priv->had_input == FALSE) { 
                                 temp = (gchar) EOF;
                                 self->priv->end_of_input_reached = TRUE;
                             }
@@ -437,14 +437,19 @@ cattle_interpreter_run (CattleInterpreter    *self,
         program = cattle_interpreter_get_program (self);
         instruction = cattle_program_get_instructions (program);
 
-        self->priv->input_cursor = (gchar *) cattle_program_get_input (program);
-        if (self->priv->input_cursor != NULL) {
+        self->priv->input = cattle_program_get_input (program);
+        if (self->priv->input != NULL) {
             self->priv->had_input = TRUE;
         }
+        self->priv->input_cursor = self->priv->input;
 
         success = run_real (self,
                             instruction,
                             error);
+
+        if (self->priv->had_input == TRUE) {
+            g_free (self->priv->input);
+        }
 
         g_object_unref (instruction);
         g_object_unref (program);
