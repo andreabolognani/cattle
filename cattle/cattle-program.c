@@ -357,7 +357,7 @@ load_from_string_real (gchar    **program,
 
                 current = cattle_instruction_new ();
                 cattle_instruction_set_next (previous, current);
-                g_object_unref (G_OBJECT (current));
+                g_object_unref (current);
             break;
 
             default:
@@ -631,9 +631,7 @@ cattle_program_get_instructions (CattleProgram *self)
     if (G_LIKELY (!self->priv->disposed)) {
 
         instructions = self->priv->instructions;
-        if (G_IS_OBJECT (instructions)) {
-            g_object_ref (instructions);
-        }
+        g_object_ref (instructions);
     }
 
     return instructions;
