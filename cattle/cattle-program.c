@@ -157,6 +157,7 @@ load_from_string_real (gchar    **program,
     /* Create the first instruction and set it as current */
     first = cattle_instruction_new ();
     current = first;
+    g_object_ref (first);
 
     /* Now loop until we reach the end of input, or until we get an end of
      * loop instruction, whichever comes first */
@@ -166,6 +167,7 @@ load_from_string_real (gchar    **program,
 
         /* Return to the caller at the end of the input */
         if (instruction == 0) {
+            g_object_unref (current);
             return first;
         }
 
@@ -173,6 +175,7 @@ load_from_string_real (gchar    **program,
          * program's input, but move the cursor forward before doing so */
         if (instruction == BANG_SYMBOL) {
             *program = g_utf8_next_char (*program);
+            g_object_unref (current);
             return first;
         }
 
@@ -194,6 +197,7 @@ load_from_string_real (gchar    **program,
             case CATTLE_INSTRUCTION_LOOP_END:
 
                 cattle_instruction_set_value (current, CATTLE_INSTRUCTION_LOOP_END);
+                g_object_unref (current);
                 return first;
             break;
 
@@ -247,7 +251,7 @@ load_from_string_real (gchar    **program,
 
                 current = cattle_instruction_new ();
                 cattle_instruction_set_next (previous, current);
-                g_object_unref (current);
+                g_object_unref (previous);
             break;
 
             default:

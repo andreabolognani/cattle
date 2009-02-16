@@ -55,7 +55,8 @@ check_refcount (CattleInstruction *instruction)
 
     while (CATTLE_IS_INSTRUCTION (instruction)) {
 
-        g_assert (G_OBJECT (instruction)->ref_count == 2);
+        g_assert (!(G_OBJECT (instruction)->ref_count < 2));
+        g_assert (!(G_OBJECT (instruction)->ref_count > 2));
 
         if (cattle_instruction_get_value (instruction) == CATTLE_INSTRUCTION_LOOP_BEGIN) {
 
