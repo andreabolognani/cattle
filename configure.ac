@@ -3,7 +3,7 @@ dnl *** Initialize autoconf and automake ***
 dnl ****************************************
 
 AC_PREREQ(2.54)
-AC_INIT(cattle, 0.9.2)
+AC_INIT(cattle, 0.9.3)
 AM_INIT_AUTOMAKE(AC_PACKAGE_NAME,
                  AC_PACKAGE_VERSION)
 
@@ -62,7 +62,7 @@ dnl ***************************************
 dnl *** Check for required GLib modules ***
 dnl ***************************************
 
-GLIB_REQUIRED_VERSION=2.4.0
+GLIB_REQUIRED_VERSION=2.16.0
 GLIB_REQUIRED_MODULES=gobject
 
 AM_PATH_GLIB_2_0($GLIB_REQUIRED_VERSION,,
