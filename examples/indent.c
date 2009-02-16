@@ -26,7 +26,7 @@
 /* Each time a loop is started, its content is indented by INDENT_STEP */
 #define INDENT_STEP 4
 
-void
+static void
 indent_real (CattleInstruction *instruction, gint level)
 {
     CattleInstruction *temp;
@@ -35,6 +35,7 @@ indent_real (CattleInstruction *instruction, gint level)
     gint i;
 
     g_return_if_fail (CATTLE_IS_INSTRUCTION (instruction));
+    g_object_ref (instruction);
 
     do {
 
@@ -60,7 +61,9 @@ indent_real (CattleInstruction *instruction, gint level)
 
         /* Recurse to process the inner loop */
         if (value == CATTLE_INSTRUCTION_LOOP_BEGIN) {
-            indent_real (cattle_instruction_get_loop (instruction), level + 1);
+            temp = cattle_instruction_get_loop (instruction);
+            indent_real (temp, level + 1);
+            g_object_unref (temp);
         }
 
         /* Drop the reference to the current instruction */
@@ -69,7 +72,7 @@ indent_real (CattleInstruction *instruction, gint level)
 
         instruction = temp;
     }
-    while (instruction != NULL);
+    while (CATTLE_IS_INSTRUCTION (instruction));
 }
 
 void
@@ -82,6 +85,7 @@ indent (CattleProgram *program)
     /* Get the first instruction and start indenting */
     instruction = cattle_program_get_instructions (program);
     indent_real (instruction, 0);
+    g_object_unref (instruction);
 }
 
 gint

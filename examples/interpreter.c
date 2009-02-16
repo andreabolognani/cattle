@@ -30,12 +30,10 @@ input_handler (GObject     *object,
                GError     **error,
                gpointer     data)
 {
-    CattleInterpreter *self;
     gchar *string;
 
     g_return_val_if_fail (error == NULL || *error == NULL, FALSE);
     g_return_val_if_fail (CATTLE_IS_INTERPRETER (object), FALSE);
-    self = CATTLE_INTERPRETER (object);
 
     /* If the pointer is not null, it points to a
      * previously-allocated buffer we need to release */
@@ -67,8 +65,7 @@ input_handler (GObject     *object,
          *
          * FIXME
          * G_FILE_ERROR is used as error domain, but it's not really correct
-         * in this case. A generic error domain is probably needed for
-         * similar situations.
+         * in this case. A generic error domain is probably needed for this.
          */
         g_set_error (error,
                      G_FILE_ERROR,
@@ -89,11 +86,8 @@ output_handler (GObject     *object,
                 GError     **error,
                 gpointer     data)
 {
-    CattleInterpreter *self;
-
     g_return_val_if_fail (error == NULL || *error == NULL, FALSE);
     g_return_val_if_fail (CATTLE_IS_INTERPRETER (object), FALSE);
-    self = CATTLE_INTERPRETER (object);
 
     /* Just dump the character to stdout */
     g_print ("%c", output);
@@ -106,16 +100,18 @@ debug_handler (GObject     *object,
                GError     **error,
                gpointer     data)
 {
-    CattleInterpreter *self;
+    CattleInterpreter *interpreter;
     CattleTape *tape;
     gchar value;
     gint count;
 
     g_return_val_if_fail (error == NULL || *error == NULL, FALSE);
     g_return_val_if_fail (CATTLE_IS_INTERPRETER (object), FALSE);
-    self = CATTLE_INTERPRETER (object);
 
-    tape = cattle_interpreter_get_tape (self);
+    interpreter = CATTLE_INTERPRETER (object);
+    g_object_ref (interpreter);
+
+    tape = cattle_interpreter_get_tape (interpreter);
 
     /* Save the current position */
     cattle_tape_push_bookmark (tape);
@@ -176,6 +172,7 @@ debug_handler (GObject     *object,
     cattle_tape_pop_bookmark (tape);
 
     g_object_unref (tape);
+    g_object_unref (interpreter);
 
     return TRUE;
 }
@@ -242,6 +239,7 @@ main (gint argc, gchar **argv)
 
         return 1;
     }
+
     g_object_unref (interpreter);
 
     return 0;
