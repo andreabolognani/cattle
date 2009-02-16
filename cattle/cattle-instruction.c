@@ -134,12 +134,11 @@ cattle_instruction_dispose (GObject *object)
 
     if (G_LIKELY (!self->priv->disposed)) {
 
-        self->priv->disposed = TRUE;
-
         if (G_IS_OBJECT (self->priv->next)) {
             g_object_unref (self->priv->next);
             self->priv->next = NULL;
         }
+
         if (G_IS_OBJECT (self->priv->loop)) {
 
             /* Releasing the first instruction in the loop causes all the
@@ -149,16 +148,16 @@ cattle_instruction_dispose (GObject *object)
             self->priv->loop = NULL;
         }
 
-        G_OBJECT_CLASS (cattle_instruction_parent_class)->dispose (G_OBJECT (self));
+        self->priv->disposed = TRUE;
+
+        G_OBJECT_CLASS (cattle_instruction_parent_class)->dispose (object);
     }
 }
 
 static void
 cattle_instruction_finalize (GObject *object)
 {
-    CattleInstruction *self = CATTLE_INSTRUCTION (object);
-
-    G_OBJECT_CLASS (cattle_instruction_parent_class)->finalize (G_OBJECT (self));
+    G_OBJECT_CLASS (cattle_instruction_parent_class)->finalize (object);
 }
 
 static void

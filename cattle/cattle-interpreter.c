@@ -125,8 +125,6 @@ cattle_interpreter_dispose (GObject *object)
 
     if (G_LIKELY (!self->priv->disposed)) {
 
-        self->priv->disposed = TRUE;
-
         if (G_IS_OBJECT (self->priv->configuration)) {
             g_object_unref (self->priv->configuration);
             self->priv->configuration = NULL;
@@ -140,21 +138,21 @@ cattle_interpreter_dispose (GObject *object)
             self->priv->tape = NULL;
         }
 
-        /* FIXME
-         * We would also need to release the input, but we don't currently
-         * do it because it would be really tricky: since the allocator is
-         * chosen by the user, we have no way to know how to release it */
+        self->priv->disposed = TRUE;
 
-        G_OBJECT_CLASS (cattle_interpreter_parent_class)->dispose (G_OBJECT (self));
+        G_OBJECT_CLASS (cattle_interpreter_parent_class)->dispose (object);
     }
 }
 
 static void
 cattle_interpreter_finalize (GObject *object)
 {
-    CattleInterpreter *self = CATTLE_INTERPRETER (object);
+    /* FIXME
+     * We should release the input here, but we don't do it because it would
+     * be really tricky: since the allocator is chosen by the user, we have
+     * no way to know how to release it */
 
-    G_OBJECT_CLASS (cattle_interpreter_parent_class)->finalize (G_OBJECT (self));
+    G_OBJECT_CLASS (cattle_interpreter_parent_class)->finalize (object);
 }
 
 static void

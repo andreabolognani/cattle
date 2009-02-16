@@ -136,7 +136,7 @@ cattle_program_dispose (GObject *object)
 
         self->priv->disposed = TRUE;
 
-        G_OBJECT_CLASS (cattle_program_parent_class)->dispose (G_OBJECT (self));
+        G_OBJECT_CLASS (cattle_program_parent_class)->dispose (object);
     }
 }
 
@@ -148,7 +148,7 @@ cattle_program_finalize (GObject *object)
     g_free (self->priv->input);
     self->priv->input = NULL;
 
-    G_OBJECT_CLASS (cattle_program_parent_class)->finalize (G_OBJECT (self));
+    G_OBJECT_CLASS (cattle_program_parent_class)->finalize (object);
 }
 
 static void

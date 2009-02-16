@@ -107,7 +107,7 @@ cattle_tape_dispose (GObject *object)
 
         self->priv->disposed = TRUE;
 
-        G_OBJECT_CLASS (cattle_tape_parent_class)->dispose (G_OBJECT (self));
+        G_OBJECT_CLASS (cattle_tape_parent_class)->dispose (object);
     }
 }
 
@@ -129,7 +129,7 @@ cattle_tape_finalize (GObject *object)
     g_list_free (self->priv->head);
     self->priv->head = NULL;
 
-    G_OBJECT_CLASS (cattle_tape_parent_class)->finalize (G_OBJECT (self));
+    G_OBJECT_CLASS (cattle_tape_parent_class)->finalize (object);
 }
 
 static void

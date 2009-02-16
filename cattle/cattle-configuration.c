@@ -94,16 +94,14 @@ cattle_configuration_dispose (GObject *object)
 
         self->priv->disposed = TRUE;
 
-        G_OBJECT_CLASS (cattle_configuration_parent_class)->dispose (G_OBJECT (self));
+        G_OBJECT_CLASS (cattle_configuration_parent_class)->dispose (object);
     }
 }
 
 static void
 cattle_configuration_finalize (GObject *object)
 {
-    CattleConfiguration *self = CATTLE_CONFIGURATION (object);
-
-    G_OBJECT_CLASS (cattle_configuration_parent_class)->finalize (G_OBJECT (self));
+    G_OBJECT_CLASS (cattle_configuration_parent_class)->finalize (object);
 }
 
 static void
