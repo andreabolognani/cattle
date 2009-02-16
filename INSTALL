@@ -4,7 +4,7 @@ Prerequisites
 Cattle depends on the following libraries and programs:
 
     * The GLib library and its GObject module, with a minimum version
-      of 2.4.0
+      of 2.16.0
 
     * The pkg-config script
 
