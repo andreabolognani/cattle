@@ -178,6 +178,16 @@ run_real (CattleInterpreter    *self,
                         success = run_real (self,
                                             loop,
                                             error);
+
+                        /* Abort on the first error */
+                        if (success == FALSE) {
+                            g_assert (error == NULL || *error != NULL);
+                            g_object_unref (loop);
+                            g_object_unref (tape);
+                            g_object_unref (program);
+                            g_object_unref (configuration);
+                            return success;
+                        }
                     }
 
                     g_object_unref (loop);
@@ -259,7 +269,11 @@ run_real (CattleInterpreter    *self,
                             /* The operation failed: we abort immediately;
                              * the signal handler must set the error */
                             if (success == FALSE) {
-                                break;
+                                g_assert (error == NULL || *error != NULL);
+                                g_object_unref (tape);
+                                g_object_unref (program);
+                                g_object_unref (configuration);
+                                return success;
                             }
 
                             /* A return value of NULL from the signal handler
@@ -351,7 +365,11 @@ run_real (CattleInterpreter    *self,
                     /* Stop at the first error, even if we should output
                      * the content of the current cell more than once */
                     if (success == FALSE) {
-                        break;
+                        g_assert (error == NULL || *error != NULL);
+                        g_object_unref (tape);
+                        g_object_unref (program);
+                        g_object_unref (configuration);
+                        return success;
                     }
                 }
                 break;
@@ -371,7 +389,11 @@ run_real (CattleInterpreter    *self,
                                        &success);
 
                         if (success == FALSE) {
-                            break;
+                            g_assert (error == NULL || *error != NULL);
+                            g_object_unref (tape);
+                            g_object_unref (program);
+                            g_object_unref (configuration);
+                            return success;
                         }
                     }
                 }
