@@ -49,22 +49,24 @@ G_DEFINE_TYPE (CattleTape, cattle_tape, G_TYPE_OBJECT)
 
 #define CATTLE_TAPE_GET_PRIVATE(object) (G_TYPE_INSTANCE_GET_PRIVATE ((object), CATTLE_TYPE_TAPE, CattleTapePrivate))
 
-struct _CattleTapePrivate {
-    gboolean disposed;
+struct _CattleTapePrivate
+{
+    gboolean    disposed;
 
-    GList    *current;      /* Current chunk */
-    GList    *head;         /* First chunk */
+    GList      *current;      /* Current chunk */
+    GList      *head;         /* First chunk */
 
-    gint      offset;       /* Offset of the current cell */
-    gint      lower_limit;  /* Offset of the first valid byte inside the first chunk */
-    gint      upper_limit;  /* Offset of the last valid byte inside the last chunk */
+    gint        offset;       /* Offset of the current cell */
+    gint        lower_limit;  /* Offset of the first valid byte inside the first chunk */
+    gint        upper_limit;  /* Offset of the last valid byte inside the last chunk */
 
-    GSList   *bookmarks;    /* Bookmarks stack */
+    GSList     *bookmarks;    /* Bookmarks stack */
 };
 
 typedef struct _CattleTapeBookmark CattleTapeBookmark;
 
-struct _CattleTapeBookmark {
+struct _CattleTapeBookmark
+{
     GList   *chunk;
     gint     offset;
 };

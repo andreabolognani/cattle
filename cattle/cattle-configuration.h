@@ -33,7 +33,8 @@ G_BEGIN_DECLS
 #define CATTLE_IS_CONFIGURATION_CLASS(klass)     (G_TYPE_CHECK_CLASS_TYPE ((klass), CATTLE_TYPE_CONFIGURATION))
 #define CATTLE_CONFIGURATION_GET_CLASS(object)   (G_TYPE_INSTANCE_GET_CLASS ((object), CATTLE_TYPE_CONFIGURATION, CattleConfigurationClass))
 
-typedef enum {
+typedef enum
+{
     CATTLE_ON_EOF_STORE_ZERO,
     CATTLE_ON_EOF_STORE_EOF,
     CATTLE_ON_EOF_DO_NOTHING
@@ -43,12 +44,14 @@ typedef struct _CattleConfiguration          CattleConfiguration;
 typedef struct _CattleConfigurationClass     CattleConfigurationClass;
 typedef struct _CattleConfigurationPrivate   CattleConfigurationPrivate;
 
-struct _CattleConfiguration {
+struct _CattleConfiguration
+{
     GObject parent;
     CattleConfigurationPrivate *priv;
 };
 
-struct _CattleConfigurationClass {
+struct _CattleConfigurationClass
+{
     GObjectClass parent;
 };
 

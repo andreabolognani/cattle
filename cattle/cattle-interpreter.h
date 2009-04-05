@@ -39,12 +39,15 @@ typedef struct _CattleInterpreter          CattleInterpreter;
 typedef struct _CattleInterpreterClass     CattleInterpreterClass;
 typedef struct _CattleInterpreterPrivate   CattleInterpreterPrivate;
 
-struct _CattleInterpreter {
+struct _CattleInterpreter
+{
     GObject parent;
+
     CattleInterpreterPrivate *priv;
 };
 
-struct _CattleInterpreterClass {
+struct _CattleInterpreterClass
+{
     GObjectClass parent;
 
     gboolean   (*output_request)   (CattleInterpreter    *interpreter,

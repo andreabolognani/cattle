@@ -34,23 +34,27 @@ G_BEGIN_DECLS
 #define CATTLE_IS_PROGRAM_CLASS(klass)     (G_TYPE_CHECK_CLASS_TYPE ((klass), CATTLE_TYPE_PROGRAM))
 #define CATTLE_PROGRAM_GET_CLASS(object)   (G_TYPE_INSTANCE_GET_CLASS ((object), CATTLE_TYPE_PROGRAM, CattleProgramClass))
 
-#define CATTLE_PROGRAM_ERROR cattle_program_error_quark ()
-typedef enum {
+typedef enum
+{
     CATTLE_PROGRAM_ERROR_BAD_UTF8,
     CATTLE_PROGRAM_ERROR_UNMATCHED_BRACKET,
     CATTLE_PROGRAM_ERROR_UNBALANCED_BRACKETS
 } CattleProgramError;
 
+#define CATTLE_PROGRAM_ERROR cattle_program_error_quark ()
+
 typedef struct _CattleProgram          CattleProgram;
 typedef struct _CattleProgramClass     CattleProgramClass;
 typedef struct _CattleProgramPrivate   CattleProgramPrivate;
 
-struct _CattleProgram {
+struct _CattleProgram
+{
     GObject parent;
     CattleProgramPrivate *priv;
 };
 
-struct _CattleProgramClass {
+struct _CattleProgramClass
+{
     GObjectClass parent;
 };
 

@@ -33,7 +33,8 @@ G_BEGIN_DECLS
 #define CATTLE_IS_INSTRUCTION_CLASS(klass)     (G_TYPE_CHECK_CLASS_TYPE ((klass), CATTLE_TYPE_INSTRUCTION))
 #define CATTLE_INSTRUCTION_GET_CLASS(object)   (G_TYPE_INSTANCE_GET_CLASS ((object), CATTLE_TYPE_INSTRUCTION, CattleInstructionClass))
 
-typedef enum {
+typedef enum
+{
     CATTLE_INSTRUCTION_NONE        = 0x5F,
     CATTLE_INSTRUCTION_MOVE_LEFT   = 0x3C,
     CATTLE_INSTRUCTION_MOVE_RIGHT  = 0x3E,
@@ -50,12 +51,14 @@ typedef struct _CattleInstruction          CattleInstruction;
 typedef struct _CattleInstructionClass     CattleInstructionClass;
 typedef struct _CattleInstructionPrivate   CattleInstructionPrivate;
 
-struct _CattleInstruction {
+struct _CattleInstruction
+{
     GObject parent;
     CattleInstructionPrivate *priv;
 };
 
-struct _CattleInstructionClass {
+struct _CattleInstructionClass
+{
     GObjectClass parent;
 };
 

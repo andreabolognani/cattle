@@ -51,15 +51,17 @@ G_DEFINE_TYPE (CattleConfiguration, cattle_configuration, G_TYPE_OBJECT)
 
 #define CATTLE_CONFIGURATION_GET_PRIVATE(object) (G_TYPE_INSTANCE_GET_PRIVATE ((object), CATTLE_TYPE_CONFIGURATION, CattleConfigurationPrivate))
 
-struct _CattleConfigurationPrivate {
-    gboolean disposed;
+struct _CattleConfigurationPrivate
+{
+    gboolean            disposed;
 
     CattleOnEOFAction   on_eof_action;
     gboolean            debug_is_enabled;
 };
 
 /* Properties */
-enum {
+enum
+{
     PROP_0,
     PROP_ON_EOF_ACTION,
     PROP_DEBUG_IS_ENABLED

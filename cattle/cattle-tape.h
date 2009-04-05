@@ -37,12 +37,14 @@ typedef struct _CattleTape          CattleTape;
 typedef struct _CattleTapeClass     CattleTapeClass;
 typedef struct _CattleTapePrivate   CattleTapePrivate;
 
-struct _CattleTape {
+struct _CattleTape
+{
     GObject parent;
     CattleTapePrivate *priv;
 };
 
-struct _CattleTapeClass {
+struct _CattleTapeClass
+{
     GObjectClass parent;
 };
 

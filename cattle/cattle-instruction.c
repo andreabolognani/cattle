@@ -87,17 +87,20 @@ G_DEFINE_TYPE (CattleInstruction, cattle_instruction, G_TYPE_OBJECT)
 
 #define CATTLE_INSTRUCTION_GET_PRIVATE(object) (G_TYPE_INSTANCE_GET_PRIVATE ((object), CATTLE_TYPE_INSTRUCTION, CattleInstructionPrivate))
 
-struct _CattleInstructionPrivate {
-    gboolean disposed;
+struct _CattleInstructionPrivate
+{
+    gboolean                  disposed;
 
     CattleInstructionValue    value;
     gint                      quantity;
+
     CattleInstruction        *next;
     CattleInstruction        *loop;
 };
 
 /* Properties */
-enum {
+enum
+{
     PROP_0,
     PROP_VALUE,
     PROP_QUANTITY,

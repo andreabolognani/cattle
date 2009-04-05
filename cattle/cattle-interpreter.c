@@ -56,8 +56,9 @@ G_DEFINE_TYPE (CattleInterpreter, cattle_interpreter, G_TYPE_OBJECT)
 
 #define CATTLE_INTERPRETER_GET_PRIVATE(object) (G_TYPE_INSTANCE_GET_PRIVATE ((object), CATTLE_TYPE_INTERPRETER, CattleInterpreterPrivate))
 
-struct _CattleInterpreterPrivate {
-    gboolean    disposed;
+struct _CattleInterpreterPrivate
+{
+    gboolean               disposed;
 
     CattleConfiguration   *configuration;
     CattleProgram         *program;
@@ -70,7 +71,8 @@ struct _CattleInterpreterPrivate {
 };
 
 /* Properties */
-enum {
+enum
+{
     PROP_0,
     PROP_CONFIGURATION,
     PROP_PROGRAM,
@@ -78,7 +80,8 @@ enum {
 };
 
 /* Signals */
-enum {
+enum
+{
     INPUT_REQUEST,
     OUTPUT_REQUEST,
     DEBUG_REQUEST,
