@@ -33,19 +33,22 @@ static void
 test_references_program_owns_instructions (void)
 {
     CattleProgram *program;
-    CattleInstruction *first;
+    CattleInstruction *instructions;
 
     program = cattle_program_new ();
     cattle_program_load_from_string (program, "++[-]", NULL);
 
-    first = cattle_program_get_instructions (program);
+    instructions = cattle_program_get_instructions (program);
 
-    g_assert (G_IS_OBJECT (first));
+    g_assert (G_IS_OBJECT (instructions));
 
     g_object_unref (program);
-    g_object_unref (first);
 
-    g_assert (!G_IS_OBJECT (first));
+    g_assert (G_IS_OBJECT (instructions));
+
+    g_object_unref (instructions);
+
+    g_assert (!G_IS_OBJECT (instructions));
 }
 
 static void
@@ -112,4 +115,3 @@ main (gint argc, gchar **argv)
 
     return 0;
 }
-
