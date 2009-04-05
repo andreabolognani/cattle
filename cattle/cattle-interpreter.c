@@ -116,18 +116,14 @@ cattle_interpreter_dispose (GObject *object)
 
     if (G_LIKELY (!self->priv->disposed)) {
 
-        if (G_IS_OBJECT (self->priv->configuration)) {
-            g_object_unref (self->priv->configuration);
-            self->priv->configuration = NULL;
-        }
-        if (G_IS_OBJECT (self->priv->program)) {
-            g_object_unref (self->priv->program);
-            self->priv->program = NULL;
-        }
-        if (G_IS_OBJECT (self->priv->tape)) {
-            g_object_unref (self->priv->tape);
-            self->priv->tape = NULL;
-        }
+        g_object_unref (self->priv->configuration);
+        self->priv->configuration = NULL;
+
+        g_object_unref (self->priv->program);
+        self->priv->program = NULL;
+
+        g_object_unref (self->priv->tape);
+        self->priv->tape = NULL;
 
         self->priv->disposed = TRUE;
 
