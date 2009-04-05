@@ -66,6 +66,8 @@ test_program_load_empty (CattleProgram   **program,
     value = cattle_instruction_get_value (instruction);
 
     g_assert (value == CATTLE_INSTRUCTION_NONE);
+
+    g_object_unref (instruction);
 }
 
 /**
@@ -100,6 +102,7 @@ test_program_load_unmatched_bracket (CattleProgram   **program,
 
     g_assert (value == CATTLE_INSTRUCTION_NONE);
 
+    g_object_unref (instruction);
     g_error_free (error);
 }
 
@@ -135,7 +138,7 @@ test_program_load_unbalanced_brackets (CattleProgram   **program,
 
     g_assert (value == CATTLE_INSTRUCTION_NONE);
 
-    g_error_free (error);
+    g_object_unref (instruction);
 }
 
 gint
