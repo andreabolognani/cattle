@@ -152,6 +152,7 @@ load_from_string_real (gchar    **program,
     CattleInstruction *current = NULL;
     CattleInstruction *previous = NULL;
     CattleInstruction *loop = NULL;
+    GError *inner_error;
     glong quantity;
     gunichar instruction;
     gunichar next;
@@ -189,7 +190,17 @@ load_from_string_real (gchar    **program,
             case CATTLE_INSTRUCTION_LOOP_BEGIN:
 
                 /* Recurse to load the inner loop */
-                loop = load_from_string_real (program, error);
+                inner_error = NULL;
+                loop = load_from_string_real (program, &inner_error);
+
+                if (inner_error != NULL) {
+
+                    g_propagate_error (error, inner_error);
+                    g_object_unref (current);
+                    g_object_unref (first);
+
+                    return NULL;
+                }
 
                 cattle_instruction_set_value (current, CATTLE_INSTRUCTION_LOOP_BEGIN);
                 cattle_instruction_set_loop (current, loop);
@@ -200,6 +211,7 @@ load_from_string_real (gchar    **program,
 
                 cattle_instruction_set_value (current, CATTLE_INSTRUCTION_LOOP_END);
                 g_object_unref (current);
+
                 return first;
             break;
 
