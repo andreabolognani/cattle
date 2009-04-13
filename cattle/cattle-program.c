@@ -319,6 +319,7 @@ cattle_program_load_from_string (CattleProgram   *self,
                                  GError          **error)
 {
     CattleInstruction *instructions;
+    GError *inner_error = NULL;
     gchar *position;
     gunichar temp;
     glong brackets_count = 0;
@@ -377,7 +378,13 @@ cattle_program_load_from_string (CattleProgram   *self,
 
         /* Load the instructions from the string */
         position = (gchar *) program;
-        instructions = load_from_string_real ((gchar **) &position, error);
+        instructions = load_from_string_real ((gchar **) &position,
+                                              &inner_error);
+
+        if (inner_error != NULL) {
+            g_propagate_error (error, inner_error);
+            return FALSE;
+        }
 
         /* Set the instructions for the program */
         cattle_program_set_instructions (self, instructions);
