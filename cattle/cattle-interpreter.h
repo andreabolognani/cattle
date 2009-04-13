@@ -49,15 +49,6 @@ struct _CattleInterpreter
 struct _CattleInterpreterClass
 {
     GObjectClass parent;
-
-    gboolean   (*output_request)   (CattleInterpreter    *interpreter,
-                                    gchar                 output,
-                                    GError              **error);
-    gboolean   (*input_request)    (CattleInterpreter    *interpreter,
-                                    gchar               **input,
-                                    GError              **error);
-    gboolean   (*debug_request)    (CattleInterpreter    *interpreter,
-                                    GError              **error);
 };
 
 CattleInterpreter*     cattle_interpreter_new                 (void);

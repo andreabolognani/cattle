@@ -718,6 +718,7 @@ cattle_interpreter_class_init (CattleInterpreterClass *self)
 {
     GObjectClass *object_class = G_OBJECT_CLASS (self);
     GParamSpec *pspec;
+    GType ptypes[2];
 
     object_class->set_property = cattle_interpreter_set_property;
     object_class->get_property = cattle_interpreter_get_property;
@@ -787,17 +788,18 @@ cattle_interpreter_class_init (CattleInterpreterClass *self)
      *
      * Since: 0.9.1
      */
-    signals[INPUT_REQUEST] = g_signal_new ("input-request",
-                                           CATTLE_TYPE_INTERPRETER,
-                                           G_SIGNAL_RUN_LAST | G_SIGNAL_NO_RECURSE,
-                                           G_STRUCT_OFFSET (CattleInterpreterClass, input_request),
-                                           g_signal_accumulator_true_handled,
-                                           NULL,
-                                           cattle_marshal_BOOLEAN__POINTER_POINTER,
-                                           G_TYPE_BOOLEAN,
-                                           2,
-                                           G_TYPE_POINTER,
-                                           G_TYPE_POINTER);
+    ptypes[0] = G_TYPE_POINTER;
+    ptypes[1] = G_TYPE_POINTER;
+    signals[INPUT_REQUEST] = g_signal_newv ("input-request",
+                                            CATTLE_TYPE_INTERPRETER,
+                                            G_SIGNAL_RUN_LAST | G_SIGNAL_NO_RECURSE,
+                                            NULL,
+                                            g_signal_accumulator_true_handled,
+                                            NULL,
+                                            cattle_marshal_BOOLEAN__POINTER_POINTER,
+                                            G_TYPE_BOOLEAN,
+                                            2,
+                                            ptypes);
 
     /**
      * CattleInterpreter::output-request:
@@ -814,17 +816,18 @@ cattle_interpreter_class_init (CattleInterpreterClass *self)
      *
      * Since: 0.9.1
      */
-    signals[OUTPUT_REQUEST] = g_signal_new ("output-request",
-                                            CATTLE_TYPE_INTERPRETER,
-                                            G_SIGNAL_RUN_LAST | G_SIGNAL_NO_RECURSE,
-                                            G_STRUCT_OFFSET (CattleInterpreterClass, output_request),
-                                            g_signal_accumulator_true_handled,
-                                            NULL,
-                                            cattle_marshal_BOOLEAN__CHAR_POINTER,
-                                            G_TYPE_BOOLEAN,
-                                            2,
-                                            G_TYPE_CHAR,
-                                            G_TYPE_POINTER);
+    ptypes[0] = G_TYPE_CHAR;
+    ptypes[1] = G_TYPE_POINTER;
+    signals[OUTPUT_REQUEST] = g_signal_newv ("output-request",
+                                             CATTLE_TYPE_INTERPRETER,
+                                             G_SIGNAL_RUN_LAST | G_SIGNAL_NO_RECURSE,
+                                             NULL,
+                                             g_signal_accumulator_true_handled,
+                                             NULL,
+                                             cattle_marshal_BOOLEAN__CHAR_POINTER,
+                                             G_TYPE_BOOLEAN,
+                                             2,
+                                             ptypes);
 
     /**
      * CattleInterpreter::debug-request:
@@ -840,16 +843,17 @@ cattle_interpreter_class_init (CattleInterpreterClass *self)
      *
      * Since: 0.9.2
      */
-    signals[DEBUG_REQUEST] = g_signal_new ("debug_request",
-                                           CATTLE_TYPE_INTERPRETER,
-                                           G_SIGNAL_RUN_LAST | G_SIGNAL_NO_RECURSE,
-                                           G_STRUCT_OFFSET (CattleInterpreterClass, debug_request),
-                                           g_signal_accumulator_true_handled,
-                                           NULL,
-                                           cattle_marshal_BOOLEAN__POINTER,
-                                           G_TYPE_BOOLEAN,
-                                           1,
-                                           G_TYPE_POINTER);
+    ptypes[0] = G_TYPE_POINTER;
+    signals[DEBUG_REQUEST] = g_signal_newv ("debug_request",
+                                            CATTLE_TYPE_INTERPRETER,
+                                            G_SIGNAL_RUN_LAST | G_SIGNAL_NO_RECURSE,
+                                            NULL,
+                                            g_signal_accumulator_true_handled,
+                                            NULL,
+                                            cattle_marshal_BOOLEAN__POINTER,
+                                            G_TYPE_BOOLEAN,
+                                            1,
+                                            ptypes);
 
     g_type_class_add_private (object_class, sizeof (CattleInterpreterPrivate));
 }
