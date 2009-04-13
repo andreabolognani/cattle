@@ -49,10 +49,8 @@ G_DEFINE_TYPE (CattleProgram, cattle_program, G_TYPE_OBJECT)
 /**
  * CattleProgramError:
  * @CATTLE_PROGRAM_ERROR_BAD_UTF8: the provided input is not valid UTF-8.
- * @CATTLE_PROGRAM_ERROR_UNMATCHED_BRACKET: an unmatched bracket (i.e. a loop
- * which is closed before being opened) was found in the input.
  * @CATTLE_PROGRAM_ERROR_UNBALANCED_BRACKETS: the number of open and closed
- * brackets in the input doesn't match.
+ * brackets in the input don't match.
  *
  * Errors detected on code loading.
  *
@@ -342,17 +340,8 @@ cattle_program_load_from_string (CattleProgram   *self,
         position = (gchar *) program;
         do {
 
-            /* If the counter ever gets negative, it means a loop was closed
-             * before being opened */
-            if (brackets_count < 0) {
-                g_set_error (error,
-                             CATTLE_PROGRAM_ERROR,
-                             CATTLE_PROGRAM_ERROR_UNMATCHED_BRACKET,
-                             "Unmatched bracket");
-                return FALSE;
-            }
-
             temp = g_utf8_get_char (position);
+
             if (temp == CATTLE_INSTRUCTION_LOOP_BEGIN) {
                 brackets_count++;
             }

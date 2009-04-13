@@ -71,42 +71,6 @@ test_program_load_empty (CattleProgram   **program,
 }
 
 /**
- * test_program_load_unmatched_bracket:
- *
- * Make sure a program containing an unmatched bracket is not loaded, and that
- * the correct error is reported.
- */
-static void
-test_program_load_unmatched_bracket (CattleProgram   **program,
-                                     gconstpointer     data)
-{
-    CattleInstruction *instruction;
-    CattleInstructionValue value;
-    GError *error = NULL;
-    gboolean success;
-
-    success = cattle_program_load_from_string (*program, "]", &error);
-
-    g_assert (!success);
-    g_assert (error != NULL);
-    g_assert (error->domain == CATTLE_PROGRAM_ERROR);
-    g_assert (error->code == CATTLE_PROGRAM_ERROR_UNMATCHED_BRACKET);
-
-    instruction = cattle_program_get_instructions (*program);
-
-    g_assert (CATTLE_IS_INSTRUCTION (instruction));
-    g_assert (cattle_instruction_get_next (instruction) == NULL);
-    g_assert (cattle_instruction_get_loop (instruction) == NULL);
-
-    value = cattle_instruction_get_value (instruction);
-
-    g_assert (value == CATTLE_INSTRUCTION_NONE);
-
-    g_object_unref (instruction);
-    g_error_free (error);
-}
-
-/**
  * test_program_load_unbalanced_brackets:
  *
  * Make sure a program containing unbalanced brackets is not loaded, and that
@@ -154,20 +118,12 @@ main (gint argc, gchar **argv)
                 test_program_load_empty,
                 program_destroy);
 
-    g_test_add ("/program/load-unmatched-bracket",
-                CattleProgram*,
-                NULL,
-                program_create,
-                test_program_load_unmatched_bracket,
-                program_destroy);
-
     g_test_add ("/program/load-unbalanced-brackets",
                 CattleProgram*,
                 NULL,
                 program_create,
                 test_program_load_unbalanced_brackets,
                 program_destroy);
-
 
     g_test_run ();
 
