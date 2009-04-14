@@ -8,6 +8,7 @@ examples/interpreter
 
 tests/tape-tests
 tests/program-tests
+tests/interpreter-tests
 tests/references-tests
 
 cattle.pc
