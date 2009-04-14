@@ -91,9 +91,13 @@ enum
 static gint signals[LAST_SIGNAL] = {0};
 
 /* Internal functions */
-static gboolean   run_real   (CattleInterpreter   *interpreter,
-                              CattleInstruction   *instruction,
-                              GError              **error);
+static gboolean   run_real                     (CattleInterpreter        *interpreter,
+                                                CattleInstruction        *instruction,
+                                                GError                  **error);
+static gboolean   single_handler_accumulator   (GSignalInvocationHint    *hint,
+                                                GValue                   *signal_retval,
+                                                const GValue             *handler_retval,
+                                                gpointer                  data);
 
 static void
 cattle_interpreter_init (CattleInterpreter *self)
@@ -412,6 +416,18 @@ run_real (CattleInterpreter    *self,
     g_object_unref (configuration);
 
     return success;
+}
+
+static gboolean
+single_handler_accumulator (GSignalInvocationHint    *hint,
+                            GValue                   *signal_retval,
+                            const GValue             *handler_retval,
+                            gpointer                  data)
+{
+    g_value_copy (handler_retval, signal_retval);
+
+    /* Stop the signal emission so other signal handlers are not called */
+    return FALSE;
 }
 
 /**
@@ -794,7 +810,7 @@ cattle_interpreter_class_init (CattleInterpreterClass *self)
                                             CATTLE_TYPE_INTERPRETER,
                                             G_SIGNAL_RUN_LAST | G_SIGNAL_NO_RECURSE,
                                             NULL,
-                                            g_signal_accumulator_true_handled,
+                                            single_handler_accumulator,
                                             NULL,
                                             cattle_marshal_BOOLEAN__POINTER_POINTER,
                                             G_TYPE_BOOLEAN,
@@ -822,7 +838,7 @@ cattle_interpreter_class_init (CattleInterpreterClass *self)
                                              CATTLE_TYPE_INTERPRETER,
                                              G_SIGNAL_RUN_LAST | G_SIGNAL_NO_RECURSE,
                                              NULL,
-                                             g_signal_accumulator_true_handled,
+                                             single_handler_accumulator,
                                              NULL,
                                              cattle_marshal_BOOLEAN__CHAR_POINTER,
                                              G_TYPE_BOOLEAN,
@@ -848,7 +864,7 @@ cattle_interpreter_class_init (CattleInterpreterClass *self)
                                             CATTLE_TYPE_INTERPRETER,
                                             G_SIGNAL_RUN_LAST | G_SIGNAL_NO_RECURSE,
                                             NULL,
-                                            g_signal_accumulator_true_handled,
+                                            single_handler_accumulator,
                                             NULL,
                                             cattle_marshal_BOOLEAN__POINTER,
                                             G_TYPE_BOOLEAN,
