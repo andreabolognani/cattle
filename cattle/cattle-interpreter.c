@@ -22,6 +22,8 @@
 #include "cattle-marshal.h"
 #include "cattle-interpreter.h"
 #include <stdio.h>
+#include <string.h>
+#include <errno.h>
 
 /**
  * SECTION:cattle-interpreter
@@ -479,10 +481,10 @@ input_default_handler (CattleInterpreter    *self,
             return TRUE;
         }
 
-        g_set_error (error,
-                     CATTLE_INTERPRETER_ERROR,
-                     CATTLE_INTERPRETER_ERROR_IO,
-                     "Read error");
+        g_set_error_literal (error,
+                             CATTLE_INTERPRETER_ERROR,
+                             CATTLE_INTERPRETER_ERROR_IO,
+                             strerror (errno));
         return FALSE;
     }
 
@@ -498,10 +500,10 @@ output_default_handler (CattleInterpreter    *self,
 {
     if (fputc (output, stdout) == EOF) {
 
-        g_set_error (error,
-                     CATTLE_INTERPRETER_ERROR,
-                     CATTLE_INTERPRETER_ERROR_IO,
-                     "Write error");
+        g_set_error_literal (error,
+                             CATTLE_INTERPRETER_ERROR,
+                             CATTLE_INTERPRETER_ERROR_IO,
+                             strerror (errno));
         return FALSE;
     }
 
