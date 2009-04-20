@@ -538,13 +538,29 @@ debug_default_handler (CattleInterpreter    *self,
         steps++;
     }
 
-    fputc ('[', stderr);
+    if (fputc ('[', stderr) == EOF) {
+        g_set_error_literal (error,
+                             CATTLE_INTERPRETER_ERROR,
+                             CATTLE_INTERPRETER_ERROR_IO,
+                             strerror (errno));
+        cattle_tape_pop_bookmark (tape);
+        g_object_unref (tape);
+        return FALSE;
+    }
 
     while (TRUE) {
 
         /* Mark the current position */
         if (steps == 0) {
-            fputc ('<', stderr);
+            if (fputc ('<', stderr) == EOF) {
+                g_set_error_literal (error,
+                                     CATTLE_INTERPRETER_ERROR,
+                                     CATTLE_INTERPRETER_ERROR_IO,
+                                     strerror (errno));
+                cattle_tape_pop_bookmark (tape);
+                g_object_unref (tape);
+                return FALSE;
+            }
         }
 
         value = cattle_tape_get_current_value (tape);
@@ -552,15 +568,39 @@ debug_default_handler (CattleInterpreter    *self,
         /* Print the value of the current cell if it is a graphical char;
          * otherwise, print its hexadecimal value */
         if (g_ascii_isgraph (value)) {
-            fputc (value, stderr);
+            if (fputc (value, stderr) == EOF) {
+                g_set_error_literal (error,
+                                     CATTLE_INTERPRETER_ERROR,
+                                     CATTLE_INTERPRETER_ERROR_IO,
+                                     strerror (errno));
+                cattle_tape_pop_bookmark (tape);
+                g_object_unref (tape);
+                return FALSE;
+            }
         }
         else {
-            fprintf (stderr, "0x%X", (gint) value);
+            if (fprintf (stderr, "0x%X", (gint) value) < 0) {
+                g_set_error_literal (error,
+                                     CATTLE_INTERPRETER_ERROR,
+                                     CATTLE_INTERPRETER_ERROR_IO,
+                                     strerror (errno));
+                cattle_tape_pop_bookmark (tape);
+                g_object_unref (tape);
+                return FALSE;
+            }
         }
 
         /* Mark the current position */
-        if (steps ==0) {
-            fputc ('>', stderr);
+        if (steps == 0) {
+            if (fputc ('>', stderr) == EOF) {
+                g_set_error_literal (error,
+                                     CATTLE_INTERPRETER_ERROR,
+                                     CATTLE_INTERPRETER_ERROR_IO,
+                                     strerror (errno));
+                cattle_tape_pop_bookmark (tape);
+                g_object_unref (tape);
+                return FALSE;
+            }
         }
 
         /* Exit after printing the last value */
@@ -569,13 +609,37 @@ debug_default_handler (CattleInterpreter    *self,
         }
 
         /* Print a space and move forward */
-        fputc (' ', stderr);
+        if (fputc (' ', stderr) == EOF) {
+            g_set_error_literal (error,
+                                 CATTLE_INTERPRETER_ERROR,
+                                 CATTLE_INTERPRETER_ERROR_IO,
+                                 strerror (errno));
+            cattle_tape_pop_bookmark (tape);
+            g_object_unref (tape);
+            return FALSE;
+        }
         cattle_tape_move_right (tape);
         steps--;
     }
 
-    fputc (']', stderr);
-    fputc ('\n', stderr);
+    if (fputc (']', stderr) == EOF) {
+        g_set_error_literal (error,
+                             CATTLE_INTERPRETER_ERROR,
+                             CATTLE_INTERPRETER_ERROR_IO,
+                             strerror (errno));
+        cattle_tape_pop_bookmark (tape);
+        g_object_unref (tape);
+        return FALSE;
+    }
+    if (fputc ('\n', stderr) == EOF) {
+        g_set_error_literal (error,
+                             CATTLE_INTERPRETER_ERROR,
+                             CATTLE_INTERPRETER_ERROR_IO,
+                             strerror (errno));
+        cattle_tape_pop_bookmark (tape);
+        g_object_unref (tape);
+        return FALSE;
+    }
 
     /* Restore the previously-saved position */
     cattle_tape_pop_bookmark (tape);
