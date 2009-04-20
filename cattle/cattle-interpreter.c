@@ -449,6 +449,47 @@ single_handler_accumulator (GSignalInvocationHint    *hint,
     return FALSE;
 }
 
+static gboolean
+input_default_handler (CattleInterpreter    *self,
+                       gchar               **input,
+                       GError              **error,
+                       gpointer              data)
+{
+    gchar *buffer;
+
+    /* The previous input buffer is not needed anymore */
+    if (*input != NULL) {
+
+        g_free (*input);
+        *input = NULL;
+    }
+
+    /* The buffer size is not really important: if the input cannot fit a
+     * single buffer, the signal will be emitted again */
+    buffer = g_new0 (gchar, 256);
+
+    if (fgets (buffer, 256, stdin) == NULL) {
+
+        /* A NULL return value from fgets could either mean a read error
+         * has occurred or the end of input has been reached. In the latter
+         * case, we have to notify the interpreter */
+        if (feof (stdin)) {
+
+            *input = NULL;
+            return TRUE;
+        }
+
+        g_set_error (error,
+                     CATTLE_INTERPRETER_ERROR,
+                     CATTLE_INTERPRETER_ERROR_IO,
+                     "Read error");
+        return FALSE;
+    }
+
+    *input = buffer;
+    return TRUE;
+}
+
 /**
  * cattle_interpreter_new:
  *
@@ -753,6 +794,7 @@ cattle_interpreter_class_init (CattleInterpreterClass *self)
 {
     GObjectClass *object_class = G_OBJECT_CLASS (self);
     GParamSpec *pspec;
+    GClosure *closure;
     GType ptypes[2];
 
     object_class->set_property = cattle_interpreter_set_property;
@@ -823,12 +865,15 @@ cattle_interpreter_class_init (CattleInterpreterClass *self)
      *
      * Since: 0.9.1
      */
+    closure = g_cclosure_new (G_CALLBACK (input_default_handler),
+                              NULL,
+                              NULL);
     ptypes[0] = G_TYPE_POINTER;
     ptypes[1] = G_TYPE_POINTER;
     signals[INPUT_REQUEST] = g_signal_newv ("input-request",
                                             CATTLE_TYPE_INTERPRETER,
                                             G_SIGNAL_RUN_LAST | G_SIGNAL_NO_RECURSE,
-                                            NULL,
+                                            closure,
                                             single_handler_accumulator,
                                             NULL,
                                             cattle_marshal_BOOLEAN__POINTER_POINTER,

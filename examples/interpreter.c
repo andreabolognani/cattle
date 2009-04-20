@@ -25,62 +25,6 @@
 #include <stdio.h>
 
 static gboolean
-input_handler (GObject     *object,
-               gchar      **input,
-               GError     **error,
-               gpointer     data)
-{
-    gchar *string;
-
-    g_return_val_if_fail (error == NULL || *error == NULL, FALSE);
-    g_return_val_if_fail (CATTLE_IS_INTERPRETER (object), FALSE);
-
-    /* If the pointer is not null, it points to a
-     * previously-allocated buffer we need to release */
-    if (*input != NULL) {
-
-        g_free (*input);
-        *input = NULL;
-    }
-
-    /* Create a buffer (hopefully) big enough to hold the next line */
-    string = g_new0 (gchar, 256);
-
-    /* Try to read a whole line from standard input */
-    if (fgets (string, 256, stdin) == NULL) {
-
-        /* We reached the end of input: we have to let the interpreter
-         * know this by returning a NULL pointer */
-        if (feof (stdin)) {
-
-            g_free (string);
-            *input = NULL;
-
-            return TRUE;
-        }
-
-        /* If fgets() returned NULL but we aren't at the end of input, it
-         * means an I/O error occurred. In this case, we need to report
-         * it to the caller.
-         *
-         * FIXME
-         * G_FILE_ERROR is used as error domain, but it's not really correct
-         * in this case. A generic error domain is probably needed for this.
-         */
-        g_set_error (error,
-                     G_FILE_ERROR,
-                     G_FILE_ERROR_IO,
-                     "Read error");
-
-        return FALSE;
-    }
-
-    *input = string;
-
-    return TRUE;
-}
-
-static gboolean
 output_handler (GObject     *object,
                 gchar        output,
                 GError     **error,
@@ -216,15 +160,11 @@ main (gint argc, gchar **argv)
     g_object_unref (program);
 
     /* Connect the input/output and debug signal handlers */
-    g_signal_connect (G_OBJECT (interpreter),
-                      "input-request",
-                      G_CALLBACK (input_handler),
-                      NULL);
-    g_signal_connect (G_OBJECT (interpreter),
+    g_signal_connect (interpreter,
                       "output-request",
                       G_CALLBACK (output_handler),
                       NULL);
-    g_signal_connect (G_OBJECT (interpreter),
+    g_signal_connect (interpreter,
                       "debug-request",
                       G_CALLBACK (debug_handler),
                       NULL);
