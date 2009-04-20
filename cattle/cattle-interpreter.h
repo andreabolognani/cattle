@@ -35,6 +35,13 @@ G_BEGIN_DECLS
 #define CATTLE_IS_INTERPRETER_CLASS(klass)     (G_TYPE_CHECK_CLASS_TYPE ((klass), CATTLE_TYPE_INTERPRETER))
 #define CATTLE_INTERPRETER_GET_CLASS(object)   (G_TYPE_INSTANCE_GET_CLASS ((object), CATTLE_TYPE_INTERPRETER, CattleInterpreterClass))
 
+typedef enum
+{
+    CATTLE_INTERPRETER_ERROR_IO
+} CattleInterpreterError;
+
+#define CATTLE_INTERPRETER_ERROR (cattle_interpreter_error_quark ())
+
 typedef struct _CattleInterpreter          CattleInterpreter;
 typedef struct _CattleInterpreterClass     CattleInterpreterClass;
 typedef struct _CattleInterpreterPrivate   CattleInterpreterPrivate;
@@ -64,6 +71,7 @@ void                   cattle_interpreter_set_tape            (CattleInterpreter
                                                                CattleTape             *tape);
 CattleTape*            cattle_interpreter_get_tape            (CattleInterpreter      *interpreter);
 
+GQuark                 cattle_interpreter_error_quark         (void) G_GNUC_CONST;
 GType                  cattle_interpreter_get_type            (void) G_GNUC_CONST;
 
 G_END_DECLS

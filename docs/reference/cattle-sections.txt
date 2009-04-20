@@ -51,6 +51,8 @@ cattle_program_error_quark
 <SECTION>
 <FILE>cattle-interpreter</FILE>
 <TITLE>CattleInterpreter</TITLE>
+CATTLE_INTERPRETER_ERROR
+CattleInterpreterError
 CattleInterpreter
 cattle_interpreter_new
 cattle_interpreter_run
@@ -70,6 +72,7 @@ CATTLE_IS_INTERPRETER_CLASS
 CATTLE_INTERPRETER_GET_CLASS
 <SUBSECTION Private>
 CattleInterpreterPrivate
+cattle_interpreter_error_quark
 </SECTION>
 
 <SECTION>

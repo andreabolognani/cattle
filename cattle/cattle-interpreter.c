@@ -48,6 +48,13 @@
 G_DEFINE_TYPE (CattleInterpreter, cattle_interpreter, G_TYPE_OBJECT)
 
 /**
+ * CattleInterpreterError:
+ * @CATTLE_INTERPRETER_ERROR_IO: I/O error.
+ *
+ * Runtime errors.
+ */
+
+/**
  * CattleInterpreter:
  *
  * Opaque data structure representing an interpreter. It should never be
@@ -98,6 +105,18 @@ static gboolean   single_handler_accumulator   (GSignalInvocationHint    *hint,
                                                 GValue                   *signal_retval,
                                                 const GValue             *handler_retval,
                                                 gpointer                  data);
+
+/**
+ * CATTLE_INTERPRETER_ERROR:
+ *
+ * Error domain for interpreter errors. Errors in this domain will be from
+ * the #CattleInterpreterError enumeration.
+ */
+GQuark
+cattle_interpreter_error_quark (void)
+{
+    return g_quark_from_static_string ("cattle-interpreter-error-quark");
+}
 
 static void
 cattle_interpreter_init (CattleInterpreter *self)
