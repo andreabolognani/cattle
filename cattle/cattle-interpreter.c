@@ -600,12 +600,7 @@ cattle_interpreter_new (void)
  * @interpreter: a #CattleInterpreter
  * @error: #GError used for error reporting
  *
- * Run the interpreter.
- *
- * Please note that this method is always successful at the moment. There is
- * no condition under which the execution of a program can fail; anyway,
- * this will change in future versions, and you are encouraged to check the
- * return value of this method.
+ * Make the interpreter run the loaded program.
  *
  * Return: #TRUE if @interpreter completed the execution of its program
  * successfully, #FALSE otherwise.
