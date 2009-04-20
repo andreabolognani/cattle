@@ -24,8 +24,6 @@ CattleConfigurationPrivate
 
 <SECTION>
 <FILE>cattle-program</FILE>
-CATTLE_PROGRAM_ERROR
-CattleProgramError
 <TITLE>CattleProgram</TITLE>
 CattleProgram
 cattle_program_new
@@ -35,6 +33,8 @@ cattle_program_set_instructions
 cattle_program_get_instructions
 cattle_program_set_input
 cattle_program_get_input
+CATTLE_PROGRAM_ERROR
+CattleProgramError
 <SUBSECTION Standard>
 CATTLE_PROGRAM
 CATTLE_IS_PROGRAM
@@ -51,8 +51,6 @@ cattle_program_error_quark
 <SECTION>
 <FILE>cattle-interpreter</FILE>
 <TITLE>CattleInterpreter</TITLE>
-CATTLE_INTERPRETER_ERROR
-CattleInterpreterError
 CattleInterpreter
 cattle_interpreter_new
 cattle_interpreter_run
@@ -62,6 +60,8 @@ cattle_interpreter_set_program
 cattle_interpreter_get_program
 cattle_interpreter_set_tape
 cattle_interpreter_get_tape
+CATTLE_INTERPRETER_ERROR
+CattleInterpreterError
 <SUBSECTION Standard>
 CATTLE_INTERPRETER
 CATTLE_IS_INTERPRETER
