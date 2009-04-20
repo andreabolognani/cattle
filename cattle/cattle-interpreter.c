@@ -490,6 +490,98 @@ input_default_handler (CattleInterpreter    *self,
     return TRUE;
 }
 
+static gboolean
+output_default_handler (CattleInterpreter    *self,
+                        gchar                 output,
+                        GError              **error,
+                        gpointer              data)
+{
+    if (fputc (output, stdout) == EOF) {
+
+        g_set_error (error,
+                     CATTLE_INTERPRETER_ERROR,
+                     CATTLE_INTERPRETER_ERROR_IO,
+                     "Write error");
+        return FALSE;
+    }
+
+    return TRUE;
+}
+
+static gboolean
+debug_default_handler (CattleInterpreter    *self,
+                       GError              **error,
+                       gpointer              data)
+{
+    CattleTape *tape;
+    gchar value;
+    gint steps;
+
+    tape = cattle_interpreter_get_tape (self);
+
+    /* Save the current position so it can be restored later */
+    cattle_tape_push_bookmark (tape);
+
+    /* Move to the beginning of the tape, counting how many steps it takes
+     * to get there. This value will be used later to mark the current
+     * position */
+    steps = 0;
+    while (TRUE) {
+
+        if (cattle_tape_is_at_beginning (tape)) {
+            break;
+        }
+
+        cattle_tape_move_left (tape);
+        steps++;
+    }
+
+    fputc ('[', stderr);
+
+    while (TRUE) {
+
+        /* Mark the current position */
+        if (steps == 0) {
+            fputc ('<', stderr);
+        }
+
+        value = cattle_tape_get_current_value (tape);
+
+        /* Print the value of the current cell if it is a graphical char;
+         * otherwise, print its hexadecimal value */
+        if (g_ascii_isgraph (value)) {
+            fputc (value, stderr);
+        }
+        else {
+            fprintf (stderr, "0x%X", (gint) value);
+        }
+
+        /* Mark the current position */
+        if (steps ==0) {
+            fputc ('>', stderr);
+        }
+
+        /* Exit after printing the last value */
+        if (cattle_tape_is_at_end (tape)) {
+            break;
+        }
+
+        /* Print a space and move forward */
+        fputc (' ', stderr);
+        cattle_tape_move_right (tape);
+        steps--;
+    }
+
+    fputc (']', stderr);
+    fputc ('\n', stderr);
+
+    /* Restore the previously-saved position */
+    cattle_tape_pop_bookmark (tape);
+
+    g_object_unref (tape);
+    return TRUE;
+}
+
 /**
  * cattle_interpreter_new:
  *
@@ -865,11 +957,11 @@ cattle_interpreter_class_init (CattleInterpreterClass *self)
      *
      * Since: 0.9.1
      */
+    ptypes[0] = G_TYPE_POINTER;
+    ptypes[1] = G_TYPE_POINTER;
     closure = g_cclosure_new (G_CALLBACK (input_default_handler),
                               NULL,
                               NULL);
-    ptypes[0] = G_TYPE_POINTER;
-    ptypes[1] = G_TYPE_POINTER;
     signals[INPUT_REQUEST] = g_signal_newv ("input-request",
                                             CATTLE_TYPE_INTERPRETER,
                                             G_SIGNAL_RUN_LAST | G_SIGNAL_NO_RECURSE,
@@ -898,10 +990,13 @@ cattle_interpreter_class_init (CattleInterpreterClass *self)
      */
     ptypes[0] = G_TYPE_CHAR;
     ptypes[1] = G_TYPE_POINTER;
+    closure = g_cclosure_new (G_CALLBACK (output_default_handler),
+                              NULL,
+                              NULL);
     signals[OUTPUT_REQUEST] = g_signal_newv ("output-request",
                                              CATTLE_TYPE_INTERPRETER,
                                              G_SIGNAL_RUN_LAST | G_SIGNAL_NO_RECURSE,
-                                             NULL,
+                                             closure,
                                              single_handler_accumulator,
                                              NULL,
                                              cattle_marshal_BOOLEAN__CHAR_POINTER,
@@ -924,10 +1019,13 @@ cattle_interpreter_class_init (CattleInterpreterClass *self)
      * Since: 0.9.2
      */
     ptypes[0] = G_TYPE_POINTER;
+    closure = g_cclosure_new (G_CALLBACK (debug_default_handler),
+                              NULL,
+                              NULL);
     signals[DEBUG_REQUEST] = g_signal_newv ("debug_request",
                                             CATTLE_TYPE_INTERPRETER,
                                             G_SIGNAL_RUN_LAST | G_SIGNAL_NO_RECURSE,
-                                            NULL,
+                                            closure,
                                             single_handler_accumulator,
                                             NULL,
                                             cattle_marshal_BOOLEAN__POINTER,
