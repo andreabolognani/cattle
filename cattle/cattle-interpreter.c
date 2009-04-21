@@ -729,9 +729,7 @@ cattle_interpreter_set_configuration (CattleInterpreter     *self,
     if (G_LIKELY (!self->priv->disposed)) {
 
         /* Release the reference held on the previous configuration */
-        if (G_IS_OBJECT (self->priv->configuration)) {
-            g_object_unref (self->priv->configuration);
-        }
+        g_object_unref (self->priv->configuration);
 
         self->priv->configuration = configuration;
         g_object_ref (self->priv->configuration);
@@ -759,9 +757,7 @@ cattle_interpreter_get_configuration (CattleInterpreter *self)
     if (G_LIKELY (!self->priv->disposed)) {
 
         configuration = self->priv->configuration;
-        if (G_IS_OBJECT (configuration)) {
-            g_object_ref (configuration);
-        }
+        g_object_ref (configuration);
     }
 
     return configuration;
@@ -787,9 +783,7 @@ cattle_interpreter_set_program (CattleInterpreter   *self,
     if (G_LIKELY (!self->priv->disposed)) {
 
         /* Release the reference held to the previous program, if any */
-        if (G_IS_OBJECT (self->priv->program)) {
-            g_object_unref (self->priv->program);
-        }
+        g_object_unref (self->priv->program);
 
         self->priv->program = program;
         g_object_ref (self->priv->program);
@@ -817,9 +811,7 @@ cattle_interpreter_get_program (CattleInterpreter *self)
     if (G_LIKELY (!self->priv->disposed)) {
 
         program = self->priv->program;
-        if (G_IS_OBJECT (program)) {
-            g_object_ref (program);
-        }
+        g_object_ref (program);
     }
 
     return program;
@@ -842,9 +834,7 @@ cattle_interpreter_set_tape (CattleInterpreter   *self,
     if (G_LIKELY (!self->priv->disposed)) {
 
         /* Release the reference held to the previous tape */
-        if (G_IS_OBJECT (self->priv->tape)) {
-            g_object_unref (self->priv->tape);
-        }
+        g_object_unref (self->priv->tape);
 
         self->priv->tape = tape;
         g_object_ref (self->priv->tape);
@@ -872,9 +862,7 @@ cattle_interpreter_get_tape (CattleInterpreter *self)
     if (G_LIKELY (!self->priv->disposed)) {
 
         tape = self->priv->tape;
-        if (G_IS_OBJECT (tape)) {
-            g_object_ref (tape);
-        }
+        g_object_ref (tape);
     }
 
     return tape;
