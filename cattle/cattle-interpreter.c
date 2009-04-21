@@ -180,7 +180,7 @@ run_real (CattleInterpreter    *self,
     CattleTape *tape;
     CattleInstruction *loop;
     gboolean success;
-    gchar temp;
+    gchar temp = 0;
     glong i;
 
     configuration = cattle_interpreter_get_configuration (self);

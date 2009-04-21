@@ -434,7 +434,6 @@ static void
 cattle_tape_class_init (CattleTapeClass *self)
 {
     GObjectClass *object_class = G_OBJECT_CLASS (self);
-    GParamSpec *pspec;
 
     object_class->dispose = cattle_tape_dispose;
     object_class->finalize = cattle_tape_finalize;

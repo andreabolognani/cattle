@@ -86,7 +86,6 @@ test_references_single_reference (void)
 {
     CattleProgram *program;
     CattleInstruction *instruction;
-    CattleInstruction *next;
 
     program = cattle_program_new ();
 
