@@ -21,10 +21,14 @@
 #ifndef __CATTLE_H__
 #define __CATTLE_H__
 
+#define __CATTLE_H_INSIDE__
+
 #include <cattle/cattle-instruction.h>
 #include <cattle/cattle-program.h>
 #include <cattle/cattle-tape.h>
 #include <cattle/cattle-configuration.h>
 #include <cattle/cattle-interpreter.h>
+
+#undef __CATTLE_H_INSIDE__
 
 #endif /* __CATTLE_H__ */

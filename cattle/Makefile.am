@@ -67,7 +67,8 @@ libcattle_la_SOURCES = $(BUILT_SOURCES)			\
 libcattle_la_CFLAGS = $(CFLAGS) 			\
 					  $(GLIB_CFLAGS)
 
-libcattle_la_CPPFLAGS = -DG_LOG_DOMAIN=\"Cattle\"
+libcattle_la_CPPFLAGS = -DG_LOG_DOMAIN=\"Cattle\"   \
+                        -DCATTLE_COMPILATION
 
 EXTRA_DIST = cattle-marshal.list	\
 			 cattle-enums.h.tmpl	\

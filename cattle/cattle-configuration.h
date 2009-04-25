@@ -18,6 +18,10 @@
  * Homepage: http://www.kiyuko.org/software/cattle
  */
 
+#if !defined (__CATTLE_H_INSIDE__) && !defined (CATTLE_COMPILATION)
+#error "Only <cattle/cattle.h> can be included directly."
+#endif
+
 #ifndef __CATTLE_CONFIGURATION_H__
 #define __CATTLE_CONFIGURATION_H__
 
