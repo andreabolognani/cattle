@@ -1,23 +1,21 @@
 Important
 =========
 
-    * Better UTF-8 support
-
-    * Performance improvement
+    * Better UTF-8 support (if at all possible)
+    * Performance improvements
+    * Extensive test suite
 
 
 Planned
 =======
 
     * Step-by-step execution
-
-    * Vala and Python bindings
+    * GObject Introspection support
 
 
 Wishlist
 ========
 
-    * Fixed-size tape as an alternative
+    * Fixed-sized tape as an alternative
         - Bound checking
-
     * Enable/disable left growth of the tape
