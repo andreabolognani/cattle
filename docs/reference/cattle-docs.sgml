@@ -23,8 +23,19 @@
             Brainfuck programming language.
         </para>
         <para>
-            The library is quite complete, but it still lacks some features
-            and performs badly. You shouldn't be using it right now.
+            The library allows one to easily embed a full-featured and quite
+            performing Brainfuck interpreter into any application; to further
+            improve integration, all I/O operations can be performed using
+            custom routines.
+        </para>
+        <para>
+            Great care has been taken in order to make the API simple and
+            conforming to expectation: any programmer with previous exposure
+            to the GNOME stack should be able to feel right at home.
+        </para>
+        <para>
+            The library is still under development, and some planned features
+            are not yet implemented, or only halfway to completion.
         </para>
     </chapter>
 
