@@ -28,7 +28,6 @@ main (gint argc, gchar **argv)
 {
     CattleInterpreter *interpreter;
     CattleProgram *program;
-    CattleConfiguration *configuration;
     GError *error = NULL;
 
     g_type_init ();
@@ -42,16 +41,12 @@ main (gint argc, gchar **argv)
     /* Create a new interpreter */
     interpreter = cattle_interpreter_new ();
 
-    configuration = cattle_interpreter_get_configuration (interpreter);
-    cattle_configuration_set_debug_is_enabled (configuration, TRUE);
-    g_object_unref (configuration);
-
     program = cattle_interpreter_get_program (interpreter);
 
     /* Load the program, aborting on failure */
     if (!cattle_program_load_from_file (program, argv[1], &error)) {
 
-        g_warning ("Cannot load program: %s", error->message);
+        g_warning ("Load error: %s", error->message);
 
         g_error_free (error);
         g_object_unref (program);
@@ -64,7 +59,7 @@ main (gint argc, gchar **argv)
     /* Start the execution */
     if (!cattle_interpreter_run (interpreter, &error)) {
 
-        g_warning ("Cannot run program: %s", error->message);
+        g_warning ("Runtime error: %s", error->message);
 
         g_error_free (error);
         g_object_unref (interpreter);

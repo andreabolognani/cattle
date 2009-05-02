@@ -23,7 +23,8 @@
 #include <glib-object.h>
 #include <cattle/cattle.h>
 
-/* Each time a loop is started, its content is indented by INDENT_STEP */
+/* Each time a loop is started, its content is indented by
+ * INDENT_STEP blank spaces */
 #define INDENT_STEP 4
 
 static void
@@ -107,9 +108,12 @@ main (gint argc, gchar **argv)
 
     /* Load the program from file, aborting on error */
     if (!cattle_program_load_from_file (program, argv[1], &error)) {
-        g_warning ("Cannot load program: %s", error->message);
+
+        g_warning ("Load error: %s", error->message);
+
         g_error_free (error);
         g_object_unref (program);
+
         return 1;
     }
 
