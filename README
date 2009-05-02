@@ -2,8 +2,8 @@ Cattle -- Flexible Brainfuck interpreter library
 ================================================
 
 Cattle is a flexible Brainfuck interpreter, implemented as a GObject-based
-shared library. The Beef interpreter itself is supposed to be ported to this
-library once it gets mature enough.
+shared library. The Beef interpreter - from which Cattle was derived - itself
+is supposed to be ported to this library once it gets mature enough.
 
 
 Improved features
@@ -11,7 +11,7 @@ Improved features
 
 The code loader used in Cattle has better error checking than the one used
 in the standalone interpreter, and is able of catching common coding error
-like unmatched and unbalanced brackets.
+like unbalanced brackets.
 
 The library supports flexible I/O using signals and callbacks, which means
 you can do weird things like use the content of a GTK+ text widget as input
@@ -22,19 +22,19 @@ Development status
 ==================
 
 The library currently provides enough features to implement a complete
-interpreter in about 100 lines of code (see examples/interpreter.c).
+interpreter in about 50 lines of code (see examples/interpreter.c).
 
-However, it performs poorly: any program takes several times the time it
-would take on the standalone interpreter to run. Several optimizations are
-already in place, and the performance loss has decreased significantly since
-the first release.
+However, it doesn't perform nearly as good as Beef: any program takes many
+times the time it would take on the standalone interpreter to run. Several
+optimizations are already in place, and the performance loss has decreased
+significantly since the first release.
 
 There is no API or ABI stability guarantee at this point of time. Everything
 is still subject sudden and thorough changes.
 
 
-Contact informations
-====================
+Contact information
+===================
 
 You can contact me anytime at the mail address <eof@kiyuko.org> if you need 
-any information or support about Cattle.
+any information about Cattle. Any suggestion is greatly appreciated.
