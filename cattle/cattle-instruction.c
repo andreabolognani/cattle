@@ -24,7 +24,6 @@
 /**
  * SECTION:cattle-instruction
  * @short_description: Single instruction
- * @see_also: #CattleProgram
  *
  * #CattleInstruction represents a single Brainfuck instruction, repeated one
  * or more times in a row.

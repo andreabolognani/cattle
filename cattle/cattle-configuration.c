@@ -24,7 +24,6 @@
 /**
  * SECTION:cattle-configuration
  * @short_description: Configuration for an interpreter
- * @see_also: #CattleInterpreter
  *
  * #CattleConfiguration represents the configuration for a #CattleInterpreter.
  */

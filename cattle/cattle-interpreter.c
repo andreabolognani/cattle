@@ -28,7 +28,6 @@
 /**
  * SECTION:cattle-interpreter
  * @short_description: Brainfuck interpreter
- * @see_also: #CattleConfiguration, #CattleProgram, #CattleTape
  *
  * An instance of #CattleInterpreter represents a Brainfuck interpreter, that
  * is, an object which is capable of executing a #CattleProgram.

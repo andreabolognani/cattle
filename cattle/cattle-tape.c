@@ -23,7 +23,6 @@
 /**
  * SECTION:cattle-tape
  * @short_description: Infinite-length memory tape
- * @see_also: #CattleInterpreter
  *
  * #CattleTape represents an infinte-length memory tape, which is used by a
  * #CattleInterpreter to store its data. The tape is constituted by an infinte

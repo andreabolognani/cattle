@@ -24,7 +24,6 @@
 /**
  * SECTION:cattle-program
  * @short_description: A program and its input
- * @see_also: #CattleInstruction
  *
  * #CattleProgram represents a complete Brainfuck program, that is, the
  * instructions to be executed and possibly its input.
