@@ -56,6 +56,13 @@
 
         <title>Input</title>
 
+        <informalexample><programlisting>
+gboolean
+input_request_handler (CattleInterpreter    *interpreter,
+                       gchar               **input,
+                       GError              **error,
+                       gpointer              data)
+        </programlisting></informalexample>
         <para>
             Input works on a per-line basis: the signal handler must
             retrieve a full, null-terminated line of input, including the
@@ -93,6 +100,13 @@
 
         <title>Output</title>
 
+        <informalexample><programlisting>
+gboolean
+output_request_handler (CattleInterpreter    *interpreter,
+                        gchar                 output,
+                        GError              **error,
+                        gpointer              data)
+        </programlisting></informalexample>
         <para>
             Output is performed one character at time, even though the user
             might choose to buffer a line or even the whole output if it
@@ -105,6 +119,12 @@
 
         <title>Debug</title>
 
+        <informalexample><programlisting>
+gboolean
+debug_request_handler (CattleInterpreter    *interpreter,
+                       GError              **error,
+                       gpointer              data)
+        </programlisting></informalexample>
         <para>
             The debug handler is required to dump the content of the tape;
             the tape can be obtained from the interpreter using the
