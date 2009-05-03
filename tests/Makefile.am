@@ -29,3 +29,12 @@ references_tests_SOURCES = references-tests.c
 references_tests_CPPFLAGS = @CFLAGS@ @GLIB_CFLAGS@
 references_tests_LDFLAGS = @GLIB_LIBS@
 references_tests_LDADD = ${top_builddir}/cattle/libcattle.la
+
+GTESTER = gtester
+
+test:
+	${GTESTER} --version 2>/dev/null 1>&2 ; \
+	test "$$?" != 0 || ${GTESTER} --verbose *-tests
+
+.PHONY: test
+check-local: test
