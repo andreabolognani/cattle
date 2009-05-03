@@ -125,7 +125,5 @@ main (gint argc, gchar **argv)
                 test_program_load_unbalanced_brackets,
                 program_destroy);
 
-    g_test_run ();
-
-    return 0;
+    return g_test_run ();
 }

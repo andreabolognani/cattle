@@ -110,7 +110,5 @@ main (gint argc, gchar **argv)
     g_test_add_func ("/references/single-reference",
                      test_references_single_reference);
 
-    g_test_run ();
-
-    return 0;
+    return g_test_run ();
 }

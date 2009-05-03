@@ -156,7 +156,5 @@ main (gint argc, gchar **argv)
                 test_tape_in_between,
                 tape_destroy);
 
-    g_test_run ();
-
-    return 0;
+    return g_test_run ();
 }

@@ -208,7 +208,5 @@ main (gint argc, gchar **argv)
                 interpreter_destroy);
 #endif /* G_OS_UNIX */
 
-    g_test_run ();
-
-    return 0;
+    return g_test_run ();
 }
