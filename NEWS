@@ -1,9 +1,32 @@
+Overview of changes from Cattle 0.9.2 to 0.9.3
+==============================================
+
+    * CattleInterpreter:
+
+        - provide a default implementations for all the I/O operations;
+        - invoke only one handler on I/O signal emission;
+        - remove the signal prototypes from the class structure;
+        - add an error domain for runtime errors.
+
+    * CattleProgram: use a single error code for both unmatched and
+                     unbalanced brackets.
+
+    * The caller owns the object returned by a method call, and must
+      unreference it when finished to avoid memory leaks.
+
+    * Enforce single header includes.
+
+    * Expand the test suite and use the GTest framework.
+
+    * Various bug fixes.
+
+
 Overview of changes from Cattle 0.9.1 to 0.9.2
 ==============================================
 
-    * CattleTape: implemented bookmarks.
+    * CattleTape: implement bookmarks.
 
-    * CattleInterpreter: added the "debug-request" signal, which behaves like
+    * CattleInterpreter: add the "debug-request" signal, which behaves like
                          the existing I/O signals, and obsoletes the
                          CattleTape.dump() method.
 
