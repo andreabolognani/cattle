@@ -1,0 +1,17 @@
+version.xml
+cattle-decl.txt
+cattle-decl-list.txt
+cattle-undeclared.txt
+cattle-undocumented.txt
+cattle.args
+cattle.hierarchy
+cattle.interfaces
+cattle.prerequisites
+cattle.signals
+html
+html.stamp
+html-build.stamp
+scan-build.stamp
+sgml-build.stamp
+sgml.stamp
+xml
