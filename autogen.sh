@@ -1,19 +1,31 @@
 #!/bin/sh
 
-#gtkdocize --flavour no-tmpl --copy
-#if [ "$?" -ne 0 ]; then echo "gtkdocize failed" >&2; exit 1; fi
+GTKDOCIZE="gtkdocize --flavour no-tmpl --copy"
+LIBTOOLIZE="libtoolize -f -c"
+ACLOCAL="aclocal"
+AUTOHEADER="autoheader -f"
+AUTOCONF="autoconf -f"
+AUTOMAKE="automake -f -a -c --foreign"
 
-libtoolize --force --copy
-if [ "$?" -ne 0 ]; then echo "libtoolize failed" >&2; exit 1; fi
+runcmd()
+{
+	CMD="$1"
+	OUT=$( ${CMD} 2>&1 )
 
-aclocal
-if [ "$?" -ne 0 ]; then echo "aclocal failed" >&2; exit 1; fi
+	if [ $? -ne 0 ]; then
 
-autoheader
-if [ "$?" -ne 0 ]; then echo "autoheader failed" >&2; exit 1; fi
+		CMD=$( echo "${CMD}" | cut -d ' ' -f 1)
 
-automake --copy --add-missing --foreign
-if [ "$?" -ne 0 ]; then echo "automake failed" >&2; exit 1; fi
+		echo "${CMD} failed:" >&2
+		echo "${OUT}" >&2
 
-autoconf
-if [ "$?" -ne 0 ]; then echo "autoconf failed" >&2; exit 1; fi
+		exit 1
+	fi
+}
+
+runcmd "${GTKDOCIZE}"
+runcmd "${LIBTOOLIZE}"
+runcmd "${ACLOCAL}"
+runcmd "${AUTOHEADER}"
+runcmd "${AUTOCONF}"
+runcmd "${AUTOMAKE}"
