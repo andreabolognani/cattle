@@ -9,6 +9,7 @@ AM_INIT_AUTOMAKE(AC_PACKAGE_NAME,
 
 AM_CONFIG_HEADER(config.h)
 AM_MAINTAINER_MODE
+m4_ifdef([AM_SILENT_RULES],[AM_SILENT_RULES([yes])])
 AC_PROG_MAKE_SET
 
 dnl ***********************
