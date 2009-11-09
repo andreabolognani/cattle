@@ -23,7 +23,7 @@ runcmd()
 	fi
 }
 
-runcmd "${GTKDOCIZE}"
+#runcmd "${GTKDOCIZE}"
 runcmd "${LIBTOOLIZE}"
 runcmd "${ACLOCAL}"
 runcmd "${AUTOHEADER}"
