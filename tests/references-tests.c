@@ -1,5 +1,5 @@
 /* references-tests -- Look for reference leaks
- * Copyright (C) 2009  Andrea Bolognani <eof@kiyuko.org>
+ * Copyright (C) 2009-2010  Andrea Bolognani <eof@kiyuko.org>
  * This file is part of Cattle
  *
  * This program is free software; you can redistribute it and/or modify

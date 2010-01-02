@@ -1,5 +1,5 @@
 /* Cattle -- Flexible Brainfuck interpreter library
- * Copyright (C) 2008-2009  Andrea Bolognani <eof@kiyuko.org>
+ * Copyright (C) 2008-2010  Andrea Bolognani <eof@kiyuko.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
