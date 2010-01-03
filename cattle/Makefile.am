@@ -7,27 +7,29 @@ MKENUMS_GENERATED = cattle-enums.h	\
 					cattle-enums.c
 
 cattle-marshal.h: cattle-marshal.list
-	( $(GLIB_GENMARSHAL) --prefix=cattle_marshal $(srcdir)/cattle-marshal.list --header > cattle-marshal.tmp \
-	&& mv cattle-marshal.tmp cattle-marshal.h ) \
+	$(AM_V_GEN)( $(GLIB_GENMARSHAL) --prefix=cattle_marshal			\
+		$(srcdir)/cattle-marshal.list --header > cattle-marshal.tmp	\
+	&& mv cattle-marshal.tmp cattle-marshal.h )						\
 	|| ( rm -f cattle-marshal.tmp && exit 1 )
 
 cattle-marshal.c: cattle-marshal.h
-	( ( echo '#include "cattle-marshal.h"'; \
-	    $(GLIB_GENMARSHAL) --prefix=cattle_marshal $(srcdir)/cattle-marshal.list --body ) > cattle-marshal.tmp \
-	&& mv cattle-marshal.tmp cattle-marshal.c ) \
+	$(AM_V_GEN)( ( echo '#include "cattle-marshal.h"';				\
+	    $(GLIB_GENMARSHAL) --prefix=cattle_marshal					\
+		$(srcdir)/cattle-marshal.list --body ) > cattle-marshal.tmp \
+	&& mv cattle-marshal.tmp cattle-marshal.c )						\
 	|| ( rm -f cattle-marshal.tmp && exit 1 )
 
 
 cattle-enums.h: $(cattle_headers)
-	( cd $(srcdir) && $(GLIB_MKENUMS) --template cattle-enums.h.tmpl 	\
-		$(cattle_headers) ) > cattle-enums.h.tmp 						\
-	&& mv cattle-enums.h.tmp cattle-enums.h 							\
+	$(AM_V_GEN)( cd $(srcdir) && $(GLIB_MKENUMS) --template cattle-enums.h.tmpl	\
+		$(cattle_headers) ) > cattle-enums.h.tmp								\
+	&& mv cattle-enums.h.tmp cattle-enums.h										\
 	|| rm -f cattle-enums.h.tmp
 
 cattle-enums.c: $(cattle_headers)
-	( cd $(srcdir) && $(GLIB_MKENUMS) --template cattle-enums.c.tmpl	\
-		$(cattle_headers) ) > cattle-enums.c.tmp 						\
-	&& mv cattle-enums.c.tmp cattle-enums.c 							\
+	$(AM_V_GEN)( cd $(srcdir) && $(GLIB_MKENUMS) --template cattle-enums.c.tmpl	\
+		$(cattle_headers) ) > cattle-enums.c.tmp								\
+	&& mv cattle-enums.c.tmp cattle-enums.c										\
 	|| rm -f cattle-enums.c.tmp
 
 BUILT_SOURCES = $(GENMARSHAL_GENERATED) $(MKENUMS_GENERATED)
