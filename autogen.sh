@@ -1,11 +1,11 @@
 #!/bin/sh
 
-GTKDOCIZE="gtkdocize --flavour no-tmpl --copy"
-LIBTOOLIZE="libtoolize -f -c"
+GTKDOCIZE="gtkdocize --flavour no-tmpl"
+LIBTOOLIZE="libtoolize -f"
 ACLOCAL="aclocal"
 AUTOHEADER="autoheader -f"
 AUTOCONF="autoconf -f"
-AUTOMAKE="automake -f -a -c --foreign"
+AUTOMAKE="automake -f -a --foreign"
 
 runcmd()
 {
