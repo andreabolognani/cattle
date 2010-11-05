@@ -299,9 +299,6 @@ run (CattleInterpreter    *self,
                              * the signal handler must set the error */
                             if (success == FALSE) {
                                 g_assert (error == NULL || *error != NULL);
-                                g_object_unref (tape);
-                                g_object_unref (program);
-                                g_object_unref (configuration);
                                 return success;
                             }
 
@@ -395,9 +392,6 @@ run (CattleInterpreter    *self,
                      * the content of the current cell more than once */
                     if (success == FALSE) {
                         g_assert (error == NULL || *error != NULL);
-                        g_object_unref (tape);
-                        g_object_unref (program);
-                        g_object_unref (configuration);
                         return success;
                     }
                 }
@@ -419,9 +413,6 @@ run (CattleInterpreter    *self,
 
                         if (success == FALSE) {
                             g_assert (error == NULL || *error != NULL);
-                            g_object_unref (tape);
-                            g_object_unref (program);
-                            g_object_unref (configuration);
                             return success;
                         }
                     }
@@ -436,10 +427,6 @@ run (CattleInterpreter    *self,
         instruction = cattle_instruction_get_next (instruction);
 
     } while (CATTLE_IS_INSTRUCTION (instruction) && success);
-
-    g_object_unref (tape);
-    g_object_unref (program);
-    g_object_unref (configuration);
 
     return success;
 }
@@ -706,7 +693,6 @@ cattle_interpreter_run (CattleInterpreter    *self,
         }
 
         g_object_unref (instruction);
-        g_object_unref (program);
     }
 
     return success;
