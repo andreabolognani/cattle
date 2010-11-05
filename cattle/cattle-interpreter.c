@@ -72,6 +72,8 @@ struct _CattleInterpreterPrivate
     CattleProgram         *program;
     CattleTape            *tape;
 
+    GSList                *stack; /* Instruction stack */
+
     gboolean               had_input;
     gchar                 *input;
     gchar                 *input_cursor;
@@ -128,6 +130,8 @@ cattle_interpreter_init (CattleInterpreter *self)
     self->priv->program = cattle_program_new ();
     self->priv->tape = cattle_tape_new ();
 
+    self->priv->stack = NULL;
+
     self->priv->had_input = FALSE;
     self->priv->input = NULL;
     self->priv->input_cursor = NULL;
@@ -170,21 +174,24 @@ cattle_interpreter_finalize (GObject *object)
 }
 
 static gboolean
-run_real (CattleInterpreter    *self,
-          CattleInstruction    *instruction,
-          GError              **error)
+run (CattleInterpreter    *self,
+     GError              **error)
 {
     CattleConfiguration *configuration;
     CattleProgram *program;
     CattleTape *tape;
+    CattleInstruction *instruction;
     CattleInstruction *loop;
+    GSList *stack;
     gboolean success;
     gchar temp = 0;
     glong i;
 
     configuration = cattle_interpreter_get_configuration (self);
     program = cattle_interpreter_get_program (self);
+    instruction = cattle_program_get_instructions (program);
     tape = cattle_interpreter_get_tape (self);
+    stack = self->priv->stack;
     success = TRUE;
 
     do {
@@ -197,30 +204,29 @@ run_real (CattleInterpreter    *self,
 
                 if (CATTLE_IS_INSTRUCTION (loop)) {
 
-                    while (cattle_tape_get_current_value (tape) != 0) {
-                        success = run_real (self,
-                                            loop,
-                                            error);
+                    /* Enter the loop only if the value stored in the
+                     * current cell is not zero */
+                    if (cattle_tape_get_current_value (tape) != 0) {
 
-                        /* Abort on the first error */
-                        if (success == FALSE) {
-                            g_assert (error == NULL || *error != NULL);
-                            g_object_unref (loop);
-                            g_object_unref (tape);
-                            g_object_unref (program);
-                            g_object_unref (configuration);
-                            return success;
-                        }
+                        /* Push the current instruction on the stack */
+                        stack = g_slist_prepend (stack, instruction);
+                        instruction = loop;
+
+                        continue;
                     }
-
-                    g_object_unref (loop);
                 }
                 break;
 
             case CATTLE_INSTRUCTION_LOOP_END:
 
-                return success;
-                break;
+                g_assert (stack != NULL);
+
+                /* Pop an instruction off the stack */
+                g_object_unref (instruction);
+                instruction = CATTLE_INSTRUCTION (stack->data);
+                stack = g_slist_delete_link (stack, stack);
+
+                continue;
 
             case CATTLE_INSTRUCTION_MOVE_LEFT:
 
@@ -685,6 +691,7 @@ cattle_interpreter_run (CattleInterpreter    *self,
 
         program = cattle_interpreter_get_program (self);
         instruction = cattle_program_get_instructions (program);
+        self->priv->stack = NULL;
 
         self->priv->input = cattle_program_get_input (program);
         if (self->priv->input != NULL) {
@@ -692,9 +699,7 @@ cattle_interpreter_run (CattleInterpreter    *self,
         }
         self->priv->input_cursor = self->priv->input;
 
-        success = run_real (self,
-                            instruction,
-                            error);
+        success = run (self, error);
 
         if (self->priv->had_input == TRUE) {
             g_free (self->priv->input);
