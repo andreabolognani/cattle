@@ -187,10 +187,10 @@ run (CattleInterpreter    *self,
     gchar temp = 0;
     glong i;
 
-    configuration = cattle_interpreter_get_configuration (self);
-    program = cattle_interpreter_get_program (self);
+    configuration = self->priv->configuration;
+    program = self->priv->program;
     instruction = cattle_program_get_instructions (program);
-    tape = cattle_interpreter_get_tape (self);
+    tape = self->priv->tape;
     stack = self->priv->stack;
     success = TRUE;
 
@@ -689,7 +689,7 @@ cattle_interpreter_run (CattleInterpreter    *self,
 
     if (G_LIKELY (!self->priv->disposed)) {
 
-        program = cattle_interpreter_get_program (self);
+        program = self->priv->program;
         instruction = cattle_program_get_instructions (program);
         self->priv->stack = NULL;
 
