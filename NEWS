@@ -1,3 +1,11 @@
+Overview of changes from Cattle 0.9.3 to 0.9.4
+==============================================
+
+    * CattleTape: add fast bulk increase/decrease/move operations.
+
+    * CattleInterpreter: use bulk operation for speed increase.
+
+
 Overview of changes from Cattle 0.9.2 to 0.9.3
 ==============================================
 

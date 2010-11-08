@@ -194,6 +194,80 @@ cattle_tape_get_current_value (CattleTape *self)
 }
 
 /**
+ * cattle_tape_increase_current_value:
+ * @tape: a #CattleTape
+ *
+ * Increase the value in the current cell by one.
+ *
+ * Since: 0.9.4
+ */
+void
+cattle_tape_increase_current_value (CattleTape *self)
+{
+	cattle_tape_increase_current_value_by (self, 1);
+}
+
+/**
+ * cattle_tape_increase_current_value_by:
+ * @tape: a #CattleTape
+ * @value: increase amount
+ *
+ * Increase the value in the current cell by @value.
+ *
+ * Increasing the value this way is much faster than calling
+ * cattle_tape_increase_current_value() multiple times.
+ *
+ * Since: 0.9.4
+ */
+void
+cattle_tape_increase_current_value_by (CattleTape   *self,
+                                       gint          value)
+{
+	gchar *chunk = NULL;
+
+	g_return_if_fail (CATTLE_IS_TAPE (self));
+
+	if (G_LIKELY (!self->priv->disposed)) {
+
+		chunk = (gchar *) self->priv->current->data;
+		chunk[self->priv->offset] += value;
+	}
+}
+
+/**
+ * cattle_tape_decrease_current_value:
+ * @tape: a #CattleTape
+ *
+ * Decrease the value in the current cell by one.
+ *
+ * Since: 0.9.4
+ */
+void
+cattle_tape_decrease_current_value (CattleTape *self)
+{
+	cattle_tape_decrease_current_value_by (self, 1);
+}
+
+/**
+ * cattle_tape_decrease_current_value_by:
+ * @tape: a #CattleTape
+ * @value: decrease amount
+ *
+ * Decrease the value in the current cell by @value.
+ *
+ * Decreasing the value this way is much faster than calling
+ * cattle_tape_decrease_current_value() multiple times.
+ *
+ * Since: 0.9.4
+ */
+void
+cattle_tape_decrease_current_value_by (CattleTape   *self,
+                                       gint          value)
+{
+	cattle_tape_increase_current_value_by (self, -value);
+}
+
+/**
  * cattle_tape_move_left:
  * @tape: a #CattleTape
  *
@@ -205,46 +279,59 @@ cattle_tape_get_current_value (CattleTape *self)
 void
 cattle_tape_move_left (CattleTape *self)
 {
-    gchar *chunk;
+	cattle_tape_move_left_by (self, 1);
+}
 
-    g_return_if_fail (CATTLE_IS_TAPE (self));
+/**
+ * cattle_tape_move_left_by:
+ * @tape: a #CattleTape
+ * @steps: number of steps
+ *
+ * Move the tape @steps cells to the left.
+ *
+ * Moving this way is much faster than calling cattle_tape_move_left()
+ * multiple times.
+ *
+ * Since: 0.9.4
+ */
+void
+cattle_tape_move_left_by (CattleTape   *self,
+                          gint          steps)
+{
+	gchar *chunk;
 
-    if (G_LIKELY (!self->priv->disposed)) {
+	g_return_if_fail (CATTLE_IS_TAPE (self));
 
-        /* We are at the beginning of the current chunk: we might need to
-         * create a new chunk, if the current one is the first one */
-        if (self->priv->offset == 0) {
+	if (G_LIKELY (!self->priv->disposed)) {
 
-            /* We are at the beginning of the tape */
-            if (g_list_previous (self->priv->current) == NULL) {
+		/* Move backwards until the correct chunk is found */
+		while (steps > self->priv->offset) {
 
-                chunk = (gchar *) g_slice_alloc0 (CHUNK_SIZE * sizeof (gchar));
-                self->priv->head = g_list_prepend (self->priv->head, chunk);
+			/* If there is no previous chunk, create it */
+			if (g_list_previous (self->priv->current) == NULL) {
 
-                /* Update the lower limit */
-                self->priv->lower_limit = CHUNK_SIZE - 1;
-            }
+				chunk = (gchar *) g_slice_alloc0 (CHUNK_SIZE * sizeof (gchar));
+				self->priv->head = g_list_prepend (self->priv->head, chunk);
+				self->priv->lower_limit = CHUNK_SIZE - 1;
+			}
 
-            /* Move to the previous chunk and update the offset */
-            self->priv->current = g_list_previous (self->priv->current);
-            self->priv->offset = CHUNK_SIZE - 1;
-        }
+			self->priv->current = g_list_previous (self->priv->current);
 
-        /* We are somewhere in the chunk */
-        else {
-            (self->priv->offset)--;
+			steps -= (self->priv->offset + 1);
+			self->priv->offset = CHUNK_SIZE - 1;
+		}
 
-            /* If we are in the first chunk, we might need to update the
-             * lower limit */
-            if (g_list_previous (self->priv->current) == NULL) {
+		self->priv->offset -= steps;
 
-                /* Update the lower limit */
-                if (self->priv->offset < self->priv->lower_limit) {
-                    self->priv->lower_limit = self->priv->offset;
-                }
-            }
-        }
-    }
+		/* If the current chunk is the first one, the lower limit
+		 * might need to be updated */
+		if (g_list_previous (self->priv->current) == NULL) {
+
+			if (self->priv->offset < self->priv->lower_limit) {
+				self->priv->lower_limit = self->priv->offset;
+			}
+		}
+	}
 }
 
 /**
@@ -259,47 +346,59 @@ cattle_tape_move_left (CattleTape *self)
 void
 cattle_tape_move_right (CattleTape *self)
 {
-    gchar *chunk;
+	cattle_tape_move_right_by (self, 1);
+}
 
-    g_return_if_fail (CATTLE_IS_TAPE (self));
+/**
+ * cattle_tape_move_right_by:
+ * @tape: a #CattleTape
+ * @steps: number of steps
+ *
+ * Move the tape @steps cells to the right.
+ *
+ * Moving this way is much faster than calling cattle_tape_move_right()
+ * multiple times.
+ *
+ * Since: 0.9.4
+ */
+void
+cattle_tape_move_right_by (CattleTape   *self,
+                           gint          steps)
+{
+	gchar *chunk;
+
+	g_return_if_fail (CATTLE_IS_TAPE (self));
 
     if (G_LIKELY (!self->priv->disposed)) {
 
-        /* We are at the end of the current chunk: we might need to create
-         * a new chunk, if the current one is the first one */
-        if (self->priv->offset == (CHUNK_SIZE - 1)) {
+		/* Move forward until the correct chunk is found */
+		while (self->priv->offset + steps >= CHUNK_SIZE ) {
 
-            /* We are at the end of the tape */
-            if (g_list_next (self->priv->current) == NULL) {
+			/* If there is no next chunk, create it */
+			if (g_list_next (self->priv->current) == NULL) {
 
-                chunk = (gchar *) g_slice_alloc0 (CHUNK_SIZE * sizeof (gchar));
-                self->priv->head = g_list_append (self->priv->head, chunk);
+				chunk = (gchar *) g_slice_alloc0 (CHUNK_SIZE * sizeof (gchar));
+				self->priv->head = g_list_append (self->priv->head, chunk);
+				self->priv->upper_limit = 0;
+			}
 
-                /* Update the upper limit */
-                self->priv->upper_limit = 0;
-            }
+			self->priv->current = g_list_next (self->priv->current);
 
-            /* Move to the next chunk and update the offset */
-            self->priv->current = g_list_next (self->priv->current);
-            self->priv->offset = 0;
-        }
+			steps -= (CHUNK_SIZE - self->priv->offset);
+			self->priv->offset = 0;
+		}
 
-        /* We are somewhere in the chunk */
-        else {
+		self->priv->offset += steps;
 
-            (self->priv->offset)++;
+		/* If the current chunk is the last one, the upper limit
+		 * might need to be updated */
+		if (g_list_next (self->priv->current) == NULL) {
 
-            /* If we are in the last chunk, we might need to update the
-             * upper limit */
-            if (g_list_next (self->priv->current) == NULL) {
-
-                /* Update the upper limit */
-                if (self->priv->offset > self->priv->upper_limit) {
-                    self->priv->upper_limit = self->priv->offset;
-                }
-            }
-        }
-    }
+			if (self->priv->offset > self->priv->upper_limit) {
+				self->priv->upper_limit = self->priv->offset;
+			}
+		}
+	}
 }
 
 /**

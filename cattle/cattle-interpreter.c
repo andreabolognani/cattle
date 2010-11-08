@@ -101,8 +101,7 @@ enum
 static gint signals[LAST_SIGNAL] = {0};
 
 /* Internal functions */
-static gboolean   run_real                     (CattleInterpreter        *interpreter,
-                                                CattleInstruction        *instruction,
+static gboolean   run                          (CattleInterpreter        *interpreter,
                                                 GError                  **error);
 static gboolean   single_handler_accumulator   (GSignalInvocationHint    *hint,
                                                 GValue                   *signal_retval,
@@ -230,25 +229,23 @@ run (CattleInterpreter    *self,
 
             case CATTLE_INSTRUCTION_MOVE_LEFT:
 
-                for (i = 0; i < cattle_instruction_get_quantity (instruction); i++) {
-                    cattle_tape_move_left (tape);
-                }
+                cattle_tape_move_left_by (tape,
+                                          cattle_instruction_get_quantity (instruction));
                 break;
 
             case CATTLE_INSTRUCTION_MOVE_RIGHT:
-                for (i = 0; i < cattle_instruction_get_quantity (instruction); i++) {
-                    cattle_tape_move_right (tape);
-                }
+                cattle_tape_move_right_by (tape,
+                                           cattle_instruction_get_quantity (instruction));
                 break;
 
             case CATTLE_INSTRUCTION_INCREASE:
-                cattle_tape_set_current_value (tape,
-                                               cattle_tape_get_current_value (tape) + cattle_instruction_get_quantity (instruction));
+                cattle_tape_increase_current_value_by (tape,
+                                                       cattle_instruction_get_quantity (instruction));
                 break;
 
             case CATTLE_INSTRUCTION_DECREASE:
-                cattle_tape_set_current_value (tape,
-                                               cattle_tape_get_current_value (tape) - cattle_instruction_get_quantity (instruction));
+                cattle_tape_decrease_current_value_by (tape,
+                                                       cattle_instruction_get_quantity (instruction));
                 break;
 
             case CATTLE_INSTRUCTION_READ:

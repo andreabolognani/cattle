@@ -52,18 +52,28 @@ struct _CattleTapeClass
     GObjectClass parent;
 };
 
-CattleTape*   cattle_tape_new                 (void);
-void          cattle_tape_set_current_value   (CattleTape   *tape,
-                                               gchar         value);
-gchar         cattle_tape_get_current_value   (CattleTape   *tape);
-void          cattle_tape_move_left           (CattleTape   *tape);
-void          cattle_tape_move_right          (CattleTape   *tape);
-gboolean      cattle_tape_is_at_beginning     (CattleTape   *tape);
-gboolean      cattle_tape_is_at_end           (CattleTape   *tape);
-void          cattle_tape_push_bookmark       (CattleTape   *tape);
-gboolean      cattle_tape_pop_bookmark        (CattleTape   *tape);
+CattleTape*   cattle_tape_new                       (void);
+void          cattle_tape_set_current_value         (CattleTape   *tape,
+                                                     gchar         value);
+gchar         cattle_tape_get_current_value         (CattleTape   *tape);
+void          cattle_tape_increase_current_value    (CattleTape   *tape);
+void          cattle_tape_increase_current_value_by (CattleTape   *tape,
+                                                     gint          value);
+void          cattle_tape_decrease_current_value    (CattleTape   *tape);
+void          cattle_tape_decrease_current_value_by (CattleTape   *tape,
+                                                     gint          value);
+void          cattle_tape_move_left                 (CattleTape   *tape);
+void          cattle_tape_move_left_by              (CattleTape   *tape,
+                                                     gint          steps);
+void          cattle_tape_move_right                (CattleTape   *tape);
+void          cattle_tape_move_right_by             (CattleTape   *tape,
+                                                     gint          steps);
+gboolean      cattle_tape_is_at_beginning           (CattleTape   *tape);
+gboolean      cattle_tape_is_at_end                 (CattleTape   *tape);
+void          cattle_tape_push_bookmark             (CattleTape   *tape);
+gboolean      cattle_tape_pop_bookmark              (CattleTape   *tape);
 
-GType         cattle_tape_get_type            (void) G_GNUC_CONST;
+GType         cattle_tape_get_type                  (void) G_GNUC_CONST;
 
 G_END_DECLS
 
