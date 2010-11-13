@@ -33,8 +33,8 @@ references_tests_LDADD = ${top_builddir}/cattle/libcattle.la
 GTESTER = gtester
 
 test:
-	${GTESTER} --version 2>/dev/null 1>&2 ; \
-	test "$$?" != 0 || ${GTESTER} --verbose *-tests
+	@${GTESTER} --version 2>/dev/null 1>&2 ; \
+	test "$$?" != 0 || ${GTESTER} --verbose ${noinst_PROGRAMS}
 
 .PHONY: test
 check-local: test
