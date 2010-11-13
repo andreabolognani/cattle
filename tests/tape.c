@@ -1,4 +1,4 @@
-/* tape-tests -- Check the tape reports the correct size limits
+/* tape -- Check the tape reports the correct size limits
  * Copyright (C) 2008-2010  Andrea Bolognani <eof@kiyuko.org>
  * This file is part of Cattle
  *

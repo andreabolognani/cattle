@@ -1,4 +1,4 @@
-tape-tests
-program-tests
-interpreter-tests
-references-tests
+tape
+program
+interpreter
+references

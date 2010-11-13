@@ -1,4 +1,4 @@
-/* interpreter-tests -- Tests for the interpreter implementation
+/* interpreter -- Tests for the interpreter implementation
  * Copyright (C) 2009-2010  Andrea Bolognani <eof@kiyuko.org>
  * This file is part of Cattle
  *
