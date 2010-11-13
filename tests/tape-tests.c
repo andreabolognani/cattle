@@ -23,7 +23,7 @@
 #include <glib-object.h>
 #include <cattle/cattle.h>
 
-#define STEPS 5
+#define STEPS 1024
 
 static void
 tape_create (CattleTape      **tape,
