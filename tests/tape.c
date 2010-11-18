@@ -122,6 +122,124 @@ test_tape_in_between (CattleTape      **tape,
     }
 }
 
+/**
+ * test_tape_move_right_by:
+ *
+ * Move the tape a bunch of cells to the right in a single step,
+ * then move left the same amount of cells one at a time.
+ */
+static void
+test_tape_move_right_by (CattleTape    **tape,
+                         gconstpointer   data)
+{
+	gint i;
+	gint j;
+
+	for (i = 1; i <= 5; i++) {
+
+		cattle_tape_set_current_value (*tape, i);
+		cattle_tape_move_right_by (*tape, STEPS);
+	}
+
+	for (i = 5; i >= 1; i--) {
+		for (j = 0; j < STEPS; j++) {
+
+			cattle_tape_move_left (*tape);
+		}
+		g_assert (cattle_tape_get_current_value (*tape) == i);
+	}
+}
+
+/**
+ * test_tape_move_left_by:
+ *
+ * Move the tape a bunch of cells to the left in a single step,
+ * then move right the same amount of cells one at a time.
+ */
+static void
+test_tape_move_left_by (CattleTape    **tape,
+                        gconstpointer   data)
+{
+	gint i;
+	gint j;
+
+	for (i = 1; i <= 5; i++) {
+
+		cattle_tape_set_current_value (*tape, i);
+		cattle_tape_move_left_by (*tape, STEPS);
+	}
+
+	for (i = 5; i >= 1; i--) {
+		for (j = 0; j < STEPS; j++) {
+
+			cattle_tape_move_right (*tape);
+		}
+		g_assert (cattle_tape_get_current_value (*tape) == i);
+	}
+}
+
+/**
+ * test_tape_current_value:
+ *
+ * Set and get the current value several times.
+ */
+static void
+test_tape_current_value (CattleTape    **tape,
+                         gconstpointer   data)
+{
+	gint i;
+
+	for (i = 0; i < 128; i++) {
+
+		g_assert (cattle_tape_get_current_value (*tape) == i);
+		cattle_tape_set_current_value (*tape, i + 1);
+	}
+}
+
+/**
+ * test_tape_increase_current_value:
+ *
+ * Increase the current value several times and then decrease it by
+ * the number of increase steps taken before.
+ */
+static void
+test_tape_increase_current_value (CattleTape    **tape,
+                                  gconstpointer   data)
+{
+	gint i;
+
+	for (i = 0; i < 128; i++) {
+
+		g_assert (cattle_tape_get_current_value (*tape) == i);
+		cattle_tape_increase_current_value (*tape);
+	}
+
+	cattle_tape_decrease_current_value_by (*tape, 128);
+	g_assert (cattle_tape_get_current_value (*tape) == 0);
+}
+
+/**
+ * test_tape_decrease_current_value:
+ *
+ * Decrease the current value several times and then increase it by
+ * the number of decrease steps taken before.
+ */
+static void
+test_tape_decrease_current_value (CattleTape    **tape,
+                                  gconstpointer   data)
+{
+	gint i;
+
+	cattle_tape_increase_current_value_by (*tape, 127);
+	g_assert (cattle_tape_get_current_value (*tape) == 127);
+
+	for (i = 127; i >= 0; i--) {
+
+		g_assert (cattle_tape_get_current_value (*tape) == i);
+		cattle_tape_decrease_current_value (*tape);
+	}
+}
+
 gint
 main (gint argc, gchar **argv)
 {
@@ -155,6 +273,41 @@ main (gint argc, gchar **argv)
                 tape_create,
                 test_tape_in_between,
                 tape_destroy);
+
+	g_test_add ("/tape/move-right-by",
+	            CattleTape*,
+	            NULL,
+	            tape_create,
+	            test_tape_move_right_by,
+	            tape_destroy);
+
+	g_test_add ("/tape/move-left-by",
+	            CattleTape*,
+	            NULL,
+	            tape_create,
+	            test_tape_move_left_by,
+	            tape_destroy);
+
+	g_test_add ("/tape/current-value",
+	            CattleTape*,
+	            NULL,
+	            tape_create,
+	            test_tape_current_value,
+	            tape_destroy);
+
+	g_test_add ("/tape/increase-current-value",
+	            CattleTape*,
+	            NULL,
+	            tape_create,
+	            test_tape_increase_current_value,
+	            tape_destroy);
+
+	g_test_add ("/tape/decrease-current-value",
+	            CattleTape*,
+	            NULL,
+	            tape_create,
+	            test_tape_decrease_current_value,
+	            tape_destroy);
 
     return g_test_run ();
 }
