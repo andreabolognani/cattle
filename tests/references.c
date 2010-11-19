@@ -32,46 +32,46 @@
 static void
 test_references_program_owns_instructions (void)
 {
-    CattleProgram *program;
-    CattleInstruction *instructions;
+	CattleProgram *program;
+	CattleInstruction *instructions;
 
-    program = cattle_program_new ();
-    cattle_program_load_from_string (program, "++[-]", NULL);
+	program = cattle_program_new ();
+	cattle_program_load_from_string (program, "++[-]", NULL);
 
-    instructions = cattle_program_get_instructions (program);
+	instructions = cattle_program_get_instructions (program);
 
-    g_assert (G_IS_OBJECT (instructions));
+	g_assert (G_IS_OBJECT (instructions));
 
-    g_object_unref (program);
+	g_object_unref (program);
 
-    g_assert (G_IS_OBJECT (instructions));
+	g_assert (G_IS_OBJECT (instructions));
 
-    g_object_unref (instructions);
+	g_object_unref (instructions);
 
-    g_assert (!G_IS_OBJECT (instructions));
+	g_assert (!G_IS_OBJECT (instructions));
 }
 
 static void
 check_refcount (CattleInstruction *instruction)
 {
-    CattleInstruction *next;
+	CattleInstruction *next;
 
-    while (CATTLE_IS_INSTRUCTION (instruction)) {
+	while (CATTLE_IS_INSTRUCTION (instruction)) {
 
-        g_assert (!(G_OBJECT (instruction)->ref_count < 2));
-        g_assert (!(G_OBJECT (instruction)->ref_count > 2));
+		g_assert (!(G_OBJECT (instruction)->ref_count < 2));
+		g_assert (!(G_OBJECT (instruction)->ref_count > 2));
 
-        if (cattle_instruction_get_value (instruction) == CATTLE_INSTRUCTION_LOOP_BEGIN) {
+		if (cattle_instruction_get_value (instruction) == CATTLE_INSTRUCTION_LOOP_BEGIN) {
 
-            next = cattle_instruction_get_loop (instruction);
-            check_refcount (next);
-            g_object_unref (next);
-        }
+			next = cattle_instruction_get_loop (instruction);
+			check_refcount (next);
+			g_object_unref (next);
+		}
 
-        next = cattle_instruction_get_next (instruction);
-        g_object_unref (instruction);
-        instruction = next;
-    }
+		next = cattle_instruction_get_next (instruction);
+		g_object_unref (instruction);
+		instruction = next;
+	}
 }
 
 /**
@@ -84,31 +84,31 @@ check_refcount (CattleInstruction *instruction)
 static void
 test_references_single_reference (void)
 {
-    CattleProgram *program;
-    CattleInstruction *instruction;
+	CattleProgram *program;
+	CattleInstruction *instruction;
 
-    program = cattle_program_new ();
+	program = cattle_program_new ();
 
-    if (!cattle_program_load_from_string (program, "++[-]", NULL)) {
-        g_object_unref (program);
-        g_assert_not_reached ();
-    }
+	if (!cattle_program_load_from_string (program, "++[-]", NULL)) {
+		g_object_unref (program);
+		g_assert_not_reached ();
+	}
 
-    instruction = cattle_program_get_instructions (program);
-    check_refcount (instruction);
+	instruction = cattle_program_get_instructions (program);
+	check_refcount (instruction);
 }
 
 
 gint
 main (gint argc, gchar **argv)
 {
-    g_type_init ();
-    g_test_init (&argc, &argv, NULL);
+	g_type_init ();
+	g_test_init (&argc, &argv, NULL);
 
-    g_test_add_func ("/references/program-owns-instructions",
-                     test_references_program_owns_instructions);
-    g_test_add_func ("/references/single-reference",
-                     test_references_single_reference);
+	g_test_add_func ("/references/program-owns-instructions",
+	                 test_references_program_owns_instructions);
+	g_test_add_func ("/references/single-reference",
+	                 test_references_single_reference);
 
-    return g_test_run ();
+	return g_test_run ();
 }

@@ -26,47 +26,47 @@
 gint
 main (gint argc, gchar **argv)
 {
-    CattleInterpreter *interpreter;
-    CattleProgram *program;
-    GError *error = NULL;
+	CattleInterpreter *interpreter;
+	CattleProgram *program;
+	GError *error = NULL;
 
-    g_type_init ();
-    g_set_prgname ("interpreter");
+	g_type_init ();
+	g_set_prgname ("interpreter");
 
-    if (argc != 2) {
-        g_warning ("Usage: %s FILENAME", argv[0]);
-        return 1;
-    }
+	if (argc != 2) {
+		g_warning ("Usage: %s FILENAME", argv[0]);
+		return 1;
+	}
 
-    /* Create a new interpreter */
-    interpreter = cattle_interpreter_new ();
+	/* Create a new interpreter */
+	interpreter = cattle_interpreter_new ();
 
-    program = cattle_interpreter_get_program (interpreter);
+	program = cattle_interpreter_get_program (interpreter);
 
-    /* Load the program, aborting on failure */
-    if (!cattle_program_load_from_file (program, argv[1], &error)) {
+	/* Load the program, aborting on failure */
+	if (!cattle_program_load_from_file (program, argv[1], &error)) {
 
-        g_warning ("Load error: %s", error->message);
+		g_warning ("Load error: %s", error->message);
 
-        g_error_free (error);
-        g_object_unref (program);
-        g_object_unref (interpreter);
+		g_error_free (error);
+		g_object_unref (program);
+		g_object_unref (interpreter);
 
-        return 1;
-    }
-    g_object_unref (program);
+		return 1;
+	}
+	g_object_unref (program);
 
-    /* Start the execution */
-    if (!cattle_interpreter_run (interpreter, &error)) {
+	/* Start the execution */
+	if (!cattle_interpreter_run (interpreter, &error)) {
 
-        g_warning ("Runtime error: %s", error->message);
+		g_warning ("Runtime error: %s", error->message);
 
-        g_error_free (error);
-        g_object_unref (interpreter);
+		g_error_free (error);
+		g_object_unref (interpreter);
 
-        return 1;
-    }
-    g_object_unref (interpreter);
+		return 1;
+	}
+	g_object_unref (interpreter);
 
-    return 0;
+	return 0;
 }

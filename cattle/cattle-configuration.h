@@ -39,35 +39,35 @@ G_BEGIN_DECLS
 
 typedef enum
 {
-    CATTLE_ON_EOF_STORE_ZERO,
-    CATTLE_ON_EOF_STORE_EOF,
-    CATTLE_ON_EOF_DO_NOTHING
+	CATTLE_ON_EOF_STORE_ZERO,
+	CATTLE_ON_EOF_STORE_EOF,
+	CATTLE_ON_EOF_DO_NOTHING
 } CattleOnEOFAction;
 
-typedef struct _CattleConfiguration          CattleConfiguration;
-typedef struct _CattleConfigurationClass     CattleConfigurationClass;
-typedef struct _CattleConfigurationPrivate   CattleConfigurationPrivate;
+typedef struct _CattleConfiguration        CattleConfiguration;
+typedef struct _CattleConfigurationClass   CattleConfigurationClass;
+typedef struct _CattleConfigurationPrivate CattleConfigurationPrivate;
 
 struct _CattleConfiguration
 {
-    GObject parent;
-    CattleConfigurationPrivate *priv;
+	GObject parent;
+	CattleConfigurationPrivate *priv;
 };
 
 struct _CattleConfigurationClass
 {
-    GObjectClass parent;
+	GObjectClass parent;
 };
 
-CattleConfiguration*   cattle_configuration_new                    (void);
-void                   cattle_configuration_set_on_eof_action      (CattleConfiguration   *configuration,
-                                                                    CattleOnEOFAction      action);
-CattleOnEOFAction      cattle_configuration_get_on_eof_action      (CattleConfiguration   *configuration);
-void                   cattle_configuration_set_debug_is_enabled   (CattleConfiguration   *configuration,
-                                                                    gboolean             enabled);
-gboolean               cattle_configuration_get_debug_is_enabled   (CattleConfiguration   *configuration);
+CattleConfiguration* cattle_configuration_new                  (void);
+void                 cattle_configuration_set_on_eof_action    (CattleConfiguration *configuration,
+                                                                CattleOnEOFAction    action);
+CattleOnEOFAction    cattle_configuration_get_on_eof_action    (CattleConfiguration *configuration);
+void                 cattle_configuration_set_debug_is_enabled (CattleConfiguration *configuration,
+                                                                gboolean             enabled);
+gboolean             cattle_configuration_get_debug_is_enabled (CattleConfiguration *configuration);
 
-GType                  cattle_configuration_get_type               (void) G_GNUC_CONST;
+GType                cattle_configuration_get_type             (void) G_GNUC_CONST;
 
 G_END_DECLS
 

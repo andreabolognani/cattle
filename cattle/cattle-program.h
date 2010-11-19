@@ -31,52 +31,52 @@
 
 G_BEGIN_DECLS
 
-#define CATTLE_TYPE_PROGRAM                (cattle_program_get_type ())
-#define CATTLE_PROGRAM(object)             (G_TYPE_CHECK_INSTANCE_CAST ((object), CATTLE_TYPE_PROGRAM, CattleProgram))
-#define CATTLE_PROGRAM_CLASS(klass)        (G_TYPE_CHECK_CLASS_CAST ((klass), CATTLE_TYPE_PROGRAM, CattleProgramClass))
-#define CATTLE_IS_PROGRAM(object)          (G_TYPE_CHECK_INSTANCE_TYPE ((object), CATTLE_TYPE_PROGRAM))
-#define CATTLE_IS_PROGRAM_CLASS(klass)     (G_TYPE_CHECK_CLASS_TYPE ((klass), CATTLE_TYPE_PROGRAM))
-#define CATTLE_PROGRAM_GET_CLASS(object)   (G_TYPE_INSTANCE_GET_CLASS ((object), CATTLE_TYPE_PROGRAM, CattleProgramClass))
+#define CATTLE_TYPE_PROGRAM              (cattle_program_get_type ())
+#define CATTLE_PROGRAM(object)           (G_TYPE_CHECK_INSTANCE_CAST ((object), CATTLE_TYPE_PROGRAM, CattleProgram))
+#define CATTLE_PROGRAM_CLASS(klass)      (G_TYPE_CHECK_CLASS_CAST ((klass), CATTLE_TYPE_PROGRAM, CattleProgramClass))
+#define CATTLE_IS_PROGRAM(object)        (G_TYPE_CHECK_INSTANCE_TYPE ((object), CATTLE_TYPE_PROGRAM))
+#define CATTLE_IS_PROGRAM_CLASS(klass)   (G_TYPE_CHECK_CLASS_TYPE ((klass), CATTLE_TYPE_PROGRAM))
+#define CATTLE_PROGRAM_GET_CLASS(object) (G_TYPE_INSTANCE_GET_CLASS ((object), CATTLE_TYPE_PROGRAM, CattleProgramClass))
 
 typedef enum
 {
-    CATTLE_PROGRAM_ERROR_BAD_UTF8,
-    CATTLE_PROGRAM_ERROR_UNBALANCED_BRACKETS
+	CATTLE_PROGRAM_ERROR_BAD_UTF8,
+	CATTLE_PROGRAM_ERROR_UNBALANCED_BRACKETS
 } CattleProgramError;
 
 #define CATTLE_PROGRAM_ERROR cattle_program_error_quark ()
 
-typedef struct _CattleProgram          CattleProgram;
-typedef struct _CattleProgramClass     CattleProgramClass;
-typedef struct _CattleProgramPrivate   CattleProgramPrivate;
+typedef struct _CattleProgram        CattleProgram;
+typedef struct _CattleProgramClass   CattleProgramClass;
+typedef struct _CattleProgramPrivate CattleProgramPrivate;
 
 struct _CattleProgram
 {
-    GObject parent;
-    CattleProgramPrivate *priv;
+	GObject parent;
+	CattleProgramPrivate *priv;
 };
 
 struct _CattleProgramClass
 {
-    GObjectClass parent;
+	GObjectClass parent;
 };
 
-CattleProgram*       cattle_program_new                (void);
-gboolean             cattle_program_load_from_string   (CattleProgram        *program,
-                                                        const gchar          *string,
-                                                        GError              **error);
-gboolean             cattle_program_load_from_file     (CattleProgram        *program,
-                                                        const gchar          *filename,
-                                                        GError              **error);
-void                 cattle_program_set_instructions   (CattleProgram        *program,
-                                                        CattleInstruction    *instructions);
-CattleInstruction*   cattle_program_get_instructions   (CattleProgram        *program);
-void                 cattle_program_set_input          (CattleProgram        *program,
-                                                        const gchar          *input);
-gchar*               cattle_program_get_input          (CattleProgram        *program);
+CattleProgram*     cattle_program_new              (void);
+gboolean           cattle_program_load_from_string (CattleProgram      *program,
+                                                    const gchar        *string,
+                                                    GError            **error);
+gboolean           cattle_program_load_from_file   (CattleProgram      *program,
+                                                    const gchar        *filename,
+                                                    GError            **error);
+void               cattle_program_set_instructions (CattleProgram      *program,
+                                                    CattleInstruction  *instructions);
+CattleInstruction* cattle_program_get_instructions (CattleProgram      *program);
+void               cattle_program_set_input        (CattleProgram      *program,
+                                                    const gchar        *input);
+gchar*             cattle_program_get_input        (CattleProgram      *program);
 
-GQuark               cattle_program_error_quark        (void) G_GNUC_CONST;
-GType                cattle_program_get_type           (void) G_GNUC_CONST;
+GQuark             cattle_program_error_quark      (void) G_GNUC_CONST;
+GType              cattle_program_get_type         (void) G_GNUC_CONST;
 
 G_END_DECLS
 

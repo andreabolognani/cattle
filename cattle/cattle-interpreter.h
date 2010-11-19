@@ -32,51 +32,50 @@
 
 G_BEGIN_DECLS
 
-#define CATTLE_TYPE_INTERPRETER                (cattle_interpreter_get_type ())
-#define CATTLE_INTERPRETER(object)             (G_TYPE_CHECK_INSTANCE_CAST ((object), CATTLE_TYPE_INTERPRETER, CattleInterpreter))
-#define CATTLE_INTERPRETER_CLASS(klass)        (G_TYPE_CHECK_CLASS_CAST ((klass), CATTLE_TYPE_INTERPRETER, CattleInterpreterClass))
-#define CATTLE_IS_INTERPRETER(object)          (G_TYPE_CHECK_INSTANCE_TYPE ((object), CATTLE_TYPE_INTERPRETER))
-#define CATTLE_IS_INTERPRETER_CLASS(klass)     (G_TYPE_CHECK_CLASS_TYPE ((klass), CATTLE_TYPE_INTERPRETER))
-#define CATTLE_INTERPRETER_GET_CLASS(object)   (G_TYPE_INSTANCE_GET_CLASS ((object), CATTLE_TYPE_INTERPRETER, CattleInterpreterClass))
+#define CATTLE_TYPE_INTERPRETER              (cattle_interpreter_get_type ())
+#define CATTLE_INTERPRETER(object)           (G_TYPE_CHECK_INSTANCE_CAST ((object), CATTLE_TYPE_INTERPRETER, CattleInterpreter))
+#define CATTLE_INTERPRETER_CLASS(klass)      (G_TYPE_CHECK_CLASS_CAST ((klass), CATTLE_TYPE_INTERPRETER, CattleInterpreterClass))
+#define CATTLE_IS_INTERPRETER(object)        (G_TYPE_CHECK_INSTANCE_TYPE ((object), CATTLE_TYPE_INTERPRETER))
+#define CATTLE_IS_INTERPRETER_CLASS(klass)   (G_TYPE_CHECK_CLASS_TYPE ((klass), CATTLE_TYPE_INTERPRETER))
+#define CATTLE_INTERPRETER_GET_CLASS(object) (G_TYPE_INSTANCE_GET_CLASS ((object), CATTLE_TYPE_INTERPRETER, CattleInterpreterClass))
 
 typedef enum
 {
-    CATTLE_INTERPRETER_ERROR_IO
+	CATTLE_INTERPRETER_ERROR_IO
 } CattleInterpreterError;
 
 #define CATTLE_INTERPRETER_ERROR (cattle_interpreter_error_quark ())
 
-typedef struct _CattleInterpreter          CattleInterpreter;
-typedef struct _CattleInterpreterClass     CattleInterpreterClass;
-typedef struct _CattleInterpreterPrivate   CattleInterpreterPrivate;
+typedef struct _CattleInterpreter        CattleInterpreter;
+typedef struct _CattleInterpreterClass   CattleInterpreterClass;
+typedef struct _CattleInterpreterPrivate CattleInterpreterPrivate;
 
 struct _CattleInterpreter
 {
-    GObject parent;
-
-    CattleInterpreterPrivate *priv;
+	GObject parent;
+	CattleInterpreterPrivate *priv;
 };
 
 struct _CattleInterpreterClass
 {
-    GObjectClass parent;
+	GObjectClass parent;
 };
 
-CattleInterpreter*     cattle_interpreter_new                 (void);
-gboolean               cattle_interpreter_run                 (CattleInterpreter      *interpreter,
-                                                               GError                **error);
-void                   cattle_interpreter_set_configuration   (CattleInterpreter      *interpreter,
-                                                               CattleConfiguration    *configuration);
-CattleConfiguration*   cattle_interpreter_get_configuration   (CattleInterpreter      *interpreter);
-void                   cattle_interpreter_set_program         (CattleInterpreter      *interpreter,
-                                                               CattleProgram          *program);
-CattleProgram*         cattle_interpreter_get_program         (CattleInterpreter      *interpreter);
-void                   cattle_interpreter_set_tape            (CattleInterpreter      *interpreter,
-                                                               CattleTape             *tape);
-CattleTape*            cattle_interpreter_get_tape            (CattleInterpreter      *interpreter);
+CattleInterpreter*   cattle_interpreter_new               (void);
+gboolean             cattle_interpreter_run               (CattleInterpreter    *interpreter,
+                                                           GError              **error);
+void                 cattle_interpreter_set_configuration (CattleInterpreter    *interpreter,
+                                                           CattleConfiguration  *configuration);
+CattleConfiguration* cattle_interpreter_get_configuration (CattleInterpreter    *interpreter);
+void                 cattle_interpreter_set_program       (CattleInterpreter    *interpreter,
+                                                           CattleProgram        *program);
+CattleProgram*       cattle_interpreter_get_program       (CattleInterpreter    *interpreter);
+void                 cattle_interpreter_set_tape          (CattleInterpreter    *interpreter,
+                                                           CattleTape           *tape);
+CattleTape*          cattle_interpreter_get_tape          (CattleInterpreter    *interpreter);
 
-GQuark                 cattle_interpreter_error_quark         (void) G_GNUC_CONST;
-GType                  cattle_interpreter_get_type            (void) G_GNUC_CONST;
+GQuark               cattle_interpreter_error_quark       (void) G_GNUC_CONST;
+GType                cattle_interpreter_get_type          (void) G_GNUC_CONST;
 
 G_END_DECLS
 

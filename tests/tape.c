@@ -26,17 +26,17 @@
 #define STEPS 1024
 
 static void
-tape_create (CattleTape      **tape,
-             gconstpointer     data)
+tape_create (CattleTape    **tape,
+             gconstpointer   data)
 {
-    *tape = cattle_tape_new ();
+	*tape = cattle_tape_new ();
 }
 
 static void
-tape_destroy (CattleTape      **tape,
-              gconstpointer     data)
+tape_destroy (CattleTape    **tape,
+              gconstpointer   data)
 {
-    g_object_unref (*tape);
+	g_object_unref (*tape);
 }
 
 /**
@@ -47,79 +47,79 @@ tape_destroy (CattleTape      **tape,
  * beginning and at the end.
  */
 static void
-test_tape_initial_position (CattleTape      **tape,
-                            gconstpointer     data)
+test_tape_initial_position (CattleTape    **tape,
+                            gconstpointer   data)
 {
-    g_assert (cattle_tape_is_at_beginning (*tape));
-    g_assert (cattle_tape_is_at_end (*tape));
+	g_assert (cattle_tape_is_at_beginning (*tape));
+	g_assert (cattle_tape_is_at_end (*tape));
 }
 
 /**
-  * test_tape_right_edge:
-  *
-  * Starting from the initial position and moving only to the right, the
-  * current position must always be at the end and never at the beginning.
-  */
+ * test_tape_right_edge:
+ *
+ * Starting from the initial position and moving only to the right, the
+ * current position must always be at the end and never at the beginning.
+ */
 static void
-test_tape_right_edge (CattleTape      **tape,
-                      gconstpointer     data)
+test_tape_right_edge (CattleTape    **tape,
+                      gconstpointer   data)
 {
-    gint i;
+	gint i;
 
-    for (i = 0; i < STEPS; i++) {
+	for (i = 0; i < STEPS; i++) {
 
-        cattle_tape_move_right (*tape);
+		cattle_tape_move_right (*tape);
 
-        g_assert (!cattle_tape_is_at_beginning (*tape));
-        g_assert (cattle_tape_is_at_end (*tape));
-    }
+		g_assert (!cattle_tape_is_at_beginning (*tape));
+		g_assert (cattle_tape_is_at_end (*tape));
+	}
 }
 
 /**
-  * test_tape_left_edge:
-  *
-  * Starting from the initial position and moving only to the left, the
-  * current position must always be at the beginning and never at the end.
-  */
+ * test_tape_left_edge:
+ *
+ * Starting from the initial position and moving only to the left, the
+ * current position must always be at the beginning and never at the end.
+ */
 static void
-test_tape_left_edge (CattleTape      **tape,
-                     gconstpointer     data)
+test_tape_left_edge (CattleTape    **tape,
+                     gconstpointer   data)
 {
-    gint i;
+	gint i;
 
-    for (i = 0; i < STEPS; i++) {
+	for (i = 0; i < STEPS; i++) {
 
-        cattle_tape_move_left (*tape);
+		cattle_tape_move_left (*tape);
 
-        g_assert (cattle_tape_is_at_beginning (*tape));
-        g_assert (!cattle_tape_is_at_end (*tape));
-    }
+		g_assert (cattle_tape_is_at_beginning (*tape));
+		g_assert (!cattle_tape_is_at_end (*tape));
+	}
 }
 
 /**
-  * test_tape_in_between:
-  *
-  * If the curren position is somewhere in between the tape, it should not
-  * be reported to be at the beginning or at the end.
-  */
+ * test_tape_in_between:
+ *
+ * If the curren position is somewhere in between the tape, it should not
+ * be reported to be at the beginning or at the end.
+ */
 static void
-test_tape_in_between (CattleTape      **tape,
-                      gconstpointer     data)
+test_tape_in_between (CattleTape    **tape,
+                      gconstpointer   data)
 {
-    gint i;
+	gint i;
 
-    for (i = 0; i < STEPS; i++) {
+	for (i = 0; i < STEPS; i++) {
 
-        cattle_tape_move_left (*tape);
-    }
+		cattle_tape_move_left (*tape);
+	}
 
-    for (i = 0; i < (STEPS - 1); i++) {
+	for (i = 0; i < (STEPS - 1); i++) {
 
-        cattle_tape_move_right (*tape);
+		cattle_tape_move_right (*tape);
 
-        g_assert (!cattle_tape_is_at_beginning (*tape));
-        g_assert (!cattle_tape_is_at_end (*tape));
-    }
+		g_assert (!cattle_tape_is_at_beginning (*tape));
+		g_assert (!cattle_tape_is_at_end (*tape));
+	}
 }
 
 /**
@@ -187,7 +187,7 @@ static void
 test_tape_current_value (CattleTape    **tape,
                          gconstpointer   data)
 {
-	gint i;
+gint i;
 
 	for (i = 0; i < 128; i++) {
 
@@ -243,65 +243,57 @@ test_tape_decrease_current_value (CattleTape    **tape,
 gint
 main (gint argc, gchar **argv)
 {
-    g_type_init ();
-    g_test_init (&argc, &argv, NULL);
+	g_type_init ();
+	g_test_init (&argc, &argv, NULL);
 
-    g_test_add ("/tape/initial-position",
-                CattleTape*,
-                NULL,
-                tape_create,
-                test_tape_initial_position,
-                tape_destroy);
-
-    g_test_add ("/tape/right-edge",
-                CattleTape*,
-                NULL,
-                tape_create,
-                test_tape_right_edge,
-                tape_destroy);
-
-    g_test_add ("/tape/left-edge",
-                CattleTape*,
-                NULL,
-                tape_create,
-                test_tape_left_edge,
-                tape_destroy);
-
-    g_test_add ("/tape/in-between",
-                CattleTape*,
-                NULL,
-                tape_create,
-                test_tape_in_between,
-                tape_destroy);
-
+	g_test_add ("/tape/initial-position",
+	            CattleTape*,
+	            NULL,
+	            tape_create,
+	            test_tape_initial_position,
+	            tape_destroy);
+	g_test_add ("/tape/right-edge",
+	            CattleTape*,
+	            NULL,
+	            tape_create,
+	            test_tape_right_edge,
+	            tape_destroy);
+	g_test_add ("/tape/left-edge",
+	            CattleTape*,
+	            NULL,
+	            tape_create,
+	            test_tape_left_edge,
+	            tape_destroy);
+	g_test_add ("/tape/in-between",
+	            CattleTape*,
+	            NULL,
+	            tape_create,
+	            test_tape_in_between,
+	            tape_destroy);
 	g_test_add ("/tape/move-right-by",
 	            CattleTape*,
 	            NULL,
 	            tape_create,
 	            test_tape_move_right_by,
 	            tape_destroy);
-
 	g_test_add ("/tape/move-left-by",
 	            CattleTape*,
 	            NULL,
 	            tape_create,
 	            test_tape_move_left_by,
 	            tape_destroy);
-
 	g_test_add ("/tape/current-value",
 	            CattleTape*,
 	            NULL,
 	            tape_create,
 	            test_tape_current_value,
 	            tape_destroy);
-
 	g_test_add ("/tape/increase-current-value",
 	            CattleTape*,
 	            NULL,
 	            tape_create,
 	            test_tape_increase_current_value,
 	            tape_destroy);
-
 	g_test_add ("/tape/decrease-current-value",
 	            CattleTape*,
 	            NULL,
@@ -309,5 +301,5 @@ main (gint argc, gchar **argv)
 	            test_tape_decrease_current_value,
 	            tape_destroy);
 
-    return g_test_run ();
+	return g_test_run ();
 }

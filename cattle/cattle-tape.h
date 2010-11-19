@@ -30,50 +30,50 @@
 
 G_BEGIN_DECLS
 
-#define CATTLE_TYPE_TAPE                (cattle_tape_get_type ())
-#define CATTLE_TAPE(object)             (G_TYPE_CHECK_INSTANCE_CAST ((object), CATTLE_TYPE_TAPE, CattleTape))
-#define CATTLE_TAPE_CLASS(klass)        (G_TYPE_CHECK_CLASS_CAST ((klass), CATTLE_TYPE_TAPE, CattleTapeClass))
-#define CATTLE_IS_TAPE(object)          (G_TYPE_CHECK_INSTANCE_TYPE ((object), CATTLE_TYPE_TAPE))
-#define CATTLE_IS_TAPE_CLASS(klass)     (G_TYPE_CHECK_CLASS_TYPE ((klass), CATTLE_TYPE_TAPE))
-#define CATTLE_TAPE_GET_CLASS(object)   (G_TYPE_INSTANCE_GET_CLASS ((object), CATTLE_TYPE_TAPE, CattleTapeClass))
+#define CATTLE_TYPE_TAPE              (cattle_tape_get_type ())
+#define CATTLE_TAPE(object)           (G_TYPE_CHECK_INSTANCE_CAST ((object), CATTLE_TYPE_TAPE, CattleTape))
+#define CATTLE_TAPE_CLASS(klass)      (G_TYPE_CHECK_CLASS_CAST ((klass), CATTLE_TYPE_TAPE, CattleTapeClass))
+#define CATTLE_IS_TAPE(object)        (G_TYPE_CHECK_INSTANCE_TYPE ((object), CATTLE_TYPE_TAPE))
+#define CATTLE_IS_TAPE_CLASS(klass)   (G_TYPE_CHECK_CLASS_TYPE ((klass), CATTLE_TYPE_TAPE))
+#define CATTLE_TAPE_GET_CLASS(object) (G_TYPE_INSTANCE_GET_CLASS ((object), CATTLE_TYPE_TAPE, CattleTapeClass))
 
-typedef struct _CattleTape          CattleTape;
-typedef struct _CattleTapeClass     CattleTapeClass;
-typedef struct _CattleTapePrivate   CattleTapePrivate;
+typedef struct _CattleTape        CattleTape;
+typedef struct _CattleTapeClass   CattleTapeClass;
+typedef struct _CattleTapePrivate CattleTapePrivate;
 
 struct _CattleTape
 {
-    GObject parent;
-    CattleTapePrivate *priv;
+	GObject parent;
+	CattleTapePrivate *priv;
 };
 
 struct _CattleTapeClass
 {
-    GObjectClass parent;
+	GObjectClass parent;
 };
 
-CattleTape*   cattle_tape_new                       (void);
-void          cattle_tape_set_current_value         (CattleTape   *tape,
-                                                     gchar         value);
-gchar         cattle_tape_get_current_value         (CattleTape   *tape);
-void          cattle_tape_increase_current_value    (CattleTape   *tape);
-void          cattle_tape_increase_current_value_by (CattleTape   *tape,
-                                                     gint          value);
-void          cattle_tape_decrease_current_value    (CattleTape   *tape);
-void          cattle_tape_decrease_current_value_by (CattleTape   *tape,
-                                                     gint          value);
-void          cattle_tape_move_left                 (CattleTape   *tape);
-void          cattle_tape_move_left_by              (CattleTape   *tape,
-                                                     gint          steps);
-void          cattle_tape_move_right                (CattleTape   *tape);
-void          cattle_tape_move_right_by             (CattleTape   *tape,
-                                                     gint          steps);
-gboolean      cattle_tape_is_at_beginning           (CattleTape   *tape);
-gboolean      cattle_tape_is_at_end                 (CattleTape   *tape);
-void          cattle_tape_push_bookmark             (CattleTape   *tape);
-gboolean      cattle_tape_pop_bookmark              (CattleTape   *tape);
+CattleTape* cattle_tape_new                       (void);
+void        cattle_tape_set_current_value         (CattleTape *tape,
+                                                   gchar       value);
+gchar       cattle_tape_get_current_value         (CattleTape *tape);
+void        cattle_tape_increase_current_value    (CattleTape *tape);
+void        cattle_tape_increase_current_value_by (CattleTape *tape,
+                                                   gint        value);
+void        cattle_tape_decrease_current_value    (CattleTape *tape);
+void        cattle_tape_decrease_current_value_by (CattleTape *tape,
+                                                   gint        value);
+void        cattle_tape_move_left                 (CattleTape *tape);
+void        cattle_tape_move_left_by              (CattleTape *tape,
+                                                   gint        steps);
+void        cattle_tape_move_right                (CattleTape *tape);
+void        cattle_tape_move_right_by             (CattleTape *tape,
+                                                   gint        steps);
+gboolean    cattle_tape_is_at_beginning           (CattleTape *tape);
+gboolean    cattle_tape_is_at_end                 (CattleTape *tape);
+void        cattle_tape_push_bookmark             (CattleTape *tape);
+gboolean    cattle_tape_pop_bookmark              (CattleTape *tape);
 
-GType         cattle_tape_get_type                  (void) G_GNUC_CONST;
+GType       cattle_tape_get_type                  (void) G_GNUC_CONST;
 
 G_END_DECLS
 
