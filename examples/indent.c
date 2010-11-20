@@ -22,6 +22,7 @@
 #include <glib.h>
 #include <glib-object.h>
 #include <cattle/cattle.h>
+#include "common.h"
 
 /* Each time a loop is started, its content is indented by
  * INDENT_STEP blank spaces */
@@ -94,7 +95,8 @@ gint
 main (gint argc, gchar **argv)
 {
 	CattleProgram *program;
-	GError *error = NULL;
+	GError *error;
+	gchar *contents;
 
 	g_type_init ();
 	g_set_prgname ("indent");
@@ -104,16 +106,30 @@ main (gint argc, gchar **argv)
 		return 1;
 	}
 
+	error = NULL;
+	contents = read_file_contents (argv[1], &error);
+
+	if (!contents) {
+
+		g_warning ("%s: %s", argv[1], error->message);
+
+		g_error_free (error);
+
+		return 1;
+	}
+
 	/* Create a new program */
 	program = cattle_program_new ();
 
 	/* Load the program from file, aborting on error */
-	if (!cattle_program_load_from_file (program, argv[1], &error)) {
+	error = NULL;
+	if (!cattle_program_load (program, contents, &error)) {
 
 		g_warning ("Load error: %s", error->message);
 
 		g_error_free (error);
 		g_object_unref (program);
+		g_free (contents);
 
 		return 1;
 	}
@@ -121,6 +137,7 @@ main (gint argc, gchar **argv)
 	/* Indent the program */
 	indent (program);
 
+	g_free (contents);
 	g_object_unref (program); 
 
 	return 0;

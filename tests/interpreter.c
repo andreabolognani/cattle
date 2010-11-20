@@ -78,7 +78,7 @@ test_interpreter_single_input_handler (CattleInterpreter **interpreter,
 	CattleProgram *program;
 
 	program = cattle_interpreter_get_program (*interpreter);
-	cattle_program_load_from_string (program, ",", NULL);
+	cattle_program_load (program, ",", NULL);
 	g_object_unref (program);
 
 	g_signal_connect (*interpreter,
@@ -136,7 +136,7 @@ test_interpreter_single_output_handler (CattleInterpreter **interpreter,
 	CattleProgram *program;
 
 	program = cattle_interpreter_get_program (*interpreter);
-	cattle_program_load_from_string (program, ".", NULL);
+	cattle_program_load (program, ".", NULL);
 	g_object_unref (program);
 
 	g_signal_connect (*interpreter,
@@ -197,7 +197,7 @@ test_interpreter_single_debug_handler (CattleInterpreter **interpreter,
 	g_object_unref (configuration);
 
 	program = cattle_interpreter_get_program (*interpreter);
-	cattle_program_load_from_string (program, "#", NULL);
+	cattle_program_load (program, "#", NULL);
 	g_object_unref (program);
 
 	g_signal_connect (*interpreter,

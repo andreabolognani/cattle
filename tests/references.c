@@ -36,7 +36,7 @@ test_references_program_owns_instructions (void)
 	CattleInstruction *instructions;
 
 	program = cattle_program_new ();
-	cattle_program_load_from_string (program, "++[-]", NULL);
+	cattle_program_load (program, "++[-]", NULL);
 
 	instructions = cattle_program_get_instructions (program);
 
@@ -89,7 +89,7 @@ test_references_single_reference (void)
 
 	program = cattle_program_new ();
 
-	if (!cattle_program_load_from_string (program, "++[-]", NULL)) {
+	if (!cattle_program_load (program, "++[-]", NULL)) {
 		g_object_unref (program);
 		g_assert_not_reached ();
 	}

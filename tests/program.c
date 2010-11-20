@@ -52,7 +52,7 @@ test_program_load_empty (CattleProgram **program,
 	GError *error = NULL;
 	gboolean success;
 
-	success = cattle_program_load_from_string (*program, "", &error);
+	success = cattle_program_load (*program, "", &error);
 
 	g_assert (success);
 	g_assert (error == NULL);
@@ -85,7 +85,7 @@ test_program_load_unbalanced_brackets (CattleProgram **program,
 	GError *error = NULL;
 	gboolean success;
 
-	success = cattle_program_load_from_string (*program, "[", &error);
+	success = cattle_program_load (*program, "[", &error);
 
 	g_assert (!success);
 	g_assert (error != NULL);

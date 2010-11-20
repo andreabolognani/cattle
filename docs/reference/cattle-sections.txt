@@ -27,8 +27,7 @@ CattleConfigurationPrivate
 <TITLE>CattleProgram</TITLE>
 CattleProgram
 cattle_program_new
-cattle_program_load_from_string
-cattle_program_load_from_file
+cattle_program_load
 cattle_program_set_instructions
 cattle_program_get_instructions
 cattle_program_set_input

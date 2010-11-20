@@ -86,8 +86,8 @@ enum
 };
 
 /* Internal functions */
-static CattleInstruction* load_from_string_real (gchar  **program,
-                                                 GError **error);
+static CattleInstruction* load (gchar  **program,
+                                GError **error);
 
 /* Symbols used by the code loader */
 #define SHARP_SYMBOL   0x23
@@ -144,8 +144,8 @@ cattle_program_finalize (GObject *object)
 }
 
 static CattleInstruction*
-load_from_string_real (gchar  **program,
-                       GError **error)
+load (gchar  **program,
+      GError **error)
 {
 	CattleInstruction *first = NULL;
 	CattleInstruction *current = NULL;
@@ -191,7 +191,7 @@ load_from_string_real (gchar  **program,
 
 				/* Recurse to load the inner loop */
 				inner_error = NULL;
-				loop = load_from_string_real (program, &inner_error);
+				loop = load (program, &inner_error);
 
 				if (inner_error != NULL) {
 
@@ -298,7 +298,7 @@ cattle_program_new (void)
 }
 
 /**
- * cattle_program_load_from_string:
+ * cattle_program_load:
  * @program: a #CattleProgram
  * @string: the source code of the program
  * @error: a #GError
@@ -317,9 +317,9 @@ cattle_program_new (void)
  * otherwise.
  */
 gboolean
-cattle_program_load_from_string (CattleProgram  *self,
-                                 const gchar    *program,
-                                 GError        **error)
+cattle_program_load (CattleProgram  *self,
+                     const gchar    *program,
+                     GError        **error)
 {
 	CattleInstruction *instructions;
 	GError *inner_error = NULL;
@@ -371,8 +371,7 @@ cattle_program_load_from_string (CattleProgram  *self,
 
 	/* Load the instructions from the string */
 	position = (gchar *) program;
-	instructions = load_from_string_real ((gchar **) &position,
-	                                      &inner_error);
+	instructions = load ((gchar **) &position, &inner_error);
 
 	if (inner_error != NULL) {
 		g_propagate_error (error, inner_error);
@@ -396,108 +395,14 @@ cattle_program_load_from_string (CattleProgram  *self,
 }
 
 /**
- * cattle_program_load_from_file:
- * @program: a #CattleProgram
- * @filename: name of the source file
- * @error: a #GError
- *
- * Load @program from a file.
- *
- * The file can optionally contain a sha-bang line, which is used
- * to tell the system how to execute the file. If such a line is
- * present, it is ignored by the code loading routine.
- *
- * In case of failure, @error is filled with detailed information
- * about what went wrong. The error domain can be either #G_FILE_ERROR
- * or #CATTLE_PROGRAM_ERROR, and the error code can be either in the
- * #GFileError or in the #CattleProgramError enumeration.
- *
- * Return: #TRUE if @program was loaded successfully, #FALSE
- * otherwise.
- */
-gboolean
-cattle_program_load_from_file (CattleProgram  *self,
-                               const gchar    *filename,
-                               GError        **error)
-{
-	gchar *content;
-	gchar *program;
-	gchar *position;
-	gunichar temp;
-
-	g_return_val_if_fail (CATTLE_IS_PROGRAM (self), FALSE);
-	g_return_val_if_fail (error == NULL || *error == NULL, FALSE);
-	g_return_val_if_fail (!self->priv->disposed, FALSE);
-
-	/* Try to load the contents from file */
-	if (!g_file_get_contents (filename, &content, NULL, error)) {
-		return FALSE;
-	}
-
-	/* Validate the file's content as UTF-8. This check is
-	 * repeated in cattle_program_load_from_string(), which is
-	 * called by this method, but we can't avoid calling it again
-	 * here because we have to manipulate the string before
-	 * passing it over for loading */
-	if (!g_utf8_validate (content, -1, NULL)) {
-		g_set_error (error,
-		             CATTLE_PROGRAM_ERROR,
-		             CATTLE_PROGRAM_ERROR_BAD_UTF8,
-		             "Invalid UTF-8");
-		g_free (content);
-		return FALSE;
-	}
-
-	program = content;
-
-	/* Now check the first two characters of the file's contents.
-	 * If they are the "magic bytes", we have to ignore the whole
-	 * first line to allow the execution as a script */
-	position = program;
-	temp = g_utf8_get_char (position);
-
-	/* The first character matches */
-	if (temp == SHARP_SYMBOL) {
-
-		position = g_utf8_next_char (position);
-		temp = g_utf8_get_char (position);
-
-		/* The second character matches as well */
-		if (temp == BANG_SYMBOL) {
-
-			/* Skip to the end of the first line */
-			do {
-				position = g_utf8_next_char (position);
-				temp = g_utf8_get_char (position);
-			} while (temp != NEWLINE_SYMBOL);
-
-			/* Update the cursor's position */
-			program = position;
-		}
-	}
-
-	/* Now that we have cleaned the file's contents, we can
-	 * pass them over to the loading method proper */
-	if (!cattle_program_load_from_string (self, program, error)) {
-		g_free (content);
-		return FALSE;
-	}
-
-	g_free (content);
-	return TRUE;
-}
-
-/**
  * cattle_program_set_instructions:
  * @program: a #CattleProgram
  * @instructions: instructions for the program
  *
  * Set the instructions for @program.
  *
- * You shouldn't usually need to use this: see
- * cattle_program_load_from_string() and
- * cattle_program_load_from_file() for standard ways to load a
- * program.
+ * You shouldn't usually need to use this: see cattle_program_load()
+ * for the standard way to load a program.
  */
 void
 cattle_program_set_instructions (CattleProgram     *self,

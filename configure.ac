@@ -64,7 +64,7 @@ dnl *** Check for required GLib modules ***
 dnl ***************************************
 
 GLIB_REQUIRED_VERSION=2.16.0
-GLIB_REQUIRED_MODULES=gobject
+GLIB_REQUIRED_MODULES="gobject gio"
 
 AM_PATH_GLIB_2_0($GLIB_REQUIRED_VERSION,,
                  AC_MSG_ERROR(GLib version $GLIB_REQUIRED_VERSION required),

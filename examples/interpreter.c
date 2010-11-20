@@ -22,13 +22,15 @@
 #include <glib.h>
 #include <glib-object.h>
 #include <cattle/cattle.h>
+#include "common.h"
 
 gint
 main (gint argc, gchar **argv)
 {
 	CattleInterpreter *interpreter;
 	CattleProgram *program;
-	GError *error = NULL;
+	GError *error;
+	gchar *contents;
 
 	g_type_init ();
 	g_set_prgname ("interpreter");
@@ -38,35 +40,52 @@ main (gint argc, gchar **argv)
 		return 1;
 	}
 
+	error = NULL;
+	contents = read_file_contents (argv[1], &error);
+
+	if (error != NULL) {
+
+		g_warning ("%s: %s", argv[1], error->message);
+
+		g_error_free (error);
+
+		return 1;
+	}
+
 	/* Create a new interpreter */
 	interpreter = cattle_interpreter_new ();
 
 	program = cattle_interpreter_get_program (interpreter);
 
 	/* Load the program, aborting on failure */
-	if (!cattle_program_load_from_file (program, argv[1], &error)) {
+	error = NULL;
+	if (!cattle_program_load (program, contents, &error)) {
 
 		g_warning ("Load error: %s", error->message);
 
 		g_error_free (error);
 		g_object_unref (program);
 		g_object_unref (interpreter);
+		g_free (contents);
 
 		return 1;
 	}
 	g_object_unref (program);
 
 	/* Start the execution */
+	error = NULL;
 	if (!cattle_interpreter_run (interpreter, &error)) {
 
 		g_warning ("Runtime error: %s", error->message);
 
 		g_error_free (error);
 		g_object_unref (interpreter);
+		g_free (contents);
 
 		return 1;
 	}
 	g_object_unref (interpreter);
+	g_free (contents);
 
 	return 0;
 }

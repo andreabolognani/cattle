@@ -62,11 +62,8 @@ struct _CattleProgramClass
 };
 
 CattleProgram*     cattle_program_new              (void);
-gboolean           cattle_program_load_from_string (CattleProgram      *program,
+gboolean           cattle_program_load             (CattleProgram      *program,
                                                     const gchar        *string,
-                                                    GError            **error);
-gboolean           cattle_program_load_from_file   (CattleProgram      *program,
-                                                    const gchar        *filename,
                                                     GError            **error);
 void               cattle_program_set_instructions (CattleProgram      *program,
                                                     CattleInstruction  *instructions);
