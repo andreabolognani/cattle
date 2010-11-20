@@ -83,12 +83,11 @@ cattle_configuration_dispose (GObject *object)
 {
 	CattleConfiguration *self = CATTLE_CONFIGURATION (object);
 
-	if (G_LIKELY (!self->priv->disposed)) {
+	g_return_if_fail (!self->priv->disposed);
 
-		self->priv->disposed = TRUE;
+	self->priv->disposed = TRUE;
 
-		G_OBJECT_CLASS (cattle_configuration_parent_class)->dispose (object);
-	}
+	G_OBJECT_CLASS (cattle_configuration_parent_class)->dispose (object);
 }
 
 static void
@@ -132,6 +131,7 @@ cattle_configuration_set_on_eof_action (CattleConfiguration *self,
 	GEnumValue *enum_value;
 
 	g_return_if_fail (CATTLE_IS_CONFIGURATION (self));
+	g_return_if_fail (!self->priv->disposed);
 
 	/* Get the enum class for actions, and lookup the value.
 	 * If it is not present, the action is not valid */
@@ -140,10 +140,7 @@ cattle_configuration_set_on_eof_action (CattleConfiguration *self,
 	g_type_class_unref (enum_class);
 	g_return_if_fail (enum_value != NULL);
 
-	if (G_LIKELY (!self->priv->disposed)) {
-
-		self->priv->on_eof_action = action;
-	}
+	self->priv->on_eof_action = action;
 }
 
 /**
@@ -158,15 +155,12 @@ cattle_configuration_set_on_eof_action (CattleConfiguration *self,
 CattleOnEOFAction
 cattle_configuration_get_on_eof_action (CattleConfiguration *self)
 {
-	CattleOnEOFAction action = CATTLE_ON_EOF_STORE_ZERO;
+	g_return_val_if_fail (CATTLE_IS_CONFIGURATION (self),
+	                      CATTLE_ON_EOF_STORE_ZERO);
+	g_return_val_if_fail (!self->priv->disposed,
+	                      CATTLE_ON_EOF_STORE_ZERO);
 
-	g_return_val_if_fail (CATTLE_IS_CONFIGURATION (self), CATTLE_ON_EOF_STORE_ZERO);
-
-	if (G_LIKELY (!self->priv->disposed)) {
-		action = self->priv->on_eof_action;
-	}
-
-	return action;
+	return self->priv->on_eof_action;
 }
 
 /**
@@ -185,11 +179,9 @@ cattle_configuration_set_debug_is_enabled (CattleConfiguration *self,
                                            gboolean             enabled)
 {
 	g_return_if_fail (CATTLE_IS_CONFIGURATION (self));
+	g_return_if_fail (!self->priv->disposed);
 
-	if (G_LIKELY (!self->priv->disposed)) {
-
-		self->priv->debug_is_enabled = enabled;
-	}
+	self->priv->debug_is_enabled = enabled;
 }
 
 /**
@@ -204,15 +196,10 @@ cattle_configuration_set_debug_is_enabled (CattleConfiguration *self,
 gboolean
 cattle_configuration_get_debug_is_enabled (CattleConfiguration *self)
 {
-	gboolean enabled = FALSE;
-
 	g_return_val_if_fail (CATTLE_IS_CONFIGURATION (self), FALSE);
+	g_return_val_if_fail (!self->priv->disposed, FALSE);
 
-	if (G_LIKELY (!self->priv->disposed)) {
-		enabled = self->priv->debug_is_enabled;
-	}
-
-	return enabled;
+	return self->priv->debug_is_enabled;
 }
 
 static void
@@ -222,23 +209,30 @@ cattle_configuration_set_property (GObject      *object,
                                    GParamSpec   *pspec)
 {
 	CattleConfiguration *self = CATTLE_CONFIGURATION (object);
+	gint t_enum;
+	gboolean t_bool;
 
-	if (G_LIKELY (!self->priv->disposed)) {
+	g_return_if_fail (!self->priv->disposed);
 
-		switch (property_id) {
+	switch (property_id) {
 
-			case PROP_ON_EOF_ACTION:
-				cattle_configuration_set_on_eof_action (self, g_value_get_enum (value));
-				break;
+		case PROP_ON_EOF_ACTION:
+			t_enum = g_value_get_enum (value);
+			cattle_configuration_set_on_eof_action (self,
+			                                        t_enum);
+			break;
 
-			case PROP_DEBUG_IS_ENABLED:
-				cattle_configuration_set_debug_is_enabled (self, g_value_get_boolean (value));
-				break;
+		case PROP_DEBUG_IS_ENABLED:
+			t_bool = g_value_get_boolean (value);
+			cattle_configuration_set_debug_is_enabled (self,
+			                                           t_bool);
+			break;
 
-			default:
-				G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
-				break;
-		}
+		default:
+			G_OBJECT_WARN_INVALID_PROPERTY_ID (object,
+			                                   property_id,
+			                                   pspec);
+			break;
 	}
 }
 
@@ -249,23 +243,28 @@ cattle_configuration_get_property (GObject    *object,
                                    GParamSpec *pspec)
 {
 	CattleConfiguration *self = CATTLE_CONFIGURATION (object);
+	gint t_enum;
+	gboolean t_bool;
 
-	if (G_LIKELY (!self->priv->disposed)) {
+	g_return_if_fail (!self->priv->disposed);
 
-		switch (property_id) {
+	switch (property_id) {
 
-			case PROP_ON_EOF_ACTION:
-				g_value_set_enum (value, cattle_configuration_get_on_eof_action (self));
-				break;
+		case PROP_ON_EOF_ACTION:
+			t_enum = cattle_configuration_get_on_eof_action (self);
+			g_value_set_enum (value, t_enum);
+			break;
 
-			case PROP_DEBUG_IS_ENABLED:
-				g_value_set_boolean (value, cattle_configuration_get_debug_is_enabled (self));
-				break;
+		case PROP_DEBUG_IS_ENABLED:
+			t_bool = cattle_configuration_get_debug_is_enabled (self);
+			g_value_set_boolean (value, t_bool);
+			break;
 
-			default:
-				G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
-				break;
-		}
+		default:
+			G_OBJECT_WARN_INVALID_PROPERTY_ID (object,
+			                                   property_id,
+			                                   pspec);
+			break;
 	}
 }
 

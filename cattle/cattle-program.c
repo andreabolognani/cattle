@@ -122,15 +122,14 @@ cattle_program_dispose (GObject *object)
 {
 	CattleProgram *self = CATTLE_PROGRAM (object);
 
-	if (G_LIKELY (!self->priv->disposed)) {
+	g_return_if_fail (!self->priv->disposed);
 
-		g_object_unref (self->priv->instructions);
-		self->priv->instructions = NULL;
+	g_object_unref (self->priv->instructions);
+	self->priv->instructions = NULL;
 
-		self->priv->disposed = TRUE;
+	self->priv->disposed = TRUE;
 
-		G_OBJECT_CLASS (cattle_program_parent_class)->dispose (object);
-	}
+	G_OBJECT_CLASS (cattle_program_parent_class)->dispose (object);
 }
 
 static void
@@ -330,74 +329,70 @@ cattle_program_load_from_string (CattleProgram  *self,
 
 	g_return_val_if_fail (CATTLE_IS_PROGRAM (self), FALSE);
 	g_return_val_if_fail (error == NULL || *error == NULL, FALSE);
+	g_return_val_if_fail (!self->priv->disposed, FALSE);
 
-	if (G_LIKELY (!self->priv->disposed)) {
-
-		/* Check the provided string is valid UTF-8 before proceeding */
-		if (!g_utf8_validate (program, -1, NULL)) {
-			g_set_error (error,
-			             CATTLE_PROGRAM_ERROR,
-			             CATTLE_PROGRAM_ERROR_BAD_UTF8,
-			             "Invalid UTF-8");
-			return FALSE;
-		}
-
-		/* Check the number of brackets to ensure the loops are balanced */
-		position = (gchar *) program;
-		do {
-
-			temp = g_utf8_get_char (position);
-
-			if (temp == CATTLE_INSTRUCTION_LOOP_BEGIN) {
-				brackets_count++;
-			}
-			else if (temp == CATTLE_INSTRUCTION_LOOP_END) {
-				brackets_count--;
-			}
-
-			/* Ignore brackets in the program's input, if present */
-			if (temp != 0 && temp != BANG_SYMBOL) {
-				position = g_utf8_next_char (position);
-			}
-		} while (temp != 0 && temp != BANG_SYMBOL);
-
-		/* Report an error to the caller if the number of open brackets
-		 * is not equal to the number of closed brackets */
-		if (brackets_count != 0) {
-			g_set_error (error,
-			             CATTLE_PROGRAM_ERROR,
-			             CATTLE_PROGRAM_ERROR_UNBALANCED_BRACKETS,
-			             "Unbalanced brackets");
-			return FALSE;
-		}
-
-		/* Load the instructions from the string */
-		position = (gchar *) program;
-		instructions = load_from_string_real ((gchar **) &position,
-		                                      &inner_error);
-
-		if (inner_error != NULL) {
-			g_propagate_error (error, inner_error);
-			return FALSE;
-		}
-
-		/* Set the instructions for the program */
-		cattle_program_set_instructions (self, instructions);
-		g_object_unref (instructions);
-
-		/* Set the input for the program, if present; otherwise,
-         * reset it */
-		if (g_utf8_strlen (position, -1) > 0) {
-			cattle_program_set_input (self, position);
-		}
-		else {
-			cattle_program_set_input (self, NULL);
-		}
-
-		return TRUE;
+	/* Check the provided string is valid UTF-8 before proceeding */
+	if (!g_utf8_validate (program, -1, NULL)) {
+		g_set_error (error,
+		             CATTLE_PROGRAM_ERROR,
+		             CATTLE_PROGRAM_ERROR_BAD_UTF8,
+		             "Invalid UTF-8");
+		return FALSE;
 	}
 
-	return FALSE;
+	/* Check the number of brackets to ensure the loops are balanced */
+	position = (gchar *) program;
+	do {
+
+		temp = g_utf8_get_char (position);
+
+		if (temp == CATTLE_INSTRUCTION_LOOP_BEGIN) {
+			brackets_count++;
+		}
+		else if (temp == CATTLE_INSTRUCTION_LOOP_END) {
+			brackets_count--;
+		}
+
+		/* Ignore brackets in the program's input, if present */
+		if (temp != 0 && temp != BANG_SYMBOL) {
+			position = g_utf8_next_char (position);
+		}
+	} while (temp != 0 && temp != BANG_SYMBOL);
+
+	/* Report an error to the caller if the number of open brackets
+	 * is not equal to the number of closed brackets */
+	if (brackets_count != 0) {
+		g_set_error (error,
+		             CATTLE_PROGRAM_ERROR,
+		             CATTLE_PROGRAM_ERROR_UNBALANCED_BRACKETS,
+		             "Unbalanced brackets");
+		return FALSE;
+	}
+
+	/* Load the instructions from the string */
+	position = (gchar *) program;
+	instructions = load_from_string_real ((gchar **) &position,
+	                                      &inner_error);
+
+	if (inner_error != NULL) {
+		g_propagate_error (error, inner_error);
+		return FALSE;
+	}
+
+	/* Set the instructions for the program */
+	cattle_program_set_instructions (self, instructions);
+	g_object_unref (instructions);
+
+	/* Set the input for the program, if present; otherwise,
+	 * reset it */
+	if (g_utf8_strlen (position, -1) > 0) {
+		cattle_program_set_input (self, position);
+	}
+	else {
+		cattle_program_set_input (self, NULL);
+	}
+
+	return TRUE;
 }
 
 /**
@@ -432,68 +427,64 @@ cattle_program_load_from_file (CattleProgram  *self,
 
 	g_return_val_if_fail (CATTLE_IS_PROGRAM (self), FALSE);
 	g_return_val_if_fail (error == NULL || *error == NULL, FALSE);
+	g_return_val_if_fail (!self->priv->disposed, FALSE);
 
-	if (G_LIKELY (!self->priv->disposed)) {
-
-		/* Try to load the contents from file */
-		if (!g_file_get_contents (filename, &content, NULL, error)) {
-			return FALSE;
-		}
-
-		/* Validate the file's content as UTF-8. This check is
-		 * repeated in cattle_program_load_from_string(), which is
-		 * called by this method, but we can't avoid calling it again
-		 * here because we have to manipulate the string before
-		 * passing it over for loading */
-		if (!g_utf8_validate (content, -1, NULL)) {
-			g_set_error (error,
-			             CATTLE_PROGRAM_ERROR,
-			             CATTLE_PROGRAM_ERROR_BAD_UTF8,
-			             "Invalid UTF-8");
-			g_free (content);
-			return FALSE;
-		}
-
-		program = content;
-
-		/* Now check the first two characters of the file's contents.
-		 * If they are the "magic bytes", we have to ignore the whole
-		 * first line to allow the execution as a script */
-		position = program;
-		temp = g_utf8_get_char (position);
-
-		/* The first character matches */
-		if (temp == SHARP_SYMBOL) {
-
-			position = g_utf8_next_char (position);
-			temp = g_utf8_get_char (position);
-
-			/* The second character matches as well */
-			if (temp == BANG_SYMBOL) {
-
-				/* Skip to the end of the first line */
-				do {
-					position = g_utf8_next_char (position);
-					temp = g_utf8_get_char (position);
-				} while (temp != NEWLINE_SYMBOL);
-
-				/* Update the cursor's position */
-				program = position;
-			}
-		}
-
-		/* Now that we have cleaned the file's contents, we can
-		 * pass them over to the loading method proper */
-		if (!cattle_program_load_from_string (self, program, error)) {
-			g_free (content);
-			return FALSE;
-		}
-
-		g_free (content);
-		return TRUE;
+	/* Try to load the contents from file */
+	if (!g_file_get_contents (filename, &content, NULL, error)) {
+		return FALSE;
 	}
 
-	return FALSE;
+	/* Validate the file's content as UTF-8. This check is
+	 * repeated in cattle_program_load_from_string(), which is
+	 * called by this method, but we can't avoid calling it again
+	 * here because we have to manipulate the string before
+	 * passing it over for loading */
+	if (!g_utf8_validate (content, -1, NULL)) {
+		g_set_error (error,
+		             CATTLE_PROGRAM_ERROR,
+		             CATTLE_PROGRAM_ERROR_BAD_UTF8,
+		             "Invalid UTF-8");
+		g_free (content);
+		return FALSE;
+	}
+
+	program = content;
+
+	/* Now check the first two characters of the file's contents.
+	 * If they are the "magic bytes", we have to ignore the whole
+	 * first line to allow the execution as a script */
+	position = program;
+	temp = g_utf8_get_char (position);
+
+	/* The first character matches */
+	if (temp == SHARP_SYMBOL) {
+
+		position = g_utf8_next_char (position);
+		temp = g_utf8_get_char (position);
+
+		/* The second character matches as well */
+		if (temp == BANG_SYMBOL) {
+
+			/* Skip to the end of the first line */
+			do {
+				position = g_utf8_next_char (position);
+				temp = g_utf8_get_char (position);
+			} while (temp != NEWLINE_SYMBOL);
+
+			/* Update the cursor's position */
+			program = position;
+		}
+	}
+
+	/* Now that we have cleaned the file's contents, we can
+	 * pass them over to the loading method proper */
+	if (!cattle_program_load_from_string (self, program, error)) {
+		g_free (content);
+		return FALSE;
+	}
+
+	g_free (content);
+	return TRUE;
 }
 
 /**
@@ -514,15 +505,13 @@ cattle_program_set_instructions (CattleProgram     *self,
 {
 	g_return_if_fail (CATTLE_IS_PROGRAM (self));
 	g_return_if_fail (CATTLE_IS_INSTRUCTION (instructions));
+	g_return_if_fail (!self->priv->disposed);
 
-	if (G_LIKELY (!self->priv->disposed)) {
+	/* Release the reference held on the current instructions */
+	g_object_unref (self->priv->instructions);
 
-		/* Release the reference held on the current instructions */
-		g_object_unref (self->priv->instructions);
-
-		self->priv->instructions = instructions;
-		g_object_ref (self->priv->instructions);
-	}
+	self->priv->instructions = instructions;
+	g_object_ref (self->priv->instructions);
 }
 
 /**
@@ -538,17 +527,12 @@ cattle_program_set_instructions (CattleProgram     *self,
 CattleInstruction*
 cattle_program_get_instructions (CattleProgram *self)
 {
-	CattleInstruction *instructions = NULL;
-
 	g_return_val_if_fail (CATTLE_IS_PROGRAM (self), NULL);
+	g_return_val_if_fail (!self->priv->disposed, NULL);
 
-	if (G_LIKELY (!self->priv->disposed)) {
+	g_object_ref (self->priv->instructions);
 
-		instructions = self->priv->instructions;
-		g_object_ref (instructions);
-	}
-
-	return instructions;
+	return self->priv->instructions;
 }
 
 /**
@@ -563,14 +547,12 @@ cattle_program_set_input (CattleProgram *self,
                           const gchar   *input)
 {
 	g_return_if_fail (CATTLE_IS_PROGRAM (self));
+	g_return_if_fail (!self->priv->disposed);
 
-	if (G_LIKELY (!self->priv->disposed)) {
+	/* Free the existing input */
+	g_free (self->priv->input);
 
-		/* Free the existing input */
-		g_free (self->priv->input);
-
-		self->priv->input = g_strdup (input);
-	}
+	self->priv->input = g_strdup (input);
 }
 
 /**
@@ -586,16 +568,10 @@ cattle_program_set_input (CattleProgram *self,
 gchar*
 cattle_program_get_input (CattleProgram *self)
 {
-	gchar *input = NULL;
-
 	g_return_val_if_fail (CATTLE_IS_PROGRAM (self), NULL);
+	g_return_val_if_fail (!self->priv->disposed, NULL);
 
-	if (G_LIKELY (!self->priv->disposed)) {
-
-		input = g_strdup (self->priv->input);
-	}
-
-	return input;
+	return g_strdup (self->priv->input);
 }
 
 static void
@@ -605,23 +581,30 @@ cattle_program_set_property (GObject      *object,
                              GParamSpec   *pspec)
 {
 	CattleProgram *self = CATTLE_PROGRAM (object);
+	CattleInstruction *t_inst;
+	gchar *t_str;
 
-	if (G_LIKELY (!self->priv->disposed)) {
+	g_return_if_fail (!self->priv->disposed);
 
-		switch (property_id) {
+	switch (property_id) {
 
-			case PROP_INSTRUCTIONS:
-				cattle_program_set_instructions (self, g_value_get_object (value));
-				break;
+		case PROP_INSTRUCTIONS:
+			t_inst = g_value_get_object (value);
+			cattle_program_set_instructions (self,
+			                                 t_inst);
+			break;
 
-			case PROP_INPUT:
-				cattle_program_set_input (self, g_value_get_string (value));
-				break;
+		case PROP_INPUT:
+			t_str = (gchar *) g_value_get_string (value);
+			cattle_program_set_input (self,
+			                          t_str);
+			break;
 
-			default:
-				G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
-				break;
-		}
+		default:
+			G_OBJECT_WARN_INVALID_PROPERTY_ID (object,
+			                                   property_id,
+			                                   pspec);
+			break;
 	}
 }
 
@@ -632,23 +615,28 @@ cattle_program_get_property (GObject    *object,
                              GParamSpec *pspec)
 {
 	CattleProgram *self = CATTLE_PROGRAM (object);
+	CattleInstruction *t_inst;
+	gchar *t_str;
 
-	if (G_LIKELY (!self->priv->disposed)) {
+	g_return_if_fail (!self->priv->disposed);
 
-		switch (property_id) {
+	switch (property_id) {
 
-			case PROP_INSTRUCTIONS:
-				g_value_set_object (value, cattle_program_get_instructions (self));
-				break;
+		case PROP_INSTRUCTIONS:
+			t_inst = cattle_program_get_instructions (self);
+			g_value_set_object (value, t_inst);
+			break;
 
-			case PROP_INPUT:
-				g_value_set_string (value, cattle_program_get_input (self));
-				break;
+		case PROP_INPUT:
+			t_str = cattle_program_get_input (self);
+			g_value_set_string (value, t_str);
+			break;
 
-			default:
-				G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
-				break;
-		}
+		default:
+			G_OBJECT_WARN_INVALID_PROPERTY_ID (object,
+			                                   property_id,
+			                                   pspec);
+			break;
 	}
 }
 
