@@ -3,6 +3,7 @@ cattle-decl.txt
 cattle-decl-list.txt
 cattle-undeclared.txt
 cattle-undocumented.txt
+cattle-unused.txt
 cattle.args
 cattle.hierarchy
 cattle.interfaces
