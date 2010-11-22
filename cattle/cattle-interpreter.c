@@ -178,37 +178,42 @@ run (CattleInterpreter  *self,
 	CattleConfiguration *configuration;
 	CattleProgram *program;
 	CattleTape *tape;
-	CattleInstruction *instruction;
-	CattleInstruction *loop;
+	CattleInstruction *current;
+	CattleInstruction *next;
+	CattleInstructionValue value;
 	GSList *stack;
 	gboolean success;
-	gchar temp = 0;
-	glong i;
+	gchar temp;
+	gint quantity;
+	gint i;
 
 	configuration = self->priv->configuration;
 	program = self->priv->program;
-	instruction = cattle_program_get_instructions (program);
 	tape = self->priv->tape;
 	stack = self->priv->stack;
 	success = TRUE;
 
-	do {
+	current = cattle_program_get_instructions (program);
 
-		switch (cattle_instruction_get_value (instruction)) {
+	while (current != NULL && success) {
+
+		value = cattle_instruction_get_value (current);
+
+		switch (value) {
 
 			case CATTLE_INSTRUCTION_LOOP_BEGIN:
 
-				loop = cattle_instruction_get_loop (instruction);
+				next = cattle_instruction_get_loop (current);
 
-				if (CATTLE_IS_INSTRUCTION (loop)) {
+				if (next != NULL) {
 
 					/* Enter the loop only if the value stored in the
 					 * current cell is not zero */
 					if (cattle_tape_get_current_value (tape) != 0) {
 
 						/* Push the current instruction on the stack */
-						stack = g_slist_prepend (stack, instruction);
-						instruction = loop;
+						stack = g_slist_prepend (stack, current);
+						current = next;
 
 						continue;
 					}
@@ -220,36 +225,41 @@ run (CattleInterpreter  *self,
 				g_assert (stack != NULL);
 
 				/* Pop an instruction off the stack */
-				g_object_unref (instruction);
-				instruction = CATTLE_INSTRUCTION (stack->data);
+				g_object_unref (current);
+				current = CATTLE_INSTRUCTION (stack->data);
 				stack = g_slist_delete_link (stack, stack);
 
 				continue;
 
 			case CATTLE_INSTRUCTION_MOVE_LEFT:
 
-				cattle_tape_move_left_by (tape,
-				                          cattle_instruction_get_quantity (instruction));
+				quantity = cattle_instruction_get_quantity (current);
+				cattle_tape_move_left_by (tape, quantity);
 				break;
 
 			case CATTLE_INSTRUCTION_MOVE_RIGHT:
-				cattle_tape_move_right_by (tape,
-				                           cattle_instruction_get_quantity (instruction));
+
+				quantity = cattle_instruction_get_quantity (current);
+				cattle_tape_move_right_by (tape, quantity);
 				break;
 
 			case CATTLE_INSTRUCTION_INCREASE:
-				cattle_tape_increase_current_value_by (tape,
-				                                       cattle_instruction_get_quantity (instruction));
+
+				quantity = cattle_instruction_get_quantity (current);
+				cattle_tape_increase_current_value_by (tape, quantity);
 				break;
 
 			case CATTLE_INSTRUCTION_DECREASE:
-				cattle_tape_decrease_current_value_by (tape,
-				                                       cattle_instruction_get_quantity (instruction));
+
+				quantity = cattle_instruction_get_quantity (current);
+				cattle_tape_decrease_current_value_by (tape, quantity);
 				break;
 
 			case CATTLE_INSTRUCTION_READ:
 
-				for (i = 0; i < cattle_instruction_get_quantity (instruction); i++) {
+				quantity = cattle_instruction_get_quantity (current);
+
+				for (i = 0; i < quantity; i++) {
 
 					/* The following code is quite complicated because
 					 * it needs to handle different situations.
@@ -380,9 +390,11 @@ run (CattleInterpreter  *self,
 
 			case CATTLE_INSTRUCTION_PRINT:
 
+				quantity = cattle_instruction_get_quantity (current);
+
 				/* Write the value in the current cell to standard
 				 * output */
-				for (i = 0; i < cattle_instruction_get_quantity (instruction); i++) {
+				for (i = 0; i < quantity; i++) {
 
 					g_signal_emit (self,
 					               signals[OUTPUT_REQUEST],
@@ -407,7 +419,9 @@ run (CattleInterpreter  *self,
 				 * configuration */
 				if (cattle_configuration_get_debug_is_enabled (configuration)) {
 
-					for (i = 0; i < cattle_instruction_get_quantity (instruction); i++) {
+					quantity = cattle_instruction_get_quantity (current);
+
+					for (i = 0; i < quantity; i++) {
 
 						g_signal_emit (self,
 						               signals[DEBUG_REQUEST],
@@ -424,13 +438,15 @@ run (CattleInterpreter  *self,
 				break;
 
 			case CATTLE_INSTRUCTION_NONE:
+
 				/* Do nothing */
 				break;
 		}
 
-		instruction = cattle_instruction_get_next (instruction);
-
-	} while (CATTLE_IS_INSTRUCTION (instruction) && success);
+		next = cattle_instruction_get_next (current);
+		g_object_unref (current);
+		current = next;
+	}
 
 	return success;
 }
