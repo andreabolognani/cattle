@@ -308,7 +308,7 @@ run (CattleInterpreter  *self,
 							/* The operation failed: we abort
 							 * immediately; the signal handler must
 							 * set the error */
-							if (success == FALSE) {
+							if (G_UNLIKELY (success == FALSE)) {
 								g_assert (error == NULL || *error != NULL);
 								return success;
 							}
@@ -406,7 +406,7 @@ run (CattleInterpreter  *self,
 					/* Stop at the first error, even if we should
 					 * output the content of the current cell more
 					 * than once */
-					if (success == FALSE) {
+					if (G_UNLIKELY (success == FALSE)) {
 						g_assert (error == NULL || *error != NULL);
 						return success;
 					}
@@ -429,7 +429,7 @@ run (CattleInterpreter  *self,
 						               error,
 						               &success);
 
-						if (success == FALSE) {
+						if (G_UNLIKELY (success == FALSE)) {
 							g_assert (error == NULL || *error != NULL);
 							return success;
 						}
@@ -488,17 +488,19 @@ input_default_handler (CattleInterpreter  *self,
 		/* A NULL return value from fgets could either mean a read
 		 * error has occurred or the end of input has been reached.
 		 * In the latter case, we have to notify the interpreter */
-		if (feof (stdin)) {
+		if (G_LIKELY (feof (stdin))) {
 
 			*input = NULL;
 			return TRUE;
 		}
+		else {
 
-		g_set_error_literal (error,
-		                     CATTLE_INTERPRETER_ERROR,
-		                     CATTLE_INTERPRETER_ERROR_IO,
-		                     strerror (errno));
-		return FALSE;
+			g_set_error_literal (error,
+			                     CATTLE_INTERPRETER_ERROR,
+			                     CATTLE_INTERPRETER_ERROR_IO,
+			                     strerror (errno));
+			return FALSE;
+		}
 	}
 
 	*input = buffer;
@@ -511,7 +513,7 @@ output_default_handler (CattleInterpreter  *self,
                         GError            **error,
                         gpointer            data)
 {
-	if (fputc (output, stdout) == EOF) {
+	if (G_UNLIKELY (fputc (output, stdout) == EOF)) {
 
 		g_set_error_literal (error,
 		                     CATTLE_INTERPRETER_ERROR,
@@ -551,7 +553,7 @@ debug_default_handler (CattleInterpreter  *self,
 		steps++;
 	}
 
-	if (fputc ('[', stderr) == EOF) {
+	if (G_UNLIKELY (fputc ('[', stderr) == EOF)) {
 		g_set_error_literal (error,
 		                     CATTLE_INTERPRETER_ERROR,
 		                     CATTLE_INTERPRETER_ERROR_IO,
@@ -565,7 +567,7 @@ debug_default_handler (CattleInterpreter  *self,
 
 		/* Mark the current position */
 		if (steps == 0) {
-			if (fputc ('<', stderr) == EOF) {
+			if (G_UNLIKELY (fputc ('<', stderr) == EOF)) {
 				g_set_error_literal (error,
 				                     CATTLE_INTERPRETER_ERROR,
 				                     CATTLE_INTERPRETER_ERROR_IO,
@@ -581,7 +583,7 @@ debug_default_handler (CattleInterpreter  *self,
 		/* Print the value of the current cell if it is a graphical char;
 		 * otherwise, print its hexadecimal value */
 		if (g_ascii_isgraph (value)) {
-			if (fputc (value, stderr) == EOF) {
+			if (G_UNLIKELY (fputc (value, stderr) == EOF)) {
 				g_set_error_literal (error,
 				                     CATTLE_INTERPRETER_ERROR,
 				                     CATTLE_INTERPRETER_ERROR_IO,
@@ -592,7 +594,7 @@ debug_default_handler (CattleInterpreter  *self,
 			}
 		}
 		else {
-			if (fprintf (stderr, "0x%X", (gint) value) < 0) {
+			if (G_UNLIKELY (fprintf (stderr, "0x%X", (gint) value) < 0)) {
 				g_set_error_literal (error,
 				                     CATTLE_INTERPRETER_ERROR,
 				                     CATTLE_INTERPRETER_ERROR_IO,
@@ -605,7 +607,7 @@ debug_default_handler (CattleInterpreter  *self,
 
 		/* Mark the current position */
 		if (steps == 0) {
-			if (fputc ('>', stderr) == EOF) {
+			if (G_UNLIKELY (fputc ('>', stderr) == EOF)) {
 				g_set_error_literal (error,
 				                     CATTLE_INTERPRETER_ERROR,
 				                     CATTLE_INTERPRETER_ERROR_IO,
@@ -622,7 +624,7 @@ debug_default_handler (CattleInterpreter  *self,
 		}
 
 		/* Print a space and move forward */
-		if (fputc (' ', stderr) == EOF) {
+		if (G_UNLIKELY (fputc (' ', stderr) == EOF)) {
 			g_set_error_literal (error,
 			                     CATTLE_INTERPRETER_ERROR,
 			                     CATTLE_INTERPRETER_ERROR_IO,
@@ -635,7 +637,7 @@ debug_default_handler (CattleInterpreter  *self,
 		steps--;
 	}
 
-	if (fputc (']', stderr) == EOF) {
+	if (G_UNLIKELY (fputc (']', stderr) == EOF)) {
 		g_set_error_literal (error,
 		                     CATTLE_INTERPRETER_ERROR,
 		                     CATTLE_INTERPRETER_ERROR_IO,
@@ -644,7 +646,7 @@ debug_default_handler (CattleInterpreter  *self,
 		g_object_unref (tape);
 		return FALSE;
 	}
-	if (fputc ('\n', stderr) == EOF) {
+	if (G_UNLIKELY (fputc ('\n', stderr) == EOF)) {
 		g_set_error_literal (error,
 		                     CATTLE_INTERPRETER_ERROR,
 		                     CATTLE_INTERPRETER_ERROR_IO,
