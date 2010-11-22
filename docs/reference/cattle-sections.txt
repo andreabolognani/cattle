@@ -130,20 +130,3 @@ CATTLE_TAPE_GET_CLASS
 <SUBSECTION Private>
 CattleTapePrivate
 </SECTION>
-
-<SECTION>
-<FILE>cattle-enums</FILE>
-<SUBSECTION Standard>
-cattle_instruction_value_get_type
-CATTLE_TYPE_INSTRUCTION_VALUE
-cattle_program_error_get_type
-CATTLE_TYPE_PROGRAM_ERROR
-cattle_on_eof_action_get_type
-CATTLE_TYPE_ON_EOF_ACTION
-</SUBSECTION>
-</SECTION>
-
-<SECTION>
-<FILE>cattle</FILE>
-</SECTION>
-
