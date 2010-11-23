@@ -86,8 +86,7 @@ enum
 };
 
 /* Internal functions */
-static CattleInstruction* load (gchar  **program,
-                                GError **error);
+static CattleInstruction* load (gchar **program);
 
 /* Symbols used by the code loader */
 #define SHARP_SYMBOL   0x23
@@ -144,138 +143,141 @@ cattle_program_finalize (GObject *object)
 }
 
 static CattleInstruction*
-load (gchar  **program,
-      GError **error)
+load (gchar  **program)
 {
-	CattleInstruction *first = NULL;
-	CattleInstruction *current = NULL;
-	CattleInstruction *previous = NULL;
-	CattleInstruction *loop = NULL;
-	GError *inner_error;
-	glong quantity;
-	gunichar instruction;
-	gunichar next;
+	CattleInstruction *first;
+	CattleInstruction *current;
+	CattleInstruction *previous;
+	CattleInstruction *loop;
+	gint quantity;
+	gunichar value;
+	gunichar temp;
 
-	/* Create the first instruction and set it as current */
-	first = cattle_instruction_new ();
-	current = first;
-	g_object_ref (first);
+	first = NULL;
+	previous = NULL;
 
-	/* Now loop until we reach the end of input, or until we get
-	 * an end of loop instruction, whichever comes first */
 	do {
 
-		instruction = g_utf8_get_char (*program);
+		current = NULL;
 
-		/* Return to the caller at the end of the input */
-		if (instruction == 0) {
-			g_object_unref (current);
-			return first;
+		/* Pick the first symbol from the input string */
+		value = g_utf8_get_char (*program);
+		quantity = 1;
+
+		/* End of input */
+		if (value == 0) {
+			break;
 		}
 
-		/* Quit parsing if the current symbol marks the beginning
-		 * of the program's input, but move the cursor forward
-		 * before doing so */
-		if (instruction == BANG_SYMBOL) {
-			*program = g_utf8_next_char (*program);
-			g_object_unref (current);
-			return first;
-		}
-
+		/* Move one position to the right */
 		*program = g_utf8_next_char (*program);
-		quantity = 0;
 
-		switch (instruction) {
+		/* Start of program's input */
+		if (value == BANG_SYMBOL) {
+			break;
+		}
 
-			case CATTLE_INSTRUCTION_LOOP_BEGIN:
+		/* Read a sequence of identical symbols, counting them. Don't
+		 * do that for loop instructions, those can't be optimized */
+		if (value != CATTLE_INSTRUCTION_LOOP_BEGIN &&
+		    value != CATTLE_INSTRUCTION_LOOP_END)
+		{
+			do {
+				temp = g_utf8_get_char (*program);
 
-				/* Recurse to load the inner loop */
-				inner_error = NULL;
-				loop = load (program, &inner_error);
-
-				if (inner_error != NULL) {
-
-					g_propagate_error (error, inner_error);
-					g_object_unref (current);
-					g_object_unref (first);
-
-					return NULL;
+				/* Same value: increase the quantity, move the
+				 * pointer to the right */
+				if (temp == value) {
+					quantity++;
+					*program = g_utf8_next_char (*program);
 				}
+				else {
+					break;
+				}
+			} while (temp == value);
+		}
 
-				cattle_instruction_set_value (current, CATTLE_INSTRUCTION_LOOP_BEGIN);
+		g_assert (value == CATTLE_INSTRUCTION_LOOP_BEGIN ||
+		          value == CATTLE_INSTRUCTION_LOOP_END ||
+		          value != g_utf8_get_char (*program));
+
+		/* Normalize symbol: if value is not a recognized symbol,
+		 * set it to CATTLE_INSTRUCTION_NONE */
+		switch (value) {
+
+			case CATTLE_INSTRUCTION_INCREASE:
+			case CATTLE_INSTRUCTION_DECREASE:
+			case CATTLE_INSTRUCTION_MOVE_LEFT:
+			case CATTLE_INSTRUCTION_MOVE_RIGHT:
+			case CATTLE_INSTRUCTION_LOOP_BEGIN:
+			case CATTLE_INSTRUCTION_LOOP_END:
+			case CATTLE_INSTRUCTION_READ:
+			case CATTLE_INSTRUCTION_PRINT:
+			case CATTLE_INSTRUCTION_DUMP_TAPE:
+
+				break;
+
+			default:
+
+				value = CATTLE_INSTRUCTION_NONE;
+				break;
+		}
+
+		/* Not an instruction, restart the loop */
+		if (value == CATTLE_INSTRUCTION_NONE) {
+			continue;
+		} 
+
+		/* Create a new instruction and set its value and quantity */
+		current = cattle_instruction_new ();
+
+		cattle_instruction_set_value (current, value);
+		cattle_instruction_set_quantity (current, quantity);
+
+		/* This is the first instruction */
+		if (first == NULL) {
+			first = current;
+			g_object_ref (first);
+		}
+
+		if (value == CATTLE_INSTRUCTION_LOOP_BEGIN) {
+
+			/* Read the loop's contents */
+			loop = load (program);
+
+			g_assert (loop != NULL);
+
+			if (loop != NULL) {
 				cattle_instruction_set_loop (current, loop);
 				g_object_unref (loop);
-			break;
+			}
+		}
 
-			case CATTLE_INSTRUCTION_LOOP_END:
+		/* Link the current instruction to the previous one (if any) */
+		if (previous != NULL) {
+			cattle_instruction_set_next (previous, current);
+			g_object_unref (previous);
+		}
+		previous = current;
 
-				cattle_instruction_set_value (current, CATTLE_INSTRUCTION_LOOP_END);
-				g_object_unref (current);
-
-				return first;
-			break;
-
-			case CATTLE_INSTRUCTION_MOVE_LEFT:
-			case CATTLE_INSTRUCTION_MOVE_RIGHT:
-			case CATTLE_INSTRUCTION_INCREASE:
-			case CATTLE_INSTRUCTION_DECREASE:
-			case CATTLE_INSTRUCTION_READ:
-			case CATTLE_INSTRUCTION_PRINT:
-			case CATTLE_INSTRUCTION_DUMP_TAPE:
-
-				do {
-
-					/* Increase the quantity */
-					quantity++;
-
-					/* Move to the next character */
-					next = g_utf8_get_char (*program);
-					if (next != 0) {
-						*program = g_utf8_next_char (*program);
-					}
-				} while ((next != 0) && (next == instruction));
-
-				/* The last character we read was different, so
-				 * we step back */
-				if (next != 0) {
-					*program = g_utf8_prev_char (*program);
-				}
-
-				cattle_instruction_set_value (current, instruction);
-				cattle_instruction_set_quantity (current, quantity);
-			break;
-
-			default:
-				/* Ignore any other character */
+		/* Exit on loop end */
+		if (value == CATTLE_INSTRUCTION_LOOP_END) {
 			break;
 		}
 
-		/* Create a new instruction if needed */
-		switch (instruction) {
+	} while (value != 0);
 
-			case CATTLE_INSTRUCTION_LOOP_BEGIN:
-			case CATTLE_INSTRUCTION_MOVE_LEFT:
-			case CATTLE_INSTRUCTION_MOVE_RIGHT:
-			case CATTLE_INSTRUCTION_INCREASE:
-			case CATTLE_INSTRUCTION_DECREASE:
-			case CATTLE_INSTRUCTION_READ:
-			case CATTLE_INSTRUCTION_PRINT:
-			case CATTLE_INSTRUCTION_DUMP_TAPE:
-
-				previous = current;
-
-				current = cattle_instruction_new ();
-				cattle_instruction_set_next (previous, current);
-				g_object_unref (previous);
-			break;
-
-			default:
-				/* Ignore any other character */
-			break;
+	/* Drop the remaining reference to the current instruction, or
+	 * if no current instruction is present, to the previous one */
+	if (current != NULL) {
+		g_object_unref (current);
+	}
+	else {
+		if (previous != NULL) {
+			g_object_unref (previous);
 		}
-	} while (TRUE);
+	}
 
-	g_assert_not_reached ();
 	return first;
 }
 
@@ -371,11 +373,12 @@ cattle_program_load (CattleProgram  *self,
 
 	/* Load the instructions from the string */
 	position = (gchar *) program;
-	instructions = load ((gchar **) &position, &inner_error);
+	instructions = load ((gchar **) &position);
 
-	if (inner_error != NULL) {
-		g_propagate_error (error, inner_error);
-		return FALSE;
+	/* The load routine returns NULL for the empty program.
+	 * Create a single instruction to use in the program */
+	if (instructions == NULL) {
+		instructions = cattle_instruction_new ();
 	}
 
 	/* Set the instructions for the program */

@@ -89,7 +89,7 @@ test_references_single_reference (void)
 
 	program = cattle_program_new ();
 
-	if (!cattle_program_load (program, "++[-]", NULL)) {
+	if (!cattle_program_load (program, "+", NULL)) {
 		g_object_unref (program);
 		g_assert_not_reached ();
 	}
