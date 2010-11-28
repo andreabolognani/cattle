@@ -1,6 +1,7 @@
 <?xml version="1.0"?>
 <!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN"
                "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd" [
+<!ENTITY version-information SYSTEM "xml/cattle-version.xml">
 <!ENTITY CattleInstruction SYSTEM "xml/cattle-instruction.xml">
 <!ENTITY CattleProgram SYSTEM "xml/cattle-program.xml">
 <!ENTITY CattleTape SYSTEM "xml/cattle-tape.xml">
@@ -39,8 +40,13 @@
         </para>
     </chapter>
 
+	<chapter>
+		<title>Core Features</title>
+		&version-information;
+	</chapter>
+
     <chapter>
-        <title>API Reference</title>
+        <title>Objects</title>
         &CattleInstruction;
         &CattleProgram;
         &CattleTape;

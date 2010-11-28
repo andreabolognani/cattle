@@ -130,3 +130,16 @@ CATTLE_TAPE_GET_CLASS
 <SUBSECTION Private>
 CattleTapePrivate
 </SECTION>
+
+<SECTION>
+<FILE>cattle-version</FILE>
+<TITLE>Version Information</TITLE>
+CATTLE_MAJOR_VERSION
+CATTLE_MINOR_VERSION
+CATTLE_MICRO_VERSION
+CATTLE_CHECK_VERSION
+cattle_major_version
+cattle_minor_version
+cattle_micro_version
+cattle_check_version
+</SECTION>

@@ -38,7 +38,8 @@ CLEANFILES = $(GENMARSHAL_GENERATED) $(MKENUMS_GENERATED)
 
 cattleincludedir = $(includedir)/cattle
 
-cattle_headers = cattle-instruction.h		\
+cattle_headers = cattle-version.h			\
+				 cattle-instruction.h		\
 			   	 cattle-program.h			\
 			   	 cattle-tape.h 				\
 			     cattle-configuration.h		\
@@ -60,6 +61,7 @@ libcattle_la_LDFLAGS = -version-info $(CATTLE_CURRENT):$(CATTLE_REVISION):$(CATT
 libcattle_la_LIBADD = $(GLIB_LIBS)
 
 libcattle_la_SOURCES = $(BUILT_SOURCES)			\
+					   cattle-version.c			\
 					   cattle-instruction.c		\
 					   cattle-program.c 		\
 					   cattle-tape.c			\
