@@ -15,3 +15,5 @@ indent_SOURCES = indent.c common.c
 indent_CPPFLAGS = @CFLAGS@ @GLIB_CFLAGS@
 indent_LDFLAGS = @GLIB_LIBS@
 indent_LDADD = ${top_builddir}/cattle/libcattle.la
+
+EXTRA_DIST = common.h
