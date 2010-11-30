@@ -85,7 +85,7 @@ AC_OUTPUT([Makefile
            cattle/cattle-version.h
            cattle.pc
            examples/Makefile
-		   tests/Makefile
+           tests/Makefile
            docs/Makefile
            docs/reference/Makefile
            docs/reference/version.xml])

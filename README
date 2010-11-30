@@ -2,7 +2,7 @@ Cattle -- Flexible Brainfuck interpreter library
 ================================================
 
 Cattle is a flexible Brainfuck interpreter, implemented as a GObject-based
-shared library. The Beef interpreter - from which Cattle was derived - itself
+shared library. The Beef interpreter -- from which Cattle was derived --
 is supposed to be ported to this library once it gets mature enough.
 
 
@@ -15,7 +15,8 @@ like unbalanced brackets.
 
 The library supports flexible I/O using signals and callbacks, which means
 you can do weird things like use the content of a GTK+ text widget as input
-for a program and send its output to a network socket, if you want to do so.
+for a program and send its output to a network socket, if you want to do
+so.
 
 
 Development status
@@ -29,12 +30,12 @@ times the time it would take on the standalone interpreter to run. Several
 optimizations are already in place, and the performance loss has decreased
 significantly since the first release.
 
-There is no API or ABI stability guarantee at this point of time. Everything
-is still subject sudden and thorough changes.
+There is no API or ABI stability guarantee at this point of time.
+Everything is still subject sudden and thorough changes.
 
 
 Contact information
 ===================
 
-You can contact me anytime at the mail address <eof@kiyuko.org> if you need 
-any information about Cattle. Any suggestion is greatly appreciated.
+You can contact me anytime at the mail address <eof@kiyuko.org> if you
+need any information about Cattle. Suggestion are greatly appreciated.

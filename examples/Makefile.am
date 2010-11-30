@@ -1,8 +1,8 @@
-INCLUDES = -I$(top_srcdir) \
+INCLUDES = -I$(top_srcdir)   \
            -I$(top_builddir)
 
-noinst_PROGRAMS = interpreter	\
-				  indent
+noinst_PROGRAMS = interpreter \
+                  indent
 
 interpreter_DEPENDENCIES = ${top_builddir}/cattle/libcattle.la common.h
 interpreter_SOURCES = interpreter.c common.c

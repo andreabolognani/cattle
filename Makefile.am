@@ -1,12 +1,12 @@
 AUTOMAKE_OPTIONS = 1.6
 
-SUBDIRS = cattle	\
-		  examples	\
-		  tests		\
-		  docs
+SUBDIRS = cattle   \
+          examples \
+          tests    \
+          docs
 
-EXTRA_DIST = gtk-doc.make	\
-			 cattle.pc.in
+EXTRA_DIST = gtk-doc.make \
+             cattle.pc.in
 
 DISTCHECK_CONFIGURE_FLAGS = --enable-gtk-doc
 
