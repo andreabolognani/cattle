@@ -68,13 +68,13 @@ G_DEFINE_TYPE (CattleInstruction, cattle_instruction, G_TYPE_OBJECT)
  * @CATTLE_INSTRUCTION_READ: get one character from the input and save
  * its value at the current position.
  * @CATTLE_INSTRUCTION_PRINT: send the current value to the output.
- * @CATTLE_INSTRUCTION_DUMP_TAPE: show debugging information. This
- * usually means dumping the contents of the tape.
+ * @CATTLE_INSTRUCTION_DEBUG: show debugging information. This usually
+ * means dumping the contents of the tape.
  *
  * Brainfuck instructions supported by Cattle, as #gunichar<!-- -->s.
  *
- * #CATTLE_INSTRUCTION_DUMP_TAPE is not part of the Brainfuck language,
- * but it's often used for debugging and implemented in many interpreters,
+ * #CATTLE_INSTRUCTION_DEBUG is not part of the Brainfuck language, but
+ * it's often used for debugging and implemented in many interpreters,
  * so it's included in Cattle as well.
  */
 

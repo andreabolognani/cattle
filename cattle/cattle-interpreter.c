@@ -412,7 +412,7 @@ run (CattleInterpreter  *self,
 				}
 				break;
 
-			case CATTLE_INSTRUCTION_DUMP_TAPE:
+			case CATTLE_INSTRUCTION_DEBUG:
 
 				/* Dump the tape only if debugging is enabled in the
 				 * configuration */

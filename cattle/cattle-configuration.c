@@ -171,7 +171,7 @@ cattle_configuration_get_on_eof_action (CattleConfiguration *self)
  * Set the status of the debugging support. It is disabled by default.
  *
  * If debugging is disabled, instructions whose value is
- * %CATTLE_INSTRUCTION_DUMP_TAPE will be ignored by the interpreter.
+ * %CATTLE_INSTRUCTION_DEBUG will be ignored by the interpreter.
  */
 void
 cattle_configuration_set_debug_is_enabled (CattleConfiguration *self,
@@ -300,7 +300,7 @@ cattle_configuration_class_init (CattleConfigurationClass *self)
 	 * CattleConfiguration:debug-is-enabled:
 	 *
 	 * If %FALSE, instructions whose value is
-	 * #CATTLE_INSTRUCTION_DUMP_TAPE are not executed by the interpreter.
+	 * #CATTLE_INSTRUCTION_DEBUG are not executed by the interpreter.
 	 *
 	 * Changes to this property are not notified.
 	 */

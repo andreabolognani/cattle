@@ -1,6 +1,11 @@
 Overview of changes from Cattle 0.9.3 to 0.9.4
 ==============================================
 
+    * CattleInstruction: rename CATTLE_INSTRUCTION_DUMP_TAPE to
+                         CATTLE_INSTRUCTION_DEBUG, since the corresponding
+                         handler might do more than dumping the tape's
+                         contents.
+
     * CattleTape: add fast bulk increase/decrease/move operations.
 
     * CattleInterpreter: use bulk operation for speed increase.

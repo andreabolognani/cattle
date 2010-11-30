@@ -48,7 +48,7 @@ typedef enum
 	CATTLE_INSTRUCTION_LOOP_END    = 0x5D,
 	CATTLE_INSTRUCTION_READ        = 0x2C,
 	CATTLE_INSTRUCTION_PRINT       = 0x2E,
-	CATTLE_INSTRUCTION_DUMP_TAPE   = 0x23
+	CATTLE_INSTRUCTION_DEBUG       = 0x23
 } CattleInstructionValue;
 
 typedef struct _CattleInstruction        CattleInstruction;
