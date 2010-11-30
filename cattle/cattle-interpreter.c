@@ -1086,7 +1086,7 @@ cattle_interpreter_class_init (CattleInterpreterClass *self)
 	closure = g_cclosure_new (G_CALLBACK (debug_default_handler),
 	                          NULL,
 	                          NULL);
-	signals[DEBUG_REQUEST] = g_signal_newv ("debug_request",
+	signals[DEBUG_REQUEST] = g_signal_newv ("debug-request",
 	                                        CATTLE_TYPE_INTERPRETER,
 	                                        G_SIGNAL_RUN_LAST | G_SIGNAL_NO_RECURSE,
 	                                        closure,
