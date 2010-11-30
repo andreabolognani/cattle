@@ -1,67 +1,50 @@
 <?xml version="1.0"?>
 <!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN"
                "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd" [
+<!ENTITY overview SYSTEM "contents/overview.xml">
 <!ENTITY version-information SYSTEM "xml/cattle-version.xml">
 <!ENTITY CattleInstruction SYSTEM "xml/cattle-instruction.xml">
 <!ENTITY CattleProgram SYSTEM "xml/cattle-program.xml">
 <!ENTITY CattleTape SYSTEM "xml/cattle-tape.xml">
 <!ENTITY CattleConfiguration SYSTEM "xml/cattle-configuration.xml">
 <!ENTITY CattleInterpreter SYSTEM "xml/cattle-interpreter.xml">
-<!ENTITY io-handling SYSTEM "io-handling.xml">
+<!ENTITY io-handling SYSTEM "contents/io-handling.xml">
 <!ENTITY version SYSTEM "version.xml">
 ]>
 <book id="index">
 
-    <bookinfo>
-        <title>Cattle Reference Manual</title>
-        <releaseinfo>for Cattle &version;</releaseinfo>
-    </bookinfo>
+	<bookinfo>
+		<title>Cattle Reference Manual</title>
+		<releaseinfo>for Cattle &version;</releaseinfo>
+	</bookinfo>
 
-    <chapter>
-        <title>Overview</title>
-        <para>
-            Cattle is a library implementing a flexible interpreter for the
-            Brainfuck programming language.
-        </para>
-        <para>
-            The library allows one to easily embed a full-featured and quite
-            performing Brainfuck interpreter into any application; to further
-            improve integration, all I/O operations can be performed using
-            custom routines.
-        </para>
-        <para>
-            Great care has been taken in order to make the API simple and
-            conforming to expectation: any programmer with previous exposure
-            to the GNOME stack should be able to feel right at home.
-        </para>
-        <para>
-            The library is still under development, and some planned features
-            are not yet implemented, or only halfway to completion.
-        </para>
-    </chapter>
+	<chapter>
+		<title>Overview</title>
+		&overview;
+	</chapter>
 
 	<chapter>
 		<title>Core Features</title>
 		&version-information;
 	</chapter>
 
-    <chapter>
-        <title>Objects</title>
-        &CattleInstruction;
-        &CattleProgram;
-        &CattleTape;
-        &CattleConfiguration;
-        &CattleInterpreter;
-    </chapter>
+	<chapter>
+		<title>Objects</title>
+		&CattleInstruction;
+		&CattleProgram;
+		&CattleTape;
+		&CattleConfiguration;
+		&CattleInterpreter;
+	</chapter>
 
-    <chapter>
-        <title>Miscellaneous topics</title>
-        &io-handling;
-    </chapter>
+	<chapter>
+		<title>Miscellaneous Topics</title>
+		&io-handling;
+	</chapter>
 
-    <index>
-        <title>Index</title>
-    </index>
+	<index>
+		<title>Index</title>
+	</index>
 	<index role="0.9.1">
 		<title>Index of new symbols in 0.9.1</title>
 	</index>

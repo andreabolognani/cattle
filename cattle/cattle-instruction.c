@@ -23,33 +23,34 @@
 
 /**
  * SECTION:cattle-instruction
- * @short_description: Single instruction
+ * @short_description: A single Brainfuck instruction
  *
- * #CattleInstruction represents a single Brainfuck instruction, repeated
- * one or more times in a row.
+ * A #CattleInstruction represents a single Brainfuck instruction,
+ * repeated one or more times in a row.
  *
  * Multiple instructions of the same type (i.e. multiple increment
- * instruction) are grouped together to reduce memory usage and execution
- * time.
+ * instruction) are grouped together to reduce memory usage and speed
+ * up execution.
  *
- * Consider the following, very common Brainfuck code:
+ * Consider the following piece of Brainfuck code:
  *
  * <informalexample><programlisting>
  * +++.-----
  * </programlisting></informalexample>
  *
- * As you can see, it is constituted by three increment instructions, a
- * print instruction, and five decrement instructions.
+ * There are nine instructions: three increment instructions, a print
+ * instruction, and five decrement instructions.
  *
  * Instead of creating nine separate objects, with all the involved
- * overhead, we can create just three objects (one with value
+ * overhead, Cattle creates just three objects (one with value
  * #CATTLE_INSTRUCTION_INCREASE, one with value #CATTLE_INSTRUCTION_PRINT,
  * and one with value #CATTLE_INSTRUCTION_DECREASE) and set their quantity
  * to three, one and five respectively.
  *
  * Each instruction maintains a reference to the next instruction in the
- * execution flow, and to the first instruction in the loop (if the value
- * is #CATTLE_INSTRUCTION_LOOP_BEGIN).
+ * execution flow. If the instruction starts a loop (its value is
+ * #CATTLE_INSTRUCTION_LOOP_BEGIN) it also holds a reference to the first
+ * instruction in the loop.
  */
 
 G_DEFINE_TYPE (CattleInstruction, cattle_instruction, G_TYPE_OBJECT)
@@ -67,8 +68,8 @@ G_DEFINE_TYPE (CattleInstruction, cattle_instruction, G_TYPE_OBJECT)
  * @CATTLE_INSTRUCTION_READ: get one character from the input and save
  * its value at the current position.
  * @CATTLE_INSTRUCTION_PRINT: send the current value to the output.
- * @CATTLE_INSTRUCTION_DUMP_TAPE: dump the whole content of the tape on
- * the output.
+ * @CATTLE_INSTRUCTION_DUMP_TAPE: show debugging information. This
+ * usually means dumping the contents of the tape.
  *
  * Brainfuck instructions supported by Cattle, as #gunichar<!-- -->s.
  *
@@ -290,11 +291,11 @@ cattle_instruction_set_next (CattleInstruction *self,
  *
  * Get the next instruction.
  *
- * Please note that the instruction returned might not be really the
- * next instruction to be executed: if @instruction marks the beginning
- * of a loop (i.e. its value is #CATTLE_INSTRUCTION_LOOP_BEGIN), the
- * instruction returned will be executed only after the loop has
- * returned.
+ * Please note that the returned instruction might not be the next
+ * instruction in the execution flow: if @instruction marks the
+ * beginning of a loop (its value is #CATTLE_INSTRUCTION_LOOP_BEGIN),
+ * the returned instruction will be executed only after the loop has
+ * ended.
  *
  * The returned object must be unreferenced when no longer needed.
  *
@@ -316,9 +317,12 @@ cattle_instruction_get_next (CattleInstruction *self)
 /**
  * cattle_instruction_set_loop:
  * @instruction: a #CattleInstruction
- * @loop: first #CattleInstruction in the loop
+ * @loop: first #CattleInstruction in the loop, or %NULL
  *
  * Set the instructions to be executed in the loop.
+ *
+ * This method should only be called on instructions whose value is
+ * #CATTLE_INSTRUCTION_LOOP_BEGIN.
  */
 void
 cattle_instruction_set_loop (CattleInstruction *self,
@@ -348,6 +352,9 @@ cattle_instruction_set_loop (CattleInstruction *self,
  * @instruction: a #CattleInstruction
  *
  * Get the first instruction of the loop.
+ *
+ * This method should only be called on instructions whose value is
+ * #CATTLE_INSTRUCTION_LOOP_BEGIN.
  *
  * The returned object must be unreferenced when no longer needed.
  *

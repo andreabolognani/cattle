@@ -25,7 +25,7 @@
  * SECTION:cattle-configuration
  * @short_description: Configuration for an interpreter
  *
- * #CattleConfiguration represents the configuration for a
+ * A #CattleConfiguration contains the configuration for a
  * #CattleInterpreter.
  */
 
@@ -33,13 +33,13 @@ G_DEFINE_TYPE (CattleConfiguration, cattle_configuration, G_TYPE_OBJECT)
 
 /**
  * CattleOnEOFAction:
- * @CATTLE_ON_EOF_STORE_ZERO: store a zero in the memory tape at the
- * current location. This is the default behaviour.
- * @CATTLE_ON_EOF_STORE_EOF: store an EOF character in the memory tape.
+ * @CATTLE_ON_EOF_STORE_ZERO: store a zero in the current cell. This is
+ * the default behaviour.
+ * @CATTLE_ON_EOF_STORE_EOF: store an EOF character in the current cell.
  * @CATTLE_ON_EOF_DO_NOTHING: do nothing.
  *
- * Possible actions to be performed by the interpreter when reading
- * an EOF character from the input.
+ * Possible actions to be performed by the interpreter when an EOF
+ * character is read from the input source.
  */
 
 /**
@@ -118,10 +118,10 @@ cattle_configuration_new (void)
  * @configuration: a #CattleConfiguration
  * @action: the action to be performed
  *
- * Set the action to be performed when reading an EOF character from
- * the input.
+ * Set the action to be performed when an EOF character is read from
+ * the input source.
  *
- * Accepted values are in the #CattleOnEOFAction enumeration.
+ * Accepted values are from the #CattleOnEOFAction enumeration.
  */
 void
 cattle_configuration_set_on_eof_action (CattleConfiguration *self,
@@ -147,8 +147,8 @@ cattle_configuration_set_on_eof_action (CattleConfiguration *self,
  * cattle_configuration_get_on_eof_action:
  * @configuration: a #CattleConfiguration
  *
- * Get the action to be performed when an EOF character is red from
- * the input. See cattle_configuration_set_on_eof_action().
+ * Get the action to be performed when an EOF character is read from
+ * the input source. See cattle_configuration_set_on_eof_action().
  *
  * Return: the current action.
  */
@@ -168,11 +168,10 @@ cattle_configuration_get_on_eof_action (CattleConfiguration *self)
  * @configuration: a #CattleConfiguration
  * @enabled: whether or not debug should be enabled
  *
- * Set the status of the debugging support.
+ * Set the status of the debugging support. It is disabled by default.
  *
- * The debugging instruction #CATTLE_INSTRUCTION_DUMP_TAPE, is not part
- * of the Brainfuck language; anyway, because of its usefulness, it is
- * often used by programmers.
+ * If debugging is disabled, instructions whose value is
+ * %CATTLE_INSTRUCTION_DUMP_TAPE will be ignored by the interpreter.
  */
 void
 cattle_configuration_set_debug_is_enabled (CattleConfiguration *self,
@@ -191,7 +190,7 @@ cattle_configuration_set_debug_is_enabled (CattleConfiguration *self,
  * Get the current status of the debugging support.
  * See cattle_configuration_set_debug_is_enabled().
  *
- * Return: the current debugging status.
+ * Return: %TRUE if debugging is enabled, %FALSE otherwise.
  */
 gboolean
 cattle_configuration_get_debug_is_enabled (CattleConfiguration *self)
@@ -282,8 +281,8 @@ cattle_configuration_class_init (CattleConfigurationClass *self)
 	/**
 	 * CattleConfiguration:on-eof-action:
 	 *
-	 * Action to be performed when an EOF character is found in the
-	 * input.
+	 * Action to be performed when an EOF character is read from the
+	 * input source.
 	 *
 	 * Changes to this property are not notified.
 	 */
@@ -300,8 +299,8 @@ cattle_configuration_class_init (CattleConfigurationClass *self)
 	/**
 	 * CattleConfiguration:debug-is-enabled:
 	 *
-	 * Whether or not a #CATTLE_INSTRUCTION_DUMP_TAPE instruction
-	 * should be executed by the interpreter.
+	 * If %FALSE, instructions whose value is
+	 * #CATTLE_INSTRUCTION_DUMP_TAPE are not executed by the interpreter.
 	 *
 	 * Changes to this property are not notified.
 	 */

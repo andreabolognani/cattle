@@ -24,19 +24,20 @@
  * SECTION:cattle-tape
  * @short_description: Infinite-length memory tape
  *
- * #CattleTape represents an infinte-length memory tape, which is used
- * by a #CattleInterpreter to store its data. The tape is made of an
- * infinte number of memory cells, each one able to store a single
- * ASCII character.
+ * A #CattleTape represents an infinte-length memory tape, which is used
+ * by a #CattleInterpreter to store its data. The tape contains a
+ * virtually infinte number of memory cells, each one able to store a
+ * single ASCII character.
  *
- * You can perform three operations on a tape: read the value of the
- * current cell, update the value of the current cell, and move the
- * tape to the left or to the right.
+ * A tape supports three kinds of operations: reading the value of the
+ * current cell, updating the value of the current cell (either by
+ * increasing/decreasing it or by setting it to a certain value), and
+ * moving the current cell pointer (either to the left or to the right).
  *
- * The tape grows automatically whenever more cells are needed. You
- * can check if the current cell is at the beginning or at the end of
- * the tape using cattle_tape_is_at_beginning() and
- * cattle_tape_is_at_end() respectively.
+ * The tape grows automatically as more cells are needed, the only limit
+ * being the amount of available memory. It is possible to check if the
+ * current cell is at the beginning or at the end of the tape using
+ * cattle_tape_is_at_beginning() and cattle_tape_is_at_end().
  */
 
 G_DEFINE_TYPE (CattleTape, cattle_tape, G_TYPE_OBJECT)
@@ -397,11 +398,10 @@ cattle_tape_move_right_by (CattleTape *self,
  * cattle_tape_is_at_beginning:
  * @tape: a #CattleTape
  *
- * Check if the current cell is the first one in the tape.
+ * Check if the current cell is the first one of the tape.
  *
- * Please note that, since the tape grows automatically as more cells
- * are needed, being on the first cell doesn't mean you can't move
- * to the left.
+ * Since the tape grows automatically as more cells are needed, it is
+ * possible to move left from the first cell.
  *
  * Return: #TRUE if the current cell is the first one, #FALSE
  * otherwise
@@ -428,11 +428,10 @@ cattle_tape_is_at_beginning (CattleTape *self)
  * cattle_tape_is_at_end:
  * @tape: a #CattleTape
  *
- * Check if the current cell is the last one in the tape.
+ * Check if the current cell is the last one of the tape.
  * 
- * Please note that, since the tape grows automatically as more cells
- * are needed, being on the last cell doesn't mean you can't move
- * to the right.
+ * Since the tape grows automatically as more cells are needed, it is
+ * possible to move right from the last cell.
  *
  * Return: #TRUE if the current cell is the last one, #FALSE
  * otherwise
@@ -483,7 +482,8 @@ cattle_tape_push_bookmark (CattleTape *self)
  * cattle_tape_pop_bookmark:
  * @tape: a #CattleTape
  *
- * Restore the previously-saved position.
+ * Restore the previously-saved tape position.
+ * See cattle_tape_push_bookmark().
  *
  * Return: #FALSE if the bookmarks stack is empty, #TRUE otherwise.
  *

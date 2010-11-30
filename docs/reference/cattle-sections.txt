@@ -2,8 +2,8 @@
 
 <SECTION>
 <FILE>cattle-configuration</FILE>
-CattleOnEOFAction
 <TITLE>CattleConfiguration</TITLE>
+CattleOnEOFAction
 CattleConfiguration
 cattle_configuration_new
 cattle_configuration_set_on_eof_action
@@ -76,8 +76,8 @@ cattle_interpreter_error_quark
 
 <SECTION>
 <FILE>cattle-instruction</FILE>
-CattleInstructionValue
 <TITLE>CattleInstruction</TITLE>
+CattleInstructionValue
 CattleInstruction
 cattle_instruction_new
 cattle_instruction_set_value

@@ -23,9 +23,9 @@
 
 /**
  * SECTION:cattle-program
- * @short_description: A program and its input
+ * @short_description: A Brainfuck program (and possibly its input)
  *
- * #CattleProgram represents a complete Brainfuck program, that is,
+ * A #CattleProgram represents a complete Brainfuck program, that is,
  * the instructions to be executed and possibly its input.
  *
  * The input for a program can optionally be specified in the source
@@ -39,10 +39,9 @@
  * the program's code is ",+." while the program's input is
  * "sometext".
  *
- * It's important to remember that any Brainfuck instruction after
- * the bang symbol is considered part of the input, and as such is
- * not executed. Subsequent bang symbols are also considered part of
- * the input.
+ * Any Brainfuck instruction after the bang symbol is considered part
+ * of the input, and as such is not executed. Subsequent bang symbols
+ * are also considered part of the input.
  */
 
 G_DEFINE_TYPE (CattleProgram, cattle_program, G_TYPE_OBJECT)

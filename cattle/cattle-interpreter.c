@@ -41,9 +41,8 @@
  * suitable #CattleConfiguration object.
  *
  * Once initialized, a #CattleInterpreter can run the assigned program
- * as many times as you want; anyway, the memory tape is not cleaned
- * automatically, so you will probably want to replace the used tape
- * with a newly-created one between two different executions.
+ * as many times as needed; the memory tape, however, is not
+ * re-initialized automatically between executions.
  */
 
 G_DEFINE_TYPE (CattleInterpreter, cattle_interpreter, G_TYPE_OBJECT)
@@ -726,10 +725,9 @@ cattle_interpreter_run (CattleInterpreter  *self,
  *
  * Set the configuration for @interpreter.
  *
- * The same configuration can be used for as many interpreters as
- * you want, but modifying it after it has been assigned to an
- * interpreter may result in undefined behaviour, and as such is
- * discouraged.
+ * The same configuration can be used for several interpreters, but
+ * modifying it after it has been assigned to an interpreter may result
+ * in undefined behaviour, and as such is discouraged.
  */
 void
 cattle_interpreter_set_configuration (CattleInterpreter   *self,
@@ -777,8 +775,8 @@ cattle_interpreter_get_configuration (CattleInterpreter *self)
  *
  * Set the program to be executed by @interpreter.
  *
- * You can share a single program between multiple interpreters,
- * as long as you take care not to modify it after it has been
+ * A single program can be shared between multiple interpreters,
+ * as long as care is taken not to modify it after it has been
  * assigned to any of them.
  */
 void
@@ -1011,9 +1009,9 @@ cattle_interpreter_class_init (CattleInterpreterClass *self)
 	 * @input: return location for the input
 	 * @error: a #GError to be used for reporting, or %NULL
 	 *
-	 * Emitted  whenever the interpreter needs some input.
+	 * Emitted whenever the interpreter needs input.
 	 *
-	 * If the operation fails, @error has to be filled with
+	 * If the operation fails, @error must be filled with
 	 * detailed information about the error.
 	 *
 	 * Return: #TRUE if the operation is successful, #FALSE
@@ -1043,8 +1041,7 @@ cattle_interpreter_class_init (CattleInterpreterClass *self)
 	 * @output: the character that needs to be printed
 	 * @error: a #GError to be used for reporting, or %NULL
 	 *
-	 * Emitted whenever the interpreter needs to perform
-	 * some output.
+	 * Emitted whenever the interpreter needs to perform output.
 	 *
 	 * If the operation fails, @error has to be filled with
 	 * detailed information about the error.
@@ -1075,7 +1072,7 @@ cattle_interpreter_class_init (CattleInterpreterClass *self)
 	 * @interpreter: a #CattleInterpreter
 	 * @error: a #GError used for error reporting, or %NULL
 	 *
-	 * Emitted whenever a tape dump is requested.
+	 * Emitted whenever debugging information are needed.
 	 *
 	 * If the operation fails, @error has to be filled with
 	 * detailed information about the error.
