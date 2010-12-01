@@ -34,6 +34,7 @@ read_file_contents (const gchar  *path,
 	GError *inner_error;
 	gchar buffer[BUFFER_SIZE];
 	gchar *contents_str;
+	gchar *temp;
 	gssize count;
 
 	g_return_val_if_fail (error == NULL || *error == NULL, NULL);
@@ -76,6 +77,19 @@ read_file_contents (const gchar  *path,
 	g_string_free (contents, FALSE);
 	g_object_unref (stream);
 	g_object_unref (file);
+
+	/* Detect magic bytes and strip the first line if present */
+	if (g_str_has_prefix (contents_str, "#!")) {
+
+		temp = contents_str;
+
+		while (g_utf8_get_char (temp) != '\n') {
+			*temp = ' ';
+			temp = g_utf8_next_char (temp);
+		}
+
+		contents_str = g_strchug (contents_str);
+	}
 
 	return contents_str;
 }
