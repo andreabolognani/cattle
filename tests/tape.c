@@ -22,8 +22,23 @@
 #include <glib.h>
 #include <glib-object.h>
 #include <cattle/cattle.h>
+#include <stdio.h>
 
 #define STEPS 1024
+
+static gint
+mod (gint what,
+     gint range)
+{
+	gint ret;
+
+	ret = what % range;
+	if (ret < 0) {
+		ret = range + ret;
+	}
+
+	return ret;
+}
 
 static void
 tape_create (CattleTape    **tape,
@@ -189,10 +204,11 @@ test_tape_current_value (CattleTape    **tape,
 {
 gint i;
 
-	for (i = 0; i < 128; i++) {
+	for (i = 1; i < 128; i++) {
+
+		cattle_tape_set_current_value (*tape, i);
 
 		g_assert (cattle_tape_get_current_value (*tape) == i);
-		cattle_tape_set_current_value (*tape, i + 1);
 	}
 }
 
@@ -216,6 +232,9 @@ test_tape_increase_current_value (CattleTape    **tape,
 
 	cattle_tape_decrease_current_value_by (*tape, 128);
 	g_assert (cattle_tape_get_current_value (*tape) == 0);
+
+	cattle_tape_increase_current_value_by (*tape, 128 * 5);
+	g_assert (cattle_tape_get_current_value (*tape) == 0);
 }
 
 /**
@@ -238,6 +257,92 @@ test_tape_decrease_current_value (CattleTape    **tape,
 		g_assert (cattle_tape_get_current_value (*tape) == i);
 		cattle_tape_decrease_current_value (*tape);
 	}
+
+	g_assert (cattle_tape_get_current_value (*tape) == 127);
+
+	cattle_tape_decrease_current_value_by (*tape, 128 * 5);
+	g_assert (cattle_tape_get_current_value (*tape) == 127);
+}
+
+/**
+ * test_tape_positive_wrap:
+ *
+ * Wrap the current value by increasing it several times.
+ */
+static void
+test_tape_positive_wrap (CattleTape    **tape,
+                         gconstpointer   data)
+{
+	gint i;
+
+	cattle_tape_set_current_value (*tape, 42);
+	g_assert (cattle_tape_get_current_value (*tape) == 42);
+
+	for (i = 0; i < 128; i++) {
+
+		g_assert (cattle_tape_get_current_value (*tape) >= 0);
+		g_assert (cattle_tape_get_current_value (*tape) <= 127);
+		g_assert (cattle_tape_get_current_value (*tape) == mod ((42 + i), 128));
+
+		cattle_tape_increase_current_value (*tape);
+	}
+
+	g_assert (cattle_tape_get_current_value (*tape) == 42);
+}
+
+/**
+ * test_tape_negative_wrap:
+ *
+ * Wrap the current value by decreasing it several times.
+ */
+static void
+test_tape_negative_wrap (CattleTape    **tape,
+                         gconstpointer   data)
+{
+	gint i;
+
+	cattle_tape_set_current_value (*tape, 42);
+	g_assert (cattle_tape_get_current_value (*tape) == 42);
+
+	for (i = 0; i < 128; i++) {
+
+		g_assert (cattle_tape_get_current_value (*tape) >= 0);
+		g_assert (cattle_tape_get_current_value (*tape) <= 127);
+		g_assert (cattle_tape_get_current_value (*tape) == mod ((42 - i), 128));
+
+		cattle_tape_decrease_current_value (*tape);
+	}
+
+	g_assert (cattle_tape_get_current_value (*tape) == 42);
+}
+
+/**
+ * test_tape_eof_wrap:
+ *
+ * Check wrapping works as expected when an EOF is involved.
+ */
+static void
+test_tape_eof_wrap (CattleTape    **tape,
+                    gconstpointer   data)
+{
+	cattle_tape_set_current_value (*tape, EOF);
+	g_assert (cattle_tape_get_current_value (*tape) == EOF);
+
+	cattle_tape_set_current_value (*tape, EOF);
+	cattle_tape_increase_current_value (*tape);
+	g_assert (cattle_tape_get_current_value (*tape) == 0);
+
+	cattle_tape_set_current_value (*tape, EOF);
+	cattle_tape_increase_current_value_by (*tape, 5 + (5 * 128));
+	g_assert (cattle_tape_get_current_value (*tape) == 4);
+
+	cattle_tape_set_current_value (*tape, EOF);
+	cattle_tape_decrease_current_value (*tape);
+	g_assert (cattle_tape_get_current_value (*tape) == 127);
+
+	cattle_tape_set_current_value (*tape, EOF);
+	cattle_tape_decrease_current_value_by (*tape, 5 + (5 * 128));
+	g_assert (cattle_tape_get_current_value (*tape) == 123);
 }
 
 gint
@@ -299,6 +404,24 @@ main (gint argc, gchar **argv)
 	            NULL,
 	            tape_create,
 	            test_tape_decrease_current_value,
+	            tape_destroy);
+	g_test_add ("/tape/positive-wrap",
+	            CattleTape*,
+	            NULL,
+	            tape_create,
+	            test_tape_positive_wrap,
+	            tape_destroy);
+	g_test_add ("/tape/negative-wrap",
+	            CattleTape*,
+	            NULL,
+	            tape_create,
+	            test_tape_negative_wrap,
+	            tape_destroy);
+	g_test_add ("/tape/eof-wrap",
+	            CattleTape*,
+	            NULL,
+	            tape_create,
+	            test_tape_eof_wrap,
 	            tape_destroy);
 
 	return g_test_run ();

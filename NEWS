@@ -6,9 +6,12 @@ Overview of changes from Cattle 0.9.3 to 0.9.4
                        handler might do more than dumping the tape's
                        contents.
 
-  * CattleTape: add fast bulk increase/decrease/move operations.
+  * CattleTape:
 
-  * CattleInterpreter: use bulk operation for speed increase.
+    - add fast bulk increase/decrease/move operations;
+    - implement current value wrapping on increase/decrease.
+
+  * CattleInterpreter: use bulk operations for speed increase.
 
   * Add runtime and compile-time version information.
 

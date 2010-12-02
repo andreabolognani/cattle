@@ -19,6 +19,7 @@
  */
 
 #include "cattle-tape.h"
+#include <stdio.h>
 
 /**
  * SECTION:cattle-tape
@@ -156,6 +157,8 @@ cattle_tape_new (void)
  * @value: the current cell's new value
  *
  * Set the value of the current cell.
+ *
+ * Accepted values are ASCII values or EOF.
  */
 void
 cattle_tape_set_current_value (CattleTape *self,
@@ -165,6 +168,7 @@ cattle_tape_set_current_value (CattleTape *self,
 
 	g_return_if_fail (CATTLE_IS_TAPE (self));
 	g_return_if_fail (!self->priv->disposed);
+	g_return_if_fail ((value >= 0 && value <= 127) || value	== EOF);
 
 	chunk = (char *) self->priv->current->data;
 	chunk[self->priv->offset] = value;
@@ -182,7 +186,7 @@ cattle_tape_set_current_value (CattleTape *self,
 gchar
 cattle_tape_get_current_value (CattleTape *self)
 {
-	gchar *chunk = NULL;
+	gchar *chunk;
 
 	g_return_val_if_fail (CATTLE_IS_TAPE (self), (gchar) 0);
 	g_return_val_if_fail (!self->priv->disposed, (gchar) 0);
@@ -197,6 +201,9 @@ cattle_tape_get_current_value (CattleTape *self)
  * @tape: a #CattleTape
  *
  * Increase the value in the current cell by one.
+ *
+ * If the value in the current cell has ASCII code 127, the new value
+ * will have ASCII code 0.
  *
  * Since: 0.9.4
  */
@@ -213,6 +220,8 @@ cattle_tape_increase_current_value (CattleTape *self)
  *
  * Increase the value in the current cell by @value.
  *
+ * The value is wrapped if needed to keep it in the ASCII code.
+ *
  * Increasing the value this way is much faster than calling
  * cattle_tape_increase_current_value() multiple times.
  *
@@ -222,13 +231,42 @@ void
 cattle_tape_increase_current_value_by (CattleTape *self,
                                        gint        value)
 {
-	gchar *chunk = NULL;
+	gchar *chunk;
+	gchar current;
 
 	g_return_if_fail (CATTLE_IS_TAPE (self));
 	g_return_if_fail (!self->priv->disposed);
 
+	/* Return right away in case no increment is needed */
+	if (value == 0) {
+		return;
+	}
+
 	chunk = (gchar *) self->priv->current->data;
-	chunk[self->priv->offset] += value;
+	current = chunk[self->priv->offset];
+
+	/* Special handling for EOF character */
+	if (current == EOF) {
+		if (value > 0) {
+			chunk[self->priv->offset] = 0;
+			cattle_tape_increase_current_value_by (self, value - 1);
+			return;
+		}
+		else {
+			chunk[self->priv->offset] = 127;
+			cattle_tape_increase_current_value_by (self, value + 1);
+			return;
+		}
+	}
+
+	current = (current + value) % 128;
+
+	/* If the remainder is negative the value needs to be adjusted */
+	if (current < 0) {
+		current = 128 + current;
+	}
+
+	chunk[self->priv->offset] = current;
 }
 
 /**
@@ -236,6 +274,9 @@ cattle_tape_increase_current_value_by (CattleTape *self,
  * @tape: a #CattleTape
  *
  * Decrease the value in the current cell by one.
+ *
+ * If the value in the current cell has ASCII value 0, the new value
+ * will have ASCII value 127.
  *
  * Since: 0.9.4
  */
@@ -251,6 +292,8 @@ cattle_tape_decrease_current_value (CattleTape *self)
  * @value: decrease amount
  *
  * Decrease the value in the current cell by @value.
+ *
+ * The value is wrapped if needed to keep it in the ASCII code.
  *
  * Decreasing the value this way is much faster than calling
  * cattle_tape_decrease_current_value() multiple times.
