@@ -5,7 +5,8 @@ SUBDIRS = cattle   \
           tests    \
           docs
 
-EXTRA_DIST = gtk-doc.make \
+EXTRA_DIST = ChangeLog.pre-0.9.2 \
+             gtk-doc.make        \
              cattle.pc.in
 
 CLEANFILES = $(srcdir)/ChangeLog

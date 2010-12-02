@@ -1,0 +1,222 @@
+2008-10-02  Andrea Bolognani  <eof@kiyuko.org>
+
+	* === Released 0.9.2 ===
+
+2008-10-01  Andrea Bolognani  <eof@kiyuko.org>
+
+	* configure.in: Bumped version number.
+
+2008-09-11  Andrea Bolognani  <eof@kiyuko.org>
+
+	* cattle/cattle-tape.c (CattleTapePrivate): Splitted the limit field
+	  into two separate fields, upper_limit and lower_limit.
+
+	* cattle/cattle-tape.h (cattle_tape_pop_bookmark):
+	* cattle/cattle-tape.c (cattle_tape_pop_bookmark): Return a boolean value.
+
+2008-09-09  Andrea Bolognani  <eof@kiyuko.org>
+
+	* tests/tape-limits-test.c: Simple test to make sure the limits (i.e.
+	  beginning and end) reported by the tape are correct.
+
+2008-09-08  Andrea Bolognani  <eof@kiyuko.org>
+
+	* examples/interpreter.c (debug_handler): Added a custom handler for
+	  the "debug-request" signal, and turned debug on.
+
+	* cattle/cattle-tape.h:
+	* cattle/cattle-tape.c: Removed the dump() method.
+
+2008-09-07  Andrea Bolognani  <eof@kiyuko.org>
+
+	* cattle/cattle-interpreter.c: Initial implementation of
+	  the "debug-request" signal.
+
+2008-09-01  Andrea Bolognani  <eof@kiyuko.org>
+
+	* cattle/cattle-tape.c (CattleTapePrivate): Added a limit field, used to
+	  store the offset of the last valid byte inside the last chunk.
+
+	* cattle/cattle-tape.c (cattle_tape_is_at_end): Fixed to use the
+	  newly-introduced limit field.
+
+2008-08-30  Andrea Bolognani  <eof@kiyuko.org>
+
+	* cattle/cattle-tape.c (cattle_tape_dump): Fixed to work with chunks; it
+	  would actually need some other changes to work as expected, but I'm not
+	  going to rework it further since the current implementation is going to
+	  be obsoleted soon and it's currently only useful to debug the bookmarks
+	  code. is_at_beginning() is affected by the same issue and as such
+	  doesn't work reliably.
+
+2008-08-28  Andrea Bolognani  <eof@kiyuko.org>
+
+	* cattle/cattle-tape.h:
+	* cattle/cattle-tape.c: Started implementing tape bookmarks.
+
+2008-08-20  Andrea Bolognani  <eof@kiyuko.org>
+
+	* cattle/cattle-instruction.h:
+	* cattle/cattle-program.h:
+	* cattle/cattle-tape.h:
+	* cattle/cattle-configuration.h:
+	* cattle/cattle-interpreter.h: Added a pointer to the instance's private
+	  structure to the instance itself, to avoid calling the GET_PRIVATE()
+	  macro for every method call. Huge speed boost.
+
+2008-08-03  Andrea Bolognani  <eof@kiyuko.org>
+
+	* === Released 0.9.1 ===
+
+2008-08-01  Andrea Bolognani  <eof@kiyuko.org>
+
+	* configure.in: Bumped version number.
+
+	* README: Slightly updated.
+
+	* cattle/cattle-tape.c (cattle_tape_dump): Updated and re-enabled.
+
+2008-07-31  Andrea Bolognani  <eof@kiyuko.org>
+
+	* examples/indent.c: Added reference handling.
+
+	* examples/interpreter.c:
+	* examples/indent.c: Added copyright notice.
+
+2008-07-29  Andrea Bolognani  <eof@kiyuko.org>
+
+	* docs/reference/io-handling.xml: New file, explaining in detail how
+	  input and output are handled by Cattle.
+
+2008-07-25  Andrea Bolognani  <eof@kiyuko.org>
+
+	* examples/indent.c:
+	* examples/Makefile.am: Added a new example.
+
+2008-06-22  Andrea Bolognani  <eof@kiyuko.org>
+
+	* Makefile.am:
+	* gtk-doc.make:
+	* cattle/Makefile.am: We don't want anything to be installed yet.
+
+2008-06-16  Andrea Bolognani  <eof@kiyuko.org>
+
+	* cattle/cattle-interpreter.c (run_real): Finished implementing the
+	  input support. Added lots of comments.
+
+2008-06-14  Andrea Bolognani  <eof@kiyuko.org>
+
+	* cattle/cattle-interpreter.c (run_real): More work on the input support.
+	  Normal input works fine now; end of input still needs to be handled
+	  properly.
+
+2008-05-25  Andrea Bolognani  <eof@kiyuko.org>
+
+	* cattle/cattle-interpreter.h (CattleInterpreterClass):
+	* cattle/cattle-interpreter.c (cattle_interpreter_class_init): Initial
+	  implementation of the "input-request" signal.
+
+	* cattle/cattle-interpreter.c (run_real): Don't ignore the quantity of
+	  an instruction if its value is CATTLE_INSTRUCTION_READ.
+
+2008-05-19  Andrea Bolognani  <eof@kiyuko.org>
+
+	* cattle/cattle-program.c: The value of the "instructions" must be
+	  non-NULL. An empty program can be represented by a single instruction
+	  with value CATTLE_INSTRUCTION_NONE.
+
+2008-05-18  Andrea Bolognani  <eof@kiyuko.org>
+
+	* cattle/cattle-tape.h (CattleTapeClass):
+	* cattle/cattle-tape.c: Removed the "position-changed" signal, since it
+	  was of little use and the high number of emissions caused severe
+	  performance loss.
+
+	* cattle/cattle-instruction.c:
+	* cattle/cattle-program.c:
+	* cattle/cattle-configuration.c:
+	* cattle/cattle-tape.c:
+	* cattle/cattle-interpreter.c: Don't emit the "notify" signal on every
+	  property change to improve performance.
+
+2008-05-15  Andrea Bolognani  <eof@kiyuko.org>
+
+	* cattle/cattle-program.h (CattleProgramError):
+	* cattle/cattle-program.c: Renamed CATTLE_PROGRAM_ERROR_INVALID_UTF8
+	  to CATTLE_PROGRAM_ERROR_BAD_UTF8, to be consistent with GLib.
+
+2008-05-11  Andrea Bolognani  <eof@kiyuko.org>
+
+	* cattle/cattle-program.h (CattleProgram):
+	* cattle/cattle-configuration (CattleConfiguration):
+	* cattle/cattle-tape (CattleTape):
+	* cattle/cattle-interpreter (CattleInterpreter): Made all the instance
+	  structures opaque. The structures are not declared in the .c file
+	  to allow derived types.
+
+2008-05-06  Andrea Bolognani  <eof@kiyuko.org>
+
+	* cattle/cattle-instruction.h (CattleInstruction): Moved all the
+	  instance members into the CattleInstructionPrivate structure declared
+	  in the .c file. You were not supposed to access them directly anyway.
+
+2008-05-04  Andrea Bolognani  <eof@kiyuko.org>
+
+	* cattle/cattle-interpreter.h (CattleInterpreterClass):
+	* cattle/cattle-interpreter.c (cattle_interpreter_class_init): Initial
+	  implementation of the "output-request" signal.
+
+	* cattle/cattle-interpreter.c (run_real): Emit the "output-request"
+	  signal when needed instead of handling output directly.
+
+	* cattle/cattle-marshal.list: New file, used to generate the marshallers
+	  needed for signal emission.
+
+2008-05-02  Andrea Bolognani  <eof@kiyuko.org>
+
+	* cattle/cattle-tape.h (CattleTape):
+	* cattle/cattle-tape.c: Re-implemented CattleTape using fixed-sized
+	  chunks instead of allocating each memory cell separately. This
+	  improves both performances and memory usage. Thanks to Thomas Thomas
+	  for suggesting this approach.
+
+	* configure.in: Moved from PKG_CHECK_MODULES to AM_PATH_GLIB_2_0, which
+	  sets GLIB_MKENUMS automatically.
+
+	* configure.in: Added AM_PROG_CC_C_O, which seems to be needed to
+	  correctly compile examples/interpreter.c.
+
+2008-04-16  Andrea Bolognani  <eof@kiyuko.org>
+
+	* === Released 0.9.0 ===
+
+2008-04-12  Andrea Bolognani  <eof@kiyuko.org>
+
+	* cattle/cattle-instruction.c:
+	* cattle/cattle-program.c:
+	* cattle/cattle-tape.c:
+	* cattle/cattle-configuration.c:
+	* cattle/cattle-interpreter.c: Removed declaration of init(),
+	  class_init(), dispose() and finalize() methods, as they are already
+	  declared by G_DEFINE_TYPE().
+
+2008-04-09  Andrea Bolognani  <eof@kiyuko.org>
+
+	* cattle/cattle-interpreter.c (run_real): Use fputc() instead of
+	  g_print() to perform output, gaining in speed.
+
+2008-04-07  Andrea Bolognani  <eof@kiyuko.org>
+
+	* README: Wrote some quick informations on what Cattle is and about its
+	  current development status.
+
+2008-03-28  Andrea Bolognani  <eof@kiyuko.org>
+
+	* cattle/cattle-interpreter.h (cattle_interpreter_get_program):
+	* cattle/cattle-interpreter.c (cattle_interpreter_get_program):
+	  Modified to take and return a CattleProgram instead of a
+	  CattleInstruction.
+
+2008-02-28  Andrea Bolognani  <eof@kiyuko.org>
+
+	* ChangeLog: Started ChangeLog.
