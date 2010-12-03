@@ -33,7 +33,7 @@ main (gint argc, gchar **argv)
 	gchar *contents;
 
 	g_type_init ();
-	g_set_prgname ("interpreter");
+	g_set_prgname ("run");
 
 	if (argc != 2) {
 		g_warning ("Usage: %s FILENAME", argv[0]);

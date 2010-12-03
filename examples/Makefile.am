@@ -1,15 +1,15 @@
 INCLUDES = -I$(top_srcdir)   \
            -I$(top_builddir)
 
-noinst_PROGRAMS = interpreter \
-                  indent      \
+noinst_PROGRAMS = run      \
+                  indent   \
                   minimize
 
-interpreter_DEPENDENCIES = ${top_builddir}/cattle/libcattle.la common.h
-interpreter_SOURCES = interpreter.c common.c
-interpreter_CPPFLAGS = @CFLAGS@ @GLIB_CFLAGS@
-interpreter_LDFLAGS = @GLIB_LIBS@
-interpreter_LDADD = ${top_builddir}/cattle/libcattle.la
+run_DEPENDENCIES = ${top_builddir}/cattle/libcattle.la common.h
+run_SOURCES = run.c common.c
+run_CPPFLAGS = @CFLAGS@ @GLIB_CFLAGS@
+run_LDFLAGS = @GLIB_LIBS@
+run_LDADD = ${top_builddir}/cattle/libcattle.la
 
 indent_DEPENDENCIES = ${top_builddir}/cattle/libcattle.la common.h
 indent_SOURCES = indent.c common.c

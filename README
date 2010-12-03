@@ -23,7 +23,7 @@ Development status
 ==================
 
 The library currently provides enough features to implement a complete
-interpreter in about 50 lines of code (see examples/interpreter.c).
+interpreter in about 70 lines of code (see examples/run.c).
 
 However, it doesn't perform nearly as good as Beef: any program takes many
 times the time it would take on the standalone interpreter to run. Several
