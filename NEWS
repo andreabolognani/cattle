@@ -15,7 +15,10 @@ Overview of changes from Cattle 0.9.3 to 0.9.4
 
   * Add runtime and compile-time version information.
 
-  * Use GIO in the example programs.
+  * Examples:
+
+    - use GIO to read contents of files;
+	- add a simple Brainfuck source code minimizer.
 
 
 Overview of changes from Cattle 0.9.2 to 0.9.3
