@@ -2,12 +2,10 @@ dnl ****************************************
 dnl *** Initialize autoconf and automake ***
 dnl ****************************************
 
-AC_PREREQ(2.54)
-AC_INIT(cattle, 0.9.3)
-AM_INIT_AUTOMAKE(AC_PACKAGE_NAME,
-                 AC_PACKAGE_VERSION)
+AC_INIT([Cattle], [0.9.3], [eof@kiyuko.org], [cattle])
+AM_INIT_AUTOMAKE
 
-AM_CONFIG_HEADER(config.h)
+AM_CONFIG_HEADER([config.h])
 AM_MAINTAINER_MODE
 m4_ifdef([AM_SILENT_RULES],[AM_SILENT_RULES([yes])])
 AC_PROG_MAKE_SET
