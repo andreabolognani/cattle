@@ -5,6 +5,7 @@ cattle-undeclared.txt
 cattle-undocumented.txt
 cattle-unused.txt
 cattle.args
+cattle.types
 cattle.hierarchy
 cattle.interfaces
 cattle.prerequisites

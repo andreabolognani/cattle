@@ -1,8 +1,0 @@
-cattle_configuration_get_type
-cattle_instruction_value_get_type
-cattle_program_error_get_type
-cattle_on_eof_action_get_type
-cattle_program_get_type
-cattle_interpreter_get_type
-cattle_instruction_get_type
-cattle_tape_get_type
