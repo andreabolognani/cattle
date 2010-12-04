@@ -64,11 +64,16 @@ dnl *** Check for required GLib modules ***
 dnl ***************************************
 
 GLIB_REQUIRED_VERSION=2.16.0
-GLIB_REQUIRED_MODULES="gobject gio"
+GLIB_REQUIRED_MODULES="gobject"
 
 AM_PATH_GLIB_2_0($GLIB_REQUIRED_VERSION,,
                  AC_MSG_ERROR(GLib version $GLIB_REQUIRED_VERSION required),
                  $GLIB_REQUIRED_MODULES)
+
+# GIO is only required for the example programs
+PKG_CHECK_MODULES(GIO, gio-2.0 >= $GLIB_REQUIRED_VERSION)
+AC_SUBST(GIO_CFLAGS)
+AC_SUBST(GIO_LIBS)
 
 dnl *************************
 dnl *** Check for Gtk-Doc ***
