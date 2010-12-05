@@ -1,6 +1,29 @@
 <INCLUDE>cattle/cattle.h</INCLUDE>
 
 <SECTION>
+<FILE>cattle-version</FILE>
+<TITLE>Version Information</TITLE>
+CATTLE_MAJOR_VERSION
+CATTLE_MINOR_VERSION
+CATTLE_MICRO_VERSION
+CATTLE_CHECK_VERSION
+cattle_major_version
+cattle_minor_version
+cattle_micro_version
+cattle_check_version
+</SECTION>
+
+<SECTION>
+<FILE>cattle-error</FILE>
+<TITLE>Error Types</TITLE>
+CattleError
+CATTLE_ERROR
+<SUBSECTION Private>
+cattle_error_quark
+</SUBSECTION>
+</SECTION>
+
+<SECTION>
 <FILE>cattle-configuration</FILE>
 <TITLE>CattleConfiguration</TITLE>
 CattleOnEOFAction
@@ -32,8 +55,6 @@ cattle_program_set_instructions
 cattle_program_get_instructions
 cattle_program_set_input
 cattle_program_get_input
-CATTLE_PROGRAM_ERROR
-CattleProgramError
 <SUBSECTION Standard>
 CATTLE_PROGRAM
 CATTLE_IS_PROGRAM
@@ -44,7 +65,6 @@ CATTLE_IS_PROGRAM_CLASS
 CATTLE_PROGRAM_GET_CLASS
 <SUBSECTION Private>
 CattleProgramPrivate
-cattle_program_error_quark
 </SECTION>
 
 <SECTION>
@@ -59,8 +79,6 @@ cattle_interpreter_set_program
 cattle_interpreter_get_program
 cattle_interpreter_set_tape
 cattle_interpreter_get_tape
-CATTLE_INTERPRETER_ERROR
-CattleInterpreterError
 <SUBSECTION Standard>
 CATTLE_INTERPRETER
 CATTLE_IS_INTERPRETER
@@ -71,7 +89,6 @@ CATTLE_IS_INTERPRETER_CLASS
 CATTLE_INTERPRETER_GET_CLASS
 <SUBSECTION Private>
 CattleInterpreterPrivate
-cattle_interpreter_error_quark
 </SECTION>
 
 <SECTION>
@@ -129,17 +146,4 @@ CATTLE_IS_TAPE_CLASS
 CATTLE_TAPE_GET_CLASS
 <SUBSECTION Private>
 CattleTapePrivate
-</SECTION>
-
-<SECTION>
-<FILE>cattle-version</FILE>
-<TITLE>Version Information</TITLE>
-CATTLE_MAJOR_VERSION
-CATTLE_MINOR_VERSION
-CATTLE_MICRO_VERSION
-CATTLE_CHECK_VERSION
-cattle_major_version
-cattle_minor_version
-cattle_micro_version
-cattle_check_version
 </SECTION>

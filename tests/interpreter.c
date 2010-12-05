@@ -47,8 +47,8 @@ single_input_handler_one (CattleInterpreter  *interpreter,
 {
 	g_print ("single_input_handler_one\n");
 	g_set_error (error,
-	             CATTLE_PROGRAM_ERROR,
-	             CATTLE_PROGRAM_ERROR_BAD_UTF8,
+	             CATTLE_ERROR,
+	             CATTLE_ERROR_BAD_UTF8,
 	             "Spurious error");
 	*input = NULL;
 	return FALSE;
@@ -107,8 +107,8 @@ single_output_handler_one (CattleInterpreter  *interpreter,
 {
 	g_print ("single_output_handler_one\n");
 	g_set_error (error,
-	             CATTLE_PROGRAM_ERROR,
-	             CATTLE_PROGRAM_ERROR_BAD_UTF8,
+	             CATTLE_ERROR,
+	             CATTLE_ERROR_BAD_UTF8,
 	             "Spurious error");
 	return FALSE;
 }
@@ -164,8 +164,8 @@ single_debug_handler_one (CattleInterpreter  *interpreter,
 {
 	g_print ("single_debug_handler_one\n");
 	g_set_error (error,
-	             CATTLE_PROGRAM_ERROR,
-	             CATTLE_PROGRAM_ERROR_BAD_UTF8,
+	             CATTLE_ERROR,
+	             CATTLE_ERROR_BAD_UTF8,
 	             "Spurious error");
 	return FALSE;
 }

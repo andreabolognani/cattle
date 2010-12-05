@@ -38,14 +38,6 @@ G_BEGIN_DECLS
 #define CATTLE_IS_PROGRAM_CLASS(klass)   (G_TYPE_CHECK_CLASS_TYPE ((klass), CATTLE_TYPE_PROGRAM))
 #define CATTLE_PROGRAM_GET_CLASS(object) (G_TYPE_INSTANCE_GET_CLASS ((object), CATTLE_TYPE_PROGRAM, CattleProgramClass))
 
-typedef enum
-{
-	CATTLE_PROGRAM_ERROR_BAD_UTF8,
-	CATTLE_PROGRAM_ERROR_UNBALANCED_BRACKETS
-} CattleProgramError;
-
-#define CATTLE_PROGRAM_ERROR cattle_program_error_quark ()
-
 typedef struct _CattleProgram        CattleProgram;
 typedef struct _CattleProgramClass   CattleProgramClass;
 typedef struct _CattleProgramPrivate CattleProgramPrivate;
@@ -72,7 +64,6 @@ void               cattle_program_set_input        (CattleProgram      *program,
                                                     const gchar        *input);
 gchar*             cattle_program_get_input        (CattleProgram      *program);
 
-GQuark             cattle_program_error_quark      (void) G_GNUC_CONST;
 GType              cattle_program_get_type         (void) G_GNUC_CONST;
 
 G_END_DECLS

@@ -19,6 +19,7 @@
  */
 
 #include "cattle-enums.h"
+#include "cattle-error.h"
 #include "cattle-program.h"
 
 /**
@@ -45,19 +46,6 @@
  */
 
 G_DEFINE_TYPE (CattleProgram, cattle_program, G_TYPE_OBJECT)
-
-/**
- * CattleProgramError:
- * @CATTLE_PROGRAM_ERROR_BAD_UTF8: the provided input is not valid
- * UTF-8.
- * @CATTLE_PROGRAM_ERROR_UNBALANCED_BRACKETS: the number of open and
- * closed brackets in the input don't match.
- *
- * Errors detected on code loading.
- *
- * Cattle only supports UTF-8, so any input not using this encoding
- * is rejected by the code loader.
- */
 
 /**
  * CattleProgram:
@@ -91,18 +79,6 @@ static CattleInstruction* load (gchar **program);
 #define SHARP_SYMBOL   0x23
 #define BANG_SYMBOL    0x21
 #define NEWLINE_SYMBOL 0x0A
-
-/**
- * CATTLE_PROGRAM_ERROR:
- *
- * Error domain for program operations. Errors in this domain will be from
- * the #CattleProgramError enumeration.
- */
-GQuark
-cattle_program_error_quark (void)
-{
-	return g_quark_from_static_string ("cattle-program-error-quark");
-}
 
 static void
 cattle_program_init (CattleProgram *self)
@@ -311,8 +287,8 @@ cattle_program_new (void)
  * (!) character.
  *
  * In case of failure, @error is filled with detailed information.
- * The error domain is %CATTLE_PROGRAM_ERROR, and the error code is
- * from the #CattleProgramError enumeration.
+ * The error domain is %CATTLE_ERROR, and the error code is from the
+ * #CattleError enumeration.
  *
  * Return: #TRUE if @program was loaded successfully, #FALSE
  * otherwise.
@@ -335,8 +311,8 @@ cattle_program_load (CattleProgram  *self,
 	/* Check the provided string is valid UTF-8 before proceeding */
 	if (!g_utf8_validate (program, -1, NULL)) {
 		g_set_error (error,
-		             CATTLE_PROGRAM_ERROR,
-		             CATTLE_PROGRAM_ERROR_BAD_UTF8,
+		             CATTLE_ERROR,
+		             CATTLE_ERROR_BAD_UTF8,
 		             "Invalid UTF-8");
 		return FALSE;
 	}
@@ -364,8 +340,8 @@ cattle_program_load (CattleProgram  *self,
 	 * is not equal to the number of closed brackets */
 	if (brackets_count != 0) {
 		g_set_error (error,
-		             CATTLE_PROGRAM_ERROR,
-		             CATTLE_PROGRAM_ERROR_UNBALANCED_BRACKETS,
+		             CATTLE_ERROR,
+		             CATTLE_ERROR_UNBALANCED_BRACKETS,
 		             "Unbalanced brackets");
 		return FALSE;
 	}

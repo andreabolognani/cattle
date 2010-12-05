@@ -20,6 +20,7 @@
 
 #include "cattle-enums.h"
 #include "cattle-marshal.h"
+#include "cattle-error.h"
 #include "cattle-interpreter.h"
 #include <stdio.h>
 #include <string.h>
@@ -46,14 +47,6 @@
  */
 
 G_DEFINE_TYPE (CattleInterpreter, cattle_interpreter, G_TYPE_OBJECT)
-
-/**
- * CattleInterpreterError:
- * @CATTLE_INTERPRETER_ERROR_IO: I/O error.
- *
- * Runtime errors.
- */
-
 /**
  * CattleInterpreter:
  *
@@ -106,18 +99,6 @@ static gboolean single_handler_accumulator (GSignalInvocationHint  *hint,
                                             GValue                 *signal_retval,
                                             const GValue           *handler_retval,
                                             gpointer                data);
-
-/**
- * CATTLE_INTERPRETER_ERROR:
- *
- * Error domain for interpreter errors. Errors in this domain will be
- * from the #CattleInterpreterError enumeration.
- */
-GQuark
-cattle_interpreter_error_quark (void)
-{
-	return g_quark_from_static_string ("cattle-interpreter-error-quark");
-}
 
 static void
 cattle_interpreter_init (CattleInterpreter *self)
@@ -495,8 +476,8 @@ input_default_handler (CattleInterpreter  *self,
 		else {
 
 			g_set_error_literal (error,
-			                     CATTLE_INTERPRETER_ERROR,
-			                     CATTLE_INTERPRETER_ERROR_IO,
+			                     CATTLE_ERROR,
+			                     CATTLE_ERROR_IO,
 			                     strerror (errno));
 			return FALSE;
 		}
@@ -515,8 +496,8 @@ output_default_handler (CattleInterpreter  *self,
 	if (G_UNLIKELY (fputc (output, stdout) == EOF)) {
 
 		g_set_error_literal (error,
-		                     CATTLE_INTERPRETER_ERROR,
-		                     CATTLE_INTERPRETER_ERROR_IO,
+		                     CATTLE_ERROR,
+		                     CATTLE_ERROR_IO,
 		                     strerror (errno));
 		return FALSE;
 	}
@@ -554,8 +535,8 @@ debug_default_handler (CattleInterpreter  *self,
 
 	if (G_UNLIKELY (fputc ('[', stderr) == EOF)) {
 		g_set_error_literal (error,
-		                     CATTLE_INTERPRETER_ERROR,
-		                     CATTLE_INTERPRETER_ERROR_IO,
+		                     CATTLE_ERROR,
+		                     CATTLE_ERROR_IO,
 		                     strerror (errno));
 		cattle_tape_pop_bookmark (tape);
 		g_object_unref (tape);
@@ -568,8 +549,8 @@ debug_default_handler (CattleInterpreter  *self,
 		if (steps == 0) {
 			if (G_UNLIKELY (fputc ('<', stderr) == EOF)) {
 				g_set_error_literal (error,
-				                     CATTLE_INTERPRETER_ERROR,
-				                     CATTLE_INTERPRETER_ERROR_IO,
+				                     CATTLE_ERROR,
+				                     CATTLE_ERROR_IO,
 				                     strerror (errno));
 				cattle_tape_pop_bookmark (tape);
 				g_object_unref (tape);
@@ -584,8 +565,8 @@ debug_default_handler (CattleInterpreter  *self,
 		if (g_ascii_isgraph (value)) {
 			if (G_UNLIKELY (fputc (value, stderr) == EOF)) {
 				g_set_error_literal (error,
-				                     CATTLE_INTERPRETER_ERROR,
-				                     CATTLE_INTERPRETER_ERROR_IO,
+				                     CATTLE_ERROR,
+				                     CATTLE_ERROR_IO,
 				                     strerror (errno));
 				cattle_tape_pop_bookmark (tape);
 				g_object_unref (tape);
@@ -595,8 +576,8 @@ debug_default_handler (CattleInterpreter  *self,
 		else {
 			if (G_UNLIKELY (fprintf (stderr, "0x%X", (gint) value) < 0)) {
 				g_set_error_literal (error,
-				                     CATTLE_INTERPRETER_ERROR,
-				                     CATTLE_INTERPRETER_ERROR_IO,
+				                     CATTLE_ERROR,
+				                     CATTLE_ERROR_IO,
 				                     strerror (errno));
 				cattle_tape_pop_bookmark (tape);
 				g_object_unref (tape);
@@ -608,8 +589,8 @@ debug_default_handler (CattleInterpreter  *self,
 		if (steps == 0) {
 			if (G_UNLIKELY (fputc ('>', stderr) == EOF)) {
 				g_set_error_literal (error,
-				                     CATTLE_INTERPRETER_ERROR,
-				                     CATTLE_INTERPRETER_ERROR_IO,
+				                     CATTLE_ERROR,
+				                     CATTLE_ERROR_IO,
 				                     strerror (errno));
 				cattle_tape_pop_bookmark (tape);
 				g_object_unref (tape);
@@ -625,8 +606,8 @@ debug_default_handler (CattleInterpreter  *self,
 		/* Print a space and move forward */
 		if (G_UNLIKELY (fputc (' ', stderr) == EOF)) {
 			g_set_error_literal (error,
-			                     CATTLE_INTERPRETER_ERROR,
-			                     CATTLE_INTERPRETER_ERROR_IO,
+			                     CATTLE_ERROR,
+			                     CATTLE_ERROR_IO,
 			                     strerror (errno));
 			cattle_tape_pop_bookmark (tape);
 			g_object_unref (tape);
@@ -638,8 +619,8 @@ debug_default_handler (CattleInterpreter  *self,
 
 	if (G_UNLIKELY (fputc (']', stderr) == EOF)) {
 		g_set_error_literal (error,
-		                     CATTLE_INTERPRETER_ERROR,
-		                     CATTLE_INTERPRETER_ERROR_IO,
+		                     CATTLE_ERROR,
+		                     CATTLE_ERROR_IO,
 		                     strerror (errno));
 		cattle_tape_pop_bookmark (tape);
 		g_object_unref (tape);
@@ -647,8 +628,8 @@ debug_default_handler (CattleInterpreter  *self,
 	}
 	if (G_UNLIKELY (fputc ('\n', stderr) == EOF)) {
 		g_set_error_literal (error,
-		                     CATTLE_INTERPRETER_ERROR,
-		                     CATTLE_INTERPRETER_ERROR_IO,
+		                     CATTLE_ERROR,
+		                     CATTLE_ERROR_IO,
 		                     strerror (errno));
 		cattle_tape_pop_bookmark (tape);
 		g_object_unref (tape);

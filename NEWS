@@ -1,3 +1,9 @@
+Overview of changes from Cattle 0.9.4 to 1.0.0
+==============================================
+
+  * CattleError: merge the CattleProgramError and CattleInterpreterError
+                 enumerations into a single enumeration.
+
 Overview of changes from Cattle 0.9.3 to 0.9.4
 ==============================================
 

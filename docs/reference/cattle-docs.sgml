@@ -3,6 +3,7 @@
                "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd" [
 <!ENTITY overview SYSTEM "contents/overview.xml">
 <!ENTITY version-information SYSTEM "xml/cattle-version.xml">
+<!ENTITY error-types SYSTEM "xml/cattle-error.xml">
 <!ENTITY CattleInstruction SYSTEM "xml/cattle-instruction.xml">
 <!ENTITY CattleProgram SYSTEM "xml/cattle-program.xml">
 <!ENTITY CattleTape SYSTEM "xml/cattle-tape.xml">
@@ -26,6 +27,7 @@
 	<chapter>
 		<title>Core Features</title>
 		&version-information;
+		&error-types;
 	</chapter>
 
 	<chapter>
