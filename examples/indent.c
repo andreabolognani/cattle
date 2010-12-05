@@ -24,71 +24,93 @@
 #include <cattle/cattle.h>
 #include "common.h"
 
-/* Each time a loop is started, its content is indented by
- * INDENT_STEP blank spaces */
-#define INDENT_STEP 4
-
 static void
-indent_real (CattleInstruction *instruction,
-             gint               level)
+indent (CattleProgram *program)
 {
-	CattleInstruction *temp;
+	CattleInstruction *first;
+	CattleInstruction *current;
+	CattleInstruction *next;
 	CattleInstructionValue value;
+	GSList *stack;
+	gint level;
 	gint quantity;
 	gint i;
 
-	g_return_if_fail (CATTLE_IS_INSTRUCTION (instruction));
-	g_object_ref (instruction);
+	/* Initialize instruction stack, start at indentation level 0 */
+	stack = NULL;
+	level = 0;
 
-	do {
+	first = cattle_program_get_instructions (program);
+	g_object_ref (first);
+	current = first;
 
-		value = cattle_instruction_get_value (instruction);
-		quantity = cattle_instruction_get_quantity (instruction);
+	while (current != NULL) {
 
-		/* The closing bracket must be exactly below the opening one, so we
-		 * have to decrease the indent level here */
+		value = cattle_instruction_get_value (current);
+		quantity = cattle_instruction_get_quantity (current);
+
+		/* Decrease the indentation level at the end of a loop */
 		if (value == CATTLE_INSTRUCTION_LOOP_END) {
-			level -= 1;
+			level--;
+		}
+	
+		/* Print tabs for indentation */
+		for (i = 0; i < level; i++) {
+			g_print ("\t");
 		}
 
-		/* Output the whitespace */
-		for (i = 0; i < level * INDENT_STEP; i++) {
-			g_print (" ");
-		}
-
-		/* Output the instruction, as many times as needed */
+		/* Print the correct number of instructions */
 		for (i = 0; i < quantity; i++) {
 			g_print ("%c", value);
 		}
+
+		/* End the line */
 		g_print ("\n");
 
-		/* Recurse to process the inner loop */
+		/* Increase the indentation level at the beginning of a loop */
 		if (value == CATTLE_INSTRUCTION_LOOP_BEGIN) {
-			temp = cattle_instruction_get_loop (instruction);
-			indent_real (temp, level + 1);
-			g_object_unref (temp);
+			level++;
 		}
 
-		/* Drop the reference to the current instruction */
-		temp = cattle_instruction_get_next (instruction);
-		g_object_unref (instruction);
+		switch (value) {
 
-		instruction = temp;
+			case CATTLE_INSTRUCTION_LOOP_BEGIN:
+
+				/* Push the next instruction on top of the stack */
+				next = cattle_instruction_get_next (current);
+				stack = g_slist_prepend (stack, next);
+
+				/* Start indenting the loop */
+				next = cattle_instruction_get_loop (current);
+				g_object_unref (current);
+				current = next;
+
+				break;
+
+			case CATTLE_INSTRUCTION_LOOP_END:
+
+				g_assert (stack != NULL);
+
+				/* Pop the next instruction off the stack */
+				next = CATTLE_INSTRUCTION (stack->data);
+				stack = g_slist_delete_link (stack, stack);
+				g_object_unref (current);
+				current = next;
+
+				break;
+
+			default:
+
+				/* Go on with the next instruction */
+				next = cattle_instruction_get_next (current);
+				g_object_unref (current);
+				current = next;
+
+				break;
+		}
 	}
-	while (CATTLE_IS_INSTRUCTION (instruction));
-}
 
-void
-indent (CattleProgram *program)
-{
-	CattleInstruction *instruction;
-
-	g_return_if_fail (CATTLE_IS_PROGRAM (program));
-
-	/* Get the first instruction and start indenting */
-	instruction = cattle_program_get_instructions (program);
-	indent_real (instruction, 0);
-	g_object_unref (instruction);
+	g_object_unref (first);
 }
 
 gint
