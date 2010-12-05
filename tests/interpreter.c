@@ -219,6 +219,37 @@ test_interpreter_single_debug_handler (CattleInterpreter **interpreter,
 }
 #endif /* G_OS_UNIX */
 
+/**
+ * test_interpreter_unbalanced_brackets:
+ *
+ * Try to run a program containing unbalanced brackets.
+ *
+ * The program is created by hand to bypass the checks in the program
+ * loading routine.
+ */
+static void
+test_interpreter_unbalanced_brackets (CattleInterpreter **interpreter,
+                                      gconstpointer       data)
+{
+	CattleProgram *program;
+	CattleInstruction *instructions;
+	GError *error;
+
+	instructions = cattle_instruction_new ();
+	cattle_instruction_set_value (instructions, CATTLE_INSTRUCTION_LOOP_END);
+
+	program = cattle_interpreter_get_program (*interpreter);
+	cattle_program_set_instructions (program, instructions);
+	g_object_unref (program);
+	g_object_unref (instructions);
+
+	error = NULL;
+	g_assert (!cattle_interpreter_run (*interpreter, &error));
+	g_assert (g_error_matches (error, CATTLE_ERROR, CATTLE_ERROR_UNBALANCED_BRACKETS));
+
+	g_error_free (error);
+}
+
 gint
 main (gint argc, gchar **argv)
 {
@@ -245,6 +276,12 @@ main (gint argc, gchar **argv)
 	            test_interpreter_single_debug_handler,
 	            interpreter_destroy);
 #endif /* G_OS_UNIX */
+	g_test_add ("/interpreter/unbalanced-brackets",
+	            CattleInterpreter*,
+	            NULL,
+	            interpreter_create,
+	            test_interpreter_unbalanced_brackets,
+	            interpreter_destroy);
 
 	return g_test_run ();
 }

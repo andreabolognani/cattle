@@ -202,7 +202,19 @@ run (CattleInterpreter  *self,
 
 			case CATTLE_INSTRUCTION_LOOP_END:
 
-				g_assert (stack != NULL);
+				/* If the instruction stack is empty, we're not running
+				 * a loop, so trying to exit it is an error */
+				if (G_UNLIKELY (stack == NULL)) {
+
+					g_set_error_literal (error,
+					                     CATTLE_ERROR,
+					                     CATTLE_ERROR_UNBALANCED_BRACKETS,
+					                     "Unbalanced brackets");
+
+					g_object_unref (current);
+
+					return FALSE;
+				}
 
 				/* Pop an instruction off the stack */
 				g_object_unref (current);

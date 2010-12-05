@@ -1,6 +1,8 @@
 Overview of changes from Cattle 0.9.4 to 1.0.0
 ==============================================
 
+  * CattleInterpreter: check for unbalanced brackets at runtime.
+
   * CattleError: merge the CattleProgramError and CattleInterpreterError
                  enumerations into a single enumeration.
 
