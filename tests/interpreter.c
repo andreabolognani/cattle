@@ -219,6 +219,233 @@ test_interpreter_single_debug_handler (CattleInterpreter **interpreter,
 }
 #endif /* G_OS_UNIX */
 
+/* Fail an input request and set the error */
+static gboolean
+input_fail_set_error (CattleInterpreter  *interpreter,
+                      gchar             **input,
+                      GError            **error,
+                      gpointer            data)
+{
+	g_set_error_literal (error,
+	                     CATTLE_ERROR,
+	                     CATTLE_ERROR_BAD_UTF8,
+	                     "Spurious error");
+
+	return FALSE;
+}
+
+/* Fail an input request without setting the error */
+static gboolean
+input_fail_no_set_error (CattleInterpreter  *interpreter,
+                         gchar             **input,
+                         GError            **error,
+                         gpointer            data)
+{
+	return FALSE;
+}
+
+/**
+ * test_interpreter_failed_input:
+ *
+ * Check the correct error is reported when an input request fails, and
+ * that a generic error is reported when the input handler doesn't set
+ * the error itself.
+ */
+static void
+test_interpreter_failed_input (void)
+{
+	CattleInterpreter *interpreter;
+	CattleProgram *program;
+	GError *error;
+
+	interpreter = cattle_interpreter_new ();
+
+	program = cattle_interpreter_get_program (interpreter);
+	cattle_program_load (program, ",", NULL);
+	g_object_unref (program);
+
+	g_signal_connect (interpreter,
+	                  "input-request",
+	                  G_CALLBACK (input_fail_set_error),
+	                  NULL);
+
+	error = NULL;
+	g_assert (!cattle_interpreter_run (interpreter, &error));
+	g_assert (g_error_matches (error, CATTLE_ERROR, CATTLE_ERROR_BAD_UTF8));
+
+	g_error_free (error);
+
+	/* Replace the signal handler */
+	g_signal_handlers_disconnect_by_func (interpreter,
+	                                      G_CALLBACK (input_fail_set_error),
+	                                      NULL);
+	g_signal_connect (interpreter,
+	                  "input-request",
+	                  G_CALLBACK (input_fail_no_set_error),
+	                  NULL);
+
+	error = NULL;
+	g_assert (!cattle_interpreter_run (interpreter, &error));
+	g_assert (g_error_matches (error, CATTLE_ERROR, CATTLE_ERROR_IO));
+
+	g_error_free (error);
+
+	g_object_unref (interpreter);
+}
+
+/* Fail an output request and set the error */
+static gboolean
+output_fail_set_error (CattleInterpreter  *interpreter,
+                       gchar               output,
+                       GError            **error,
+                       gpointer            data)
+{
+	g_set_error_literal (error,
+	                     CATTLE_ERROR,
+	                     CATTLE_ERROR_BAD_UTF8,
+	                     "Spurious error");
+
+	return FALSE;
+}
+
+/* Fail an output request without setting the error */
+static gboolean
+output_fail_no_set_error (CattleInterpreter  *interpreter,
+                          gchar               output,
+                          GError            **error,
+                          gpointer            data)
+{
+	return FALSE;
+}
+
+/**
+ * test_interpreter_failed_output:
+ *
+ * Check the correct error is reported when an output request fails, and
+ * that a generic error is reported when the output handler doesn't set
+ * the error itself.
+ */
+static void
+test_interpreter_failed_output (void)
+{
+	CattleInterpreter *interpreter;
+	CattleProgram *program;
+	GError *error;
+
+	interpreter = cattle_interpreter_new ();
+
+	program = cattle_interpreter_get_program (interpreter);
+	cattle_program_load (program, ".", NULL);
+	g_object_unref (program);
+
+	g_signal_connect (interpreter,
+	                  "output-request",
+	                  G_CALLBACK (output_fail_set_error),
+	                  NULL);
+
+	error = NULL;
+	g_assert (!cattle_interpreter_run (interpreter, &error));
+	g_assert (g_error_matches (error, CATTLE_ERROR, CATTLE_ERROR_BAD_UTF8));
+
+	g_error_free (error);
+
+	/* Replace the signal handler */
+	g_signal_handlers_disconnect_by_func (interpreter,
+	                                      G_CALLBACK (output_fail_set_error),
+	                                      NULL);
+	g_signal_connect (interpreter,
+	                  "output-request",
+	                  G_CALLBACK (output_fail_no_set_error),
+	                  NULL);
+
+	error = NULL;
+	g_assert (!cattle_interpreter_run (interpreter, &error));
+	g_assert (g_error_matches (error, CATTLE_ERROR, CATTLE_ERROR_IO));
+
+	g_error_free (error);
+
+	g_object_unref (interpreter);
+}
+
+/* Fail a debug request and set the error */
+static gboolean
+debug_fail_set_error (CattleInterpreter  *interpreter,
+                      GError            **error,
+                      gpointer            data)
+{
+	g_set_error_literal (error,
+	                     CATTLE_ERROR,
+	                     CATTLE_ERROR_BAD_UTF8,
+	                     "Spurious error");
+
+	return FALSE;
+}
+
+/* Fail a debug request without setting the error */
+static gboolean
+debug_fail_no_set_error (CattleInterpreter  *interpreter,
+                         GError            **error,
+                         gpointer            data)
+{
+	return FALSE;
+}
+
+/**
+ * test_interpreter_failed_debug:
+ *
+ * Check the correct error is reported when a debug request fails, and
+ * that a generic error is reported when the debug handler doesn't set
+ * the error itself.
+ */
+static void
+test_interpreter_failed_debug (void)
+{
+	CattleInterpreter *interpreter;
+	CattleConfiguration *configuration;
+	CattleProgram *program;
+	GError *error;
+
+	interpreter = cattle_interpreter_new ();
+
+	configuration = cattle_interpreter_get_configuration (interpreter);
+	cattle_configuration_set_debug_is_enabled (configuration, TRUE);
+	g_object_unref (configuration);
+
+	program = cattle_interpreter_get_program (interpreter);
+	cattle_program_load (program, "#", NULL);
+	g_object_unref (program);
+
+	g_signal_connect (interpreter,
+	                  "debug-request",
+	                  G_CALLBACK (debug_fail_set_error),
+	                  NULL);
+
+	error = NULL;
+	g_assert (!cattle_interpreter_run (interpreter, &error));
+	g_assert (g_error_matches (error, CATTLE_ERROR, CATTLE_ERROR_BAD_UTF8));
+
+	g_error_free (error);
+
+	/* Replace the signal handler */
+	g_signal_handlers_disconnect_by_func (interpreter,
+	                                      G_CALLBACK (debug_fail_set_error),
+	                                      NULL);
+	g_signal_connect (interpreter,
+	                  "debug-request",
+	                  G_CALLBACK (debug_fail_no_set_error),
+	                  NULL);
+
+	error = NULL;
+	g_assert (!cattle_interpreter_run (interpreter, &error));
+	g_assert (g_error_matches (error, CATTLE_ERROR, CATTLE_ERROR_IO));
+
+	g_error_free (error);
+
+	g_object_unref (interpreter);
+}
+
+
+
 /**
  * test_interpreter_unbalanced_brackets:
  *
@@ -305,6 +532,12 @@ main (gint argc, gchar **argv)
 	            test_interpreter_single_debug_handler,
 	            interpreter_destroy);
 #endif /* G_OS_UNIX */
+	g_test_add_func ("/interpreter/failed-input",
+	                 test_interpreter_failed_input);
+	g_test_add_func ("/interpreter/failed-output",
+	                 test_interpreter_failed_output);
+	g_test_add_func ("/interpreter/failed-debug",
+	                 test_interpreter_failed_debug);
 	g_test_add ("/interpreter/unbalanced-brackets",
 	            CattleInterpreter*,
 	            NULL,

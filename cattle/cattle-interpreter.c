@@ -162,6 +162,7 @@ run (CattleInterpreter  *self,
 	CattleInstruction *next;
 	CattleInstructionValue value;
 	GSList *stack;
+	GError *inner_error;
 	gboolean success;
 	gchar temp;
 	gint quantity;
@@ -175,7 +176,7 @@ run (CattleInterpreter  *self,
 
 	current = cattle_program_get_instructions (program);
 
-	while (current != NULL && success) {
+	while (current != NULL) {
 
 		value = cattle_instruction_get_value (current);
 
@@ -287,19 +288,36 @@ run (CattleInterpreter  *self,
 						 * to get more input */
 						if (self->priv->input_cursor == NULL || g_utf8_get_char (self->priv->input_cursor) == 0) {
 
+							inner_error = NULL;
 							g_signal_emit (self,
 							               signals[INPUT_REQUEST],
 							               0,
 							               &(self->priv->input),
-							               error,
+							               &inner_error,
 							               &success);
 
 							/* The operation failed: we abort
-							 * immediately; the signal handler must
-							 * set the error */
+							 * immediately */
 							if (G_UNLIKELY (success == FALSE)) {
-								g_assert (error == NULL || *error != NULL);
-								return success;
+
+								/* If the signal handler has set the
+								 * error, as it's required to,
+								 * propagate that error; if it hasn't,
+								 * raise a generic I/O error */
+								if (inner_error == NULL) {
+									g_set_error_literal (error,
+									                     CATTLE_ERROR,
+									                     CATTLE_ERROR_IO,
+									                     "Unknown I/O error");
+								}
+								else {
+									g_propagate_error (error,
+									                   inner_error);
+								}
+
+								g_object_unref (current);
+
+								return FALSE;
 							}
 
 							/* A return value of NULL from the signal
@@ -385,19 +403,36 @@ run (CattleInterpreter  *self,
 				 * output */
 				for (i = 0; i < quantity; i++) {
 
+					inner_error = NULL;
 					g_signal_emit (self,
 					               signals[OUTPUT_REQUEST],
 					               0,
 					               cattle_tape_get_current_value (tape),
-					               error,
+					               &inner_error,
 					               &success);
 
 					/* Stop at the first error, even if we should
 					 * output the content of the current cell more
 					 * than once */
 					if (G_UNLIKELY (success == FALSE)) {
-						g_assert (error == NULL || *error != NULL);
-						return success;
+
+						/* If the signal handler has set the error,
+						 * propagate it; otherwise, raise a generic
+						 * I/O error */
+						if (inner_error == NULL) {
+							g_set_error_literal (error,
+							                     CATTLE_ERROR,
+							                     CATTLE_ERROR_IO,
+							                     "Unknown I/O error");
+						}
+						else {
+							g_propagate_error (error,
+							                   inner_error);
+						}
+
+						g_object_unref (current);
+
+						return FALSE;
 					}
 				}
 				break;
@@ -412,15 +447,31 @@ run (CattleInterpreter  *self,
 
 					for (i = 0; i < quantity; i++) {
 
+						inner_error = NULL;
 						g_signal_emit (self,
 						               signals[DEBUG_REQUEST],
 						               0,
-						               error,
+						               &inner_error,
 						               &success);
 
 						if (G_UNLIKELY (success == FALSE)) {
-							g_assert (error == NULL || *error != NULL);
-							return success;
+
+							/* If the debug handler hasn't set the
+							 * error, raise a generic I/O error */
+							if (inner_error == NULL) {
+								g_set_error_literal (error,
+								                     CATTLE_ERROR,
+								                     CATTLE_ERROR_IO,
+								                     "Unknown I/O error");
+							}
+							else {
+								g_propagate_error (error,
+								                   inner_error);
+							}
+
+							g_object_unref (current);
+
+							return FALSE;
 						}
 					}
 				}
@@ -449,7 +500,7 @@ run (CattleInterpreter  *self,
 		return FALSE;
 	}
 
-	return success;
+	return TRUE;
 }
 
 static gboolean
