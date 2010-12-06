@@ -283,7 +283,6 @@ main (gint argc, gchar **argv)
 	g_type_init ();
 	g_test_init (&argc, &argv, NULL);
 
-	/*
 	g_test_add ("/program/load-unbalanced-brackets",
 	            CattleProgram*,
 	            NULL,
@@ -308,7 +307,6 @@ main (gint argc, gchar **argv)
 	            program_create,
 	            test_program_load_with_input,
 	            program_destroy);
-				*/
 	g_test_add ("/program/load-double-loop",
 	            CattleProgram*,
 	            NULL,
