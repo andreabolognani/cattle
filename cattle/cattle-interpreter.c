@@ -185,18 +185,15 @@ run (CattleInterpreter  *self,
 
 				next = cattle_instruction_get_loop (current);
 
-				if (next != NULL) {
+				/* Enter the loop only if the value stored in the
+				 * current cell is not zero */
+				if (cattle_tape_get_current_value (tape) != 0) {
 
-					/* Enter the loop only if the value stored in the
-					 * current cell is not zero */
-					if (cattle_tape_get_current_value (tape) != 0) {
+					/* Push the current instruction on the stack */
+					stack = g_slist_prepend (stack, current);
+					current = next;
 
-						/* Push the current instruction on the stack */
-						stack = g_slist_prepend (stack, current);
-						current = next;
-
-						continue;
-					}
+					continue;
 				}
 				break;
 
@@ -438,6 +435,18 @@ run (CattleInterpreter  *self,
 		next = cattle_instruction_get_next (current);
 		g_object_unref (current);
 		current = next;
+	}
+
+	/* There are some instructions left on the stack: the brackets
+	 * are not balanced */
+	if (stack != NULL) {
+
+		g_set_error_literal (error,
+		                     CATTLE_ERROR,
+		                     CATTLE_ERROR_UNBALANCED_BRACKETS,
+		                     "Unbalanced brackets");
+
+		return FALSE;
 	}
 
 	return success;

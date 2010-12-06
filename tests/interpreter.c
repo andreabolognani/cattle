@@ -233,21 +233,50 @@ test_interpreter_unbalanced_brackets (CattleInterpreter **interpreter,
 {
 	CattleProgram *program;
 	CattleInstruction *instructions;
+	CattleInstruction *next;
+	CattleTape *tape;
 	GError *error;
 
+	/* Build a program containing an unbalanced start of loop: [+++ */
 	instructions = cattle_instruction_new ();
-	cattle_instruction_set_value (instructions, CATTLE_INSTRUCTION_LOOP_END);
+	cattle_instruction_set_value (instructions,
+	                              CATTLE_INSTRUCTION_LOOP_BEGIN);
 
+	next = cattle_instruction_new ();
+	cattle_instruction_set_value (next,
+	                              CATTLE_INSTRUCTION_INCREASE);
+	cattle_instruction_set_quantity (next, 3);
+
+	cattle_instruction_set_loop (instructions, next);
+	g_object_unref (next);
+
+	/* Load the buggy program */
 	program = cattle_interpreter_get_program (*interpreter);
 	cattle_program_set_instructions (program, instructions);
 	g_object_unref (program);
-	g_object_unref (instructions);
+
+	/* Set the current value to something so that the loop gets
+	 * executed */
+	tape = cattle_interpreter_get_tape (*interpreter);
+	cattle_tape_set_current_value (tape, 42);
+	g_object_unref (tape);
 
 	error = NULL;
 	g_assert (!cattle_interpreter_run (*interpreter, &error));
 	g_assert (g_error_matches (error, CATTLE_ERROR, CATTLE_ERROR_UNBALANCED_BRACKETS));
 
 	g_error_free (error);
+
+	/* Now make the start of loop instruction an end of loop instruction:
+	 * the program is now ]+++ */
+	cattle_instruction_set_value (instructions,
+	                              CATTLE_INSTRUCTION_LOOP_END);
+
+	error = NULL;
+	g_assert (!cattle_interpreter_run (*interpreter, &error));
+	g_assert (g_error_matches (error, CATTLE_ERROR, CATTLE_ERROR_UNBALANCED_BRACKETS));
+
+	g_object_unref (instructions);
 }
 
 gint
