@@ -24,202 +24,32 @@
 #include <cattle/cattle.h>
 #include <stdlib.h>
 
-static void
-interpreter_create (CattleInterpreter **interpreter,
-                    gconstpointer       data)
-{
-	*interpreter = cattle_interpreter_new ();
-}
-
-static void
-interpreter_destroy (CattleInterpreter **interpreter,
-                     gconstpointer       data)
-{
-	g_object_unref (*interpreter);
-}
-
-#ifdef G_OS_UNIX
+/* Succesful input handler */
 static gboolean
-single_input_handler_one (CattleInterpreter  *interpreter,
-                          gchar             **input,
-                          GError            **error,
-                          gpointer            data)
+input_success (CattleInterpreter  *interpreter,
+               gchar             **input,
+               GError            **error,
+               gpointer            data)
 {
-	g_print ("single_input_handler_one\n");
-	g_set_error (error,
-	             CATTLE_ERROR,
-	             CATTLE_ERROR_BAD_UTF8,
-	             "Spurious error");
-	*input = NULL;
-	return FALSE;
-}
+	*input = "whatever";
 
-static gboolean
-single_input_handler_two (CattleInterpreter  *interpreter,
-                          gchar             **input,
-                          GError            **error,
-                          gpointer            data)
-{
-	g_print ("single_input_handler_two\n");
-	*input = NULL;
 	return TRUE;
 }
 
-/**
- * test_interpreter_single_input_handler:
- *
- * Check a single handler is called upon emission of the "input-request"
- * signal emission, even if multiple handlers have been connected.
- */
-static void
-test_interpreter_single_input_handler (CattleInterpreter **interpreter,
-                                       gconstpointer       data)
-{
-	CattleProgram *program;
-
-	program = cattle_interpreter_get_program (*interpreter);
-	cattle_program_load (program, ",", NULL);
-	g_object_unref (program);
-
-	g_signal_connect (*interpreter,
-	                  "input-request",
-	                  G_CALLBACK (single_input_handler_one),
-	                  NULL);
-	g_signal_connect (*interpreter,
-	                  "input-request",
-	                  G_CALLBACK (single_input_handler_two),
-	                  NULL);
-
-	if (g_test_trap_fork (5, G_TEST_TRAP_SILENCE_STDOUT | G_TEST_TRAP_SILENCE_STDERR)) {
-		cattle_interpreter_run (*interpreter, NULL);
-		exit (1);
-	}
-
-	g_test_trap_assert_failed ();
-	g_test_trap_assert_stdout_unmatched ("*two*");
-}
-
+/* Succesful input handler that returns an invalid UTF-8 string */
 static gboolean
-single_output_handler_one (CattleInterpreter  *interpreter,
-                           gchar               output,
-                           GError            **error,
-                           gpointer            data)
+input_invalid_utf8 (CattleInterpreter  *interpreter,
+                    gchar             **input,
+                    GError            **error,
+                    gpointer            data)
 {
-	g_print ("single_output_handler_one\n");
-	g_set_error (error,
-	             CATTLE_ERROR,
-	             CATTLE_ERROR_BAD_UTF8,
-	             "Spurious error");
-	return FALSE;
-}
+	/* Return some malformed UTF-8 */
+	*input = "\xe2\x28\xa1";
 
-static gboolean
-single_output_handler_two (CattleInterpreter  *interpreter,
-                           gchar               output,
-                           GError            **error,
-                           gpointer            data)
-{
-	g_print ("single_output_handler_two\n");
 	return TRUE;
 }
 
-/**
- * test_interpreter_single_output_handler:
- *
- * Check a single handler is called upon emission of the "output-request"
- * signal emission, even if multiple handlers have been connected.
- */
-static void
-test_interpreter_single_output_handler (CattleInterpreter **interpreter,
-                                        gconstpointer       data)
-{
-	CattleProgram *program;
-
-	program = cattle_interpreter_get_program (*interpreter);
-	cattle_program_load (program, ".", NULL);
-	g_object_unref (program);
-
-	g_signal_connect (*interpreter,
-	                  "output-request",
-	                  G_CALLBACK (single_output_handler_one),
-	                  NULL);
-	g_signal_connect (*interpreter,
-	                  "output-request",
-	                  G_CALLBACK (single_output_handler_two),
-	                  NULL);
-
-	if (g_test_trap_fork (5, G_TEST_TRAP_SILENCE_STDOUT | G_TEST_TRAP_SILENCE_STDERR)) {
-		cattle_interpreter_run (*interpreter, NULL);
-		exit (1);
-	}
-
-	g_test_trap_assert_failed ();
-	g_test_trap_assert_stdout_unmatched ("*two*");
-}
-
-static gboolean
-single_debug_handler_one (CattleInterpreter  *interpreter,
-                          GError            **error,
-                          gpointer            data)
-{
-	g_print ("single_debug_handler_one\n");
-	g_set_error (error,
-	             CATTLE_ERROR,
-	             CATTLE_ERROR_BAD_UTF8,
-	             "Spurious error");
-	return FALSE;
-}
-
-static gboolean
-single_debug_handler_two (CattleInterpreter  *interpreter,
-                          GError            **error,
-                          gpointer            data)
-{
-	g_print ("single_debug_handler_two\n");
-	return TRUE;
-}
-
-/**
- * test_interpreter_single_debug_handler:
- *
- * Check a single handler is called upon emission of the "debug-request"
- * signal emission, even if multiple handlers have been connected.
- */
-static void
-test_interpreter_single_debug_handler (CattleInterpreter **interpreter,
-                                       gconstpointer       data)
-{
-	CattleConfiguration *configuration;
-	CattleProgram *program;
-
-	configuration = cattle_interpreter_get_configuration (*interpreter);
-	cattle_configuration_set_debug_is_enabled (configuration, TRUE);
-	g_object_unref (configuration);
-
-	program = cattle_interpreter_get_program (*interpreter);
-	cattle_program_load (program, "#", NULL);
-	g_object_unref (program);
-
-	g_signal_connect (*interpreter,
-	                  "debug-request",
-	                  G_CALLBACK (single_debug_handler_one),
-	                  NULL);
-	g_signal_connect (*interpreter,
-	                  "debug-request",
-	                  G_CALLBACK (single_debug_handler_two),
-	                  NULL);
-
-	if (g_test_trap_fork (5, G_TEST_TRAP_SILENCE_STDOUT | G_TEST_TRAP_SILENCE_STDERR)) {
-		cattle_interpreter_run (*interpreter, NULL);
-		exit (1);
-	}
-
-	g_test_trap_assert_failed ();
-	g_test_trap_assert_stdout_unmatched ("*two*");
-}
-#endif /* G_OS_UNIX */
-
-/* Fail an input request and set the error */
+/* Unsuccesful input handler that sets the error */
 static gboolean
 input_fail_set_error (CattleInterpreter  *interpreter,
                       gchar             **input,
@@ -234,7 +64,7 @@ input_fail_set_error (CattleInterpreter  *interpreter,
 	return FALSE;
 }
 
-/* Fail an input request without setting the error */
+/* Unsuccesful input handler that doesn't set the error */
 static gboolean
 input_fail_no_set_error (CattleInterpreter  *interpreter,
                          gchar             **input,
@@ -242,6 +72,174 @@ input_fail_no_set_error (CattleInterpreter  *interpreter,
                          gpointer            data)
 {
 	return FALSE;
+}
+
+/* Successful output handler */
+static gboolean
+output_success (CattleInterpreter  *interpreter,
+                gchar               output,
+                GError            **error,
+                gpointer            data)
+{
+	return TRUE;
+}
+
+/* Unsuccesful output handler that sets the error */
+static gboolean
+output_fail_set_error (CattleInterpreter  *interpreter,
+                       gchar               output,
+                       GError            **error,
+                       gpointer            data)
+{
+	g_set_error_literal (error,
+	                     CATTLE_ERROR,
+	                     CATTLE_ERROR_BAD_UTF8,
+	                     "Spurious error");
+
+	return FALSE;
+}
+
+/* Unsuccesful output handler that doesn't set the error */
+static gboolean
+output_fail_no_set_error (CattleInterpreter  *interpreter,
+                          gchar               output,
+                          GError            **error,
+                          gpointer            data)
+{
+	return FALSE;
+}
+
+/* Succesful debug handler */
+static gboolean
+debug_success (CattleInterpreter  *interpreter,
+               GError            **error,
+               gpointer            data)
+{
+	return TRUE;
+}
+
+/* Unsuccesful debug handler that sets the error */
+static gboolean
+debug_fail_set_error (CattleInterpreter  *interpreter,
+                      GError            **error,
+                      gpointer            data)
+{
+	g_set_error_literal (error,
+	                     CATTLE_ERROR,
+	                     CATTLE_ERROR_BAD_UTF8,
+	                     "Spurious error");
+
+	return FALSE;
+}
+
+/* Unsuccesful debug handler that doesn't set the error */
+static gboolean
+debug_fail_no_set_error (CattleInterpreter  *interpreter,
+                         GError            **error,
+                         gpointer            data)
+{
+	return FALSE;
+}
+
+/**
+ * test_interpreter_single_input_handler:
+ *
+ * Check a single handler is called upon emission of the "input-request"
+ * signal emission, even if multiple handlers have been connected.
+ */
+static void
+test_interpreter_single_input_handler (void)
+{
+	CattleInterpreter *interpreter;
+	CattleProgram *program;
+
+	interpreter = cattle_interpreter_new ();
+
+	program = cattle_interpreter_get_program (interpreter);
+	cattle_program_load (program, ",", NULL);
+	g_object_unref (program);
+
+	g_signal_connect (interpreter,
+	                  "input-request",
+	                  G_CALLBACK (input_success),
+	                  NULL);
+	g_signal_connect (interpreter,
+	                  "input-request",
+	                  G_CALLBACK (input_fail_set_error),
+	                  NULL);
+
+	g_assert (cattle_interpreter_run (interpreter, NULL));
+
+	g_object_unref (interpreter);
+}
+
+/**
+ * test_interpreter_single_output_handler:
+ *
+ * Check a single handler is called upon emission of the "output-request"
+ * signal emission, even if multiple handlers have been connected.
+ */
+static void
+test_interpreter_single_output_handler (void)
+{
+	CattleInterpreter *interpreter;
+	CattleProgram *program;
+
+	interpreter = cattle_interpreter_new ();
+
+	program = cattle_interpreter_get_program (interpreter);
+	cattle_program_load (program, ".", NULL);
+	g_object_unref (program);
+
+	g_signal_connect (interpreter,
+	                  "output-request",
+	                  G_CALLBACK (output_success),
+	                  NULL);
+	g_signal_connect (interpreter,
+	                  "output-request",
+	                  G_CALLBACK (output_fail_set_error),
+	                  NULL);
+
+	g_assert (cattle_interpreter_run (interpreter, NULL));
+
+	g_object_unref (interpreter);
+}
+
+/**
+ * test_interpreter_single_debug_handler:
+ *
+ * Check a single handler is called upon emission of the "debug-request"
+ * signal emission, even if multiple handlers have been connected.
+ */
+static void
+test_interpreter_single_debug_handler (void)
+{
+	CattleInterpreter *interpreter;
+	CattleConfiguration *configuration;
+	CattleProgram *program;
+
+	interpreter = cattle_interpreter_new ();
+
+	configuration = cattle_interpreter_get_configuration (interpreter);
+	cattle_configuration_set_debug_is_enabled (configuration, TRUE);
+	g_object_unref (configuration);
+
+	program = cattle_interpreter_get_program (interpreter);
+	cattle_program_load (program, "#", NULL);
+	g_object_unref (program);
+
+	g_signal_connect (interpreter,
+	                  "debug-request",
+	                  G_CALLBACK (debug_success),
+	                  NULL);
+	g_signal_connect (interpreter,
+	                  "debug-request",
+	                  G_CALLBACK (debug_fail_set_error),
+	                  NULL);
+
+	g_assert (cattle_interpreter_run (interpreter, NULL));
+
+	g_object_unref (interpreter);
 }
 
 /**
@@ -293,30 +291,6 @@ test_interpreter_failed_input (void)
 	g_object_unref (interpreter);
 }
 
-/* Fail an output request and set the error */
-static gboolean
-output_fail_set_error (CattleInterpreter  *interpreter,
-                       gchar               output,
-                       GError            **error,
-                       gpointer            data)
-{
-	g_set_error_literal (error,
-	                     CATTLE_ERROR,
-	                     CATTLE_ERROR_BAD_UTF8,
-	                     "Spurious error");
-
-	return FALSE;
-}
-
-/* Fail an output request without setting the error */
-static gboolean
-output_fail_no_set_error (CattleInterpreter  *interpreter,
-                          gchar               output,
-                          GError            **error,
-                          gpointer            data)
-{
-	return FALSE;
-}
 
 /**
  * test_interpreter_failed_output:
@@ -365,29 +339,6 @@ test_interpreter_failed_output (void)
 	g_error_free (error);
 
 	g_object_unref (interpreter);
-}
-
-/* Fail a debug request and set the error */
-static gboolean
-debug_fail_set_error (CattleInterpreter  *interpreter,
-                      GError            **error,
-                      gpointer            data)
-{
-	g_set_error_literal (error,
-	                     CATTLE_ERROR,
-	                     CATTLE_ERROR_BAD_UTF8,
-	                     "Spurious error");
-
-	return FALSE;
-}
-
-/* Fail a debug request without setting the error */
-static gboolean
-debug_fail_no_set_error (CattleInterpreter  *interpreter,
-                         GError            **error,
-                         gpointer            data)
-{
-	return FALSE;
 }
 
 /**
@@ -444,18 +395,6 @@ test_interpreter_failed_debug (void)
 	g_object_unref (interpreter);
 }
 
-static gboolean
-input_invalid_utf8 (CattleInterpreter  *interpreter,
-                    gchar             **input,
-                    GError            **error,
-                    gpointer            data)
-{
-	/* Return some malformed UTF-8 */
-	*input = "\xe2\x28\xa1";
-
-	return TRUE;
-}
-
 /**
  * test_interpreter_invalid_input:
  *
@@ -497,14 +436,16 @@ test_interpreter_invalid_input (void)
  * loading routine.
  */
 static void
-test_interpreter_unbalanced_brackets (CattleInterpreter **interpreter,
-                                      gconstpointer       data)
+test_interpreter_unbalanced_brackets (void)
 {
+	CattleInterpreter *interpreter;
 	CattleProgram *program;
 	CattleInstruction *instructions;
 	CattleInstruction *next;
 	CattleTape *tape;
 	GError *error;
+
+	interpreter = cattle_interpreter_new ();
 
 	/* Build a program containing an unbalanced start of loop: [+++ */
 	instructions = cattle_instruction_new ();
@@ -520,18 +461,18 @@ test_interpreter_unbalanced_brackets (CattleInterpreter **interpreter,
 	g_object_unref (next);
 
 	/* Load the buggy program */
-	program = cattle_interpreter_get_program (*interpreter);
+	program = cattle_interpreter_get_program (interpreter);
 	cattle_program_set_instructions (program, instructions);
 	g_object_unref (program);
 
 	/* Set the current value to something so that the loop gets
 	 * executed */
-	tape = cattle_interpreter_get_tape (*interpreter);
+	tape = cattle_interpreter_get_tape (interpreter);
 	cattle_tape_set_current_value (tape, 42);
 	g_object_unref (tape);
 
 	error = NULL;
-	g_assert (!cattle_interpreter_run (*interpreter, &error));
+	g_assert (!cattle_interpreter_run (interpreter, &error));
 	g_assert (g_error_matches (error, CATTLE_ERROR, CATTLE_ERROR_UNBALANCED_BRACKETS));
 
 	g_error_free (error);
@@ -542,10 +483,11 @@ test_interpreter_unbalanced_brackets (CattleInterpreter **interpreter,
 	                              CATTLE_INSTRUCTION_LOOP_END);
 
 	error = NULL;
-	g_assert (!cattle_interpreter_run (*interpreter, &error));
+	g_assert (!cattle_interpreter_run (interpreter, &error));
 	g_assert (g_error_matches (error, CATTLE_ERROR, CATTLE_ERROR_UNBALANCED_BRACKETS));
 
 	g_object_unref (instructions);
+	g_object_unref (interpreter);
 }
 
 gint
@@ -554,26 +496,12 @@ main (gint argc, gchar **argv)
 	g_type_init ();
 	g_test_init (&argc, &argv, NULL);
 
-#ifdef G_OS_UNIX
-	g_test_add ("/interpreter/single-input-handler",
-	            CattleInterpreter*,
-	            NULL,
-	            interpreter_create,
-	            test_interpreter_single_input_handler,
-	            interpreter_destroy);
-	g_test_add ("/interpreter/single-output-handler",
-	            CattleInterpreter*,
-	            NULL,
-	            interpreter_create,
-	            test_interpreter_single_output_handler,
-	            interpreter_destroy);
-	g_test_add ("/interpreter/single-debug-handler",
-	            CattleInterpreter*,
-	            NULL,
-	            interpreter_create,
-	            test_interpreter_single_debug_handler,
-	            interpreter_destroy);
-#endif /* G_OS_UNIX */
+	g_test_add_func ("/interpreter/single-input-handler",
+	                 test_interpreter_single_input_handler);
+	g_test_add_func ("/interpreter/single-output-handler",
+	                 test_interpreter_single_output_handler);
+	g_test_add_func ("/interpreter/single-debug-handler",
+	                 test_interpreter_single_debug_handler);
 	g_test_add_func ("/interpreter/failed-input",
 	                 test_interpreter_failed_input);
 	g_test_add_func ("/interpreter/failed-output",
@@ -582,12 +510,8 @@ main (gint argc, gchar **argv)
 	                 test_interpreter_failed_debug);
 	g_test_add_func ("/interpreter/invalid-input",
 	                 test_interpreter_invalid_input);
-	g_test_add ("/interpreter/unbalanced-brackets",
-	            CattleInterpreter*,
-	            NULL,
-	            interpreter_create,
-	            test_interpreter_unbalanced_brackets,
-	            interpreter_destroy);
+	g_test_add_func ("/interpreter/unbalanced-brackets",
+	                 test_interpreter_unbalanced_brackets);
 
 	return g_test_run ();
 }
