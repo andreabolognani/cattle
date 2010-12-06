@@ -320,6 +320,19 @@ run (CattleInterpreter  *self,
 								return FALSE;
 							}
 
+							/* Check the input is valid UTF-8, and
+							 * raise an error if it isn't */
+							if (!g_utf8_validate (self->priv->input, -1, NULL)) {
+								g_set_error_literal (error,
+								                     CATTLE_ERROR,
+								                     CATTLE_ERROR_BAD_UTF8,
+								                     "Invalid UTF-8 input");
+
+								g_object_unref (current);
+
+								return FALSE;
+							}
+
 							/* A return value of NULL from the signal
 							 * handler means the end of input was
 							 * reached. We set the appropriate flag */

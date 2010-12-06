@@ -444,7 +444,49 @@ test_interpreter_failed_debug (void)
 	g_object_unref (interpreter);
 }
 
+static gboolean
+input_invalid_utf8 (CattleInterpreter  *interpreter,
+                    gchar             **input,
+                    GError            **error,
+                    gpointer            data)
+{
+	/* Return some malformed UTF-8 */
+	*input = "\xe2\x28\xa1";
 
+	return TRUE;
+}
+
+/**
+ * test_interpreter_invalid_input:
+ *
+ * Feed the interpreter with some input not encoded in UTF-8.
+ */
+static void
+test_interpreter_invalid_input (void)
+{
+	CattleInterpreter *interpreter;
+	CattleProgram *program;
+	GError *error;
+
+	interpreter = cattle_interpreter_new ();
+
+	program = cattle_interpreter_get_program (interpreter);
+	cattle_program_load (program, ",", NULL);
+	g_object_unref (program);
+
+	g_signal_connect (interpreter,
+	                  "input-request",
+	                  G_CALLBACK (input_invalid_utf8),
+	                  NULL);
+
+	error = NULL;
+	g_assert (!cattle_interpreter_run (interpreter, &error));
+	g_assert (g_error_matches (error, CATTLE_ERROR, CATTLE_ERROR_BAD_UTF8));
+
+	g_error_free (error);
+
+	g_object_unref (interpreter);
+}
 
 /**
  * test_interpreter_unbalanced_brackets:
@@ -538,6 +580,8 @@ main (gint argc, gchar **argv)
 	                 test_interpreter_failed_output);
 	g_test_add_func ("/interpreter/failed-debug",
 	                 test_interpreter_failed_debug);
+	g_test_add_func ("/interpreter/invalid-input",
+	                 test_interpreter_invalid_input);
 	g_test_add ("/interpreter/unbalanced-brackets",
 	            CattleInterpreter*,
 	            NULL,
