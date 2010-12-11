@@ -23,20 +23,6 @@
 #include <glib-object.h>
 #include <cattle/cattle.h>
 
-static void
-program_create (CattleProgram **program,
-                gconstpointer   data)
-{
-	*program = cattle_program_new ();
-}
-
-static void
-program_destroy (CattleProgram **program,
-                 gconstpointer   data)
-{
-	g_object_unref (*program);
-}
-
 /**
  * test_program_load_unbalanced_brackets:
  *
@@ -44,22 +30,25 @@ program_destroy (CattleProgram **program,
  * and that the correct error is reported.
  */
 static void
-test_program_load_unbalanced_brackets (CattleProgram **program,
-                                       gconstpointer   data)
+test_program_load_unbalanced_brackets (void)
 {
+	CattleProgram *program;
 	CattleInstruction *instruction;
 	CattleInstructionValue value;
-	GError *error = NULL;
+	GError *error;
 	gboolean success;
 
-	success = cattle_program_load (*program, "[", &error);
+	program = cattle_program_new ();
+
+	error = NULL;
+	success = cattle_program_load (program, "[", &error);
 
 	g_assert (!success);
 	g_assert (error != NULL);
 	g_assert (error->domain == CATTLE_ERROR);
 	g_assert (error->code == CATTLE_ERROR_UNBALANCED_BRACKETS);
 
-	instruction = cattle_program_get_instructions (*program);
+	instruction = cattle_program_get_instructions (program);
 
 	g_assert (CATTLE_IS_INSTRUCTION (instruction));
 	g_assert (cattle_instruction_get_next (instruction) == NULL);
@@ -70,6 +59,7 @@ test_program_load_unbalanced_brackets (CattleProgram **program,
 	g_assert (value == CATTLE_INSTRUCTION_NONE);
 
 	g_object_unref (instruction);
+	g_object_unref (program);
 }
 
 /**
@@ -80,20 +70,23 @@ test_program_load_unbalanced_brackets (CattleProgram **program,
  * CATTLE_INSTRUCTION_NONE.
  */
 static void
-test_program_load_empty (CattleProgram **program,
-                         gconstpointer   data)
+test_program_load_empty (void)
 {
+	CattleProgram *program;
 	CattleInstruction *instruction;
 	CattleInstructionValue value;
-	GError *error = NULL;
+	GError *error;
 	gboolean success;
 
-	success = cattle_program_load (*program, "", &error);
+	program = cattle_program_new ();
+
+	error = NULL;
+	success = cattle_program_load (program, "", &error);
 
 	g_assert (success);
 	g_assert (error == NULL);
 
-	instruction = cattle_program_get_instructions (*program);
+	instruction = cattle_program_get_instructions (program);
 
 	g_assert (CATTLE_IS_INSTRUCTION (instruction));
 	g_assert (cattle_instruction_get_next (instruction) == NULL);
@@ -104,6 +97,7 @@ test_program_load_empty (CattleProgram **program,
 	g_assert (value == CATTLE_INSTRUCTION_NONE);
 
 	g_object_unref (instruction);
+	g_object_unref (program);
 }
 
 /**
@@ -112,9 +106,9 @@ test_program_load_empty (CattleProgram **program,
  * Load a program with no input.
  */
 static void
-test_program_load_without_input (CattleProgram **program,
-                                 gconstpointer   data)
+test_program_load_without_input (void)
 {
+	CattleProgram *program;
 	CattleInstruction *instructions;
 	CattleInstructionValue value;
 	GError *error;
@@ -122,16 +116,18 @@ test_program_load_without_input (CattleProgram **program,
 	gint quantity;
 	gboolean success;
 
+	program = cattle_program_new ();
+
 	error = NULL;
-	success = cattle_program_load (*program,
+	success = cattle_program_load (program,
 	                               "+++>-<[-]",
 	                               &error);
 
 	g_assert (success);
 	g_assert (error == NULL);
 
-	instructions = cattle_program_get_instructions (*program);
-	input = cattle_program_get_input (*program);
+	instructions = cattle_program_get_instructions (program);
+	input = cattle_program_get_input (program);
 
 	g_assert (instructions != NULL);
 	g_assert (input == NULL);
@@ -143,6 +139,7 @@ test_program_load_without_input (CattleProgram **program,
 	g_assert (quantity == 3);
 
 	g_object_unref (instructions);
+	g_object_unref (program);
 }
 
 /**
@@ -151,25 +148,27 @@ test_program_load_without_input (CattleProgram **program,
  * Load a program which containst some input along with the code.
  */
 static void
-test_program_load_with_input (CattleProgram **program,
-                              gconstpointer   data)
+test_program_load_with_input (void)
 {
+	CattleProgram *program;
 	CattleInstruction *instructions;
 	CattleInstructionValue value;
 	GError *error;
 	gchar *input;
 	gboolean success;
 
+	program = cattle_program_new ();
+
 	error = NULL;
-	success = cattle_program_load (*program,
+	success = cattle_program_load (program,
 	                               ",[+.,]!some input",
 	                               &error);
 
 	g_assert (success);
 	g_assert (error == NULL);
 
-	instructions = cattle_program_get_instructions (*program);
-	input = cattle_program_get_input (*program);
+	instructions = cattle_program_get_instructions (program);
+	input = cattle_program_get_input (program);
 
 	g_assert (instructions != NULL);
 	g_assert (input != NULL);
@@ -181,6 +180,7 @@ test_program_load_with_input (CattleProgram **program,
 
 	g_free (input);
 	g_object_unref (instructions);
+	g_object_unref (program);
 }
 
 /**
@@ -189,9 +189,9 @@ test_program_load_with_input (CattleProgram **program,
  * Load a program that is nothing but two loops nested.
  */
 static void
-test_program_load_double_loop (CattleProgram **program,
-                               gconstpointer   data)
+test_program_load_double_loop (void)
 {
+	CattleProgram *program;
 	CattleInstruction *current;
 	CattleInstruction *outer_loop;
 	CattleInstruction *inner_loop;
@@ -201,14 +201,16 @@ test_program_load_double_loop (CattleProgram **program,
 	gint quantity;
 	gboolean success;
 
+	program = cattle_program_new ();
+
 	error = NULL;
-	success = cattle_program_load (*program, "[[]]", &error);
+	success = cattle_program_load (program, "[[]]", &error);
 
 	g_assert (success);
 	g_assert (error == NULL);
 
 	/* First instruction: [ */
-	outer_loop = cattle_program_get_instructions (*program);
+	outer_loop = cattle_program_get_instructions (program);
 	current = outer_loop;
 
 	g_assert (current != NULL);
@@ -275,6 +277,8 @@ test_program_load_double_loop (CattleProgram **program,
 	current = next;
 
 	g_assert (current == NULL);
+
+	g_object_unref (program);
 }
 
 gint
@@ -283,36 +287,16 @@ main (gint argc, gchar **argv)
 	g_type_init ();
 	g_test_init (&argc, &argv, NULL);
 
-	g_test_add ("/program/load-unbalanced-brackets",
-	            CattleProgram*,
-	            NULL,
-	            program_create,
-	            test_program_load_unbalanced_brackets,
-	            program_destroy);
-	g_test_add ("/program/load-empty",
-	            CattleProgram*,
-	            NULL,
-	            program_create,
-	            test_program_load_empty,
-	            program_destroy);
-	g_test_add ("/program/load-without-input",
-	            CattleProgram*,
-	            NULL,
-	            program_create,
-	            test_program_load_without_input,
-	            program_destroy);
-	g_test_add ("/program/load-with-input",
-	            CattleProgram*,
-	            NULL,
-	            program_create,
-	            test_program_load_with_input,
-	            program_destroy);
-	g_test_add ("/program/load-double-loop",
-	            CattleProgram*,
-	            NULL,
-	            program_create,
-	            test_program_load_double_loop,
-	            program_destroy);
+	g_test_add_func ("/program/load-unbalanced-brackets",
+	                 test_program_load_unbalanced_brackets);
+	g_test_add_func ("/program/load-empty",
+	                 test_program_load_empty);
+	g_test_add_func ("/program/load-without-input",
+	                 test_program_load_without_input);
+	g_test_add_func ("/program/load-with-input",
+	                 test_program_load_with_input);
+	g_test_add_func ("/program/load-double-loop",
+	                 test_program_load_double_loop);
 
 	return g_test_run ();
 }

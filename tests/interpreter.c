@@ -152,6 +152,8 @@ test_interpreter_single_input_handler (void)
 {
 	CattleInterpreter *interpreter;
 	CattleProgram *program;
+	GError *error;
+	gboolean success;
 
 	interpreter = cattle_interpreter_new ();
 
@@ -168,7 +170,11 @@ test_interpreter_single_input_handler (void)
 	                  G_CALLBACK (input_fail_set_error),
 	                  NULL);
 
-	g_assert (cattle_interpreter_run (interpreter, NULL));
+	error = NULL;
+	success = cattle_interpreter_run (interpreter, &error);
+
+	g_assert (success);
+	g_assert (error == NULL);
 
 	g_object_unref (interpreter);
 }
@@ -184,6 +190,8 @@ test_interpreter_single_output_handler (void)
 {
 	CattleInterpreter *interpreter;
 	CattleProgram *program;
+	GError *error;
+	gboolean success;
 
 	interpreter = cattle_interpreter_new ();
 
@@ -200,7 +208,11 @@ test_interpreter_single_output_handler (void)
 	                  G_CALLBACK (output_fail_set_error),
 	                  NULL);
 
-	g_assert (cattle_interpreter_run (interpreter, NULL));
+	error = NULL;
+	success = cattle_interpreter_run (interpreter, &error);
+
+	g_assert (success);
+	g_assert (error == NULL);
 
 	g_object_unref (interpreter);
 }
@@ -217,6 +229,8 @@ test_interpreter_single_debug_handler (void)
 	CattleInterpreter *interpreter;
 	CattleConfiguration *configuration;
 	CattleProgram *program;
+	GError *error;
+	gboolean success;
 
 	interpreter = cattle_interpreter_new ();
 
@@ -237,7 +251,11 @@ test_interpreter_single_debug_handler (void)
 	                  G_CALLBACK (debug_fail_set_error),
 	                  NULL);
 
-	g_assert (cattle_interpreter_run (interpreter, NULL));
+	error = NULL;
+	success = cattle_interpreter_run (interpreter, &error);
+
+	g_assert (success);
+	g_assert (error == NULL);
 
 	g_object_unref (interpreter);
 }
