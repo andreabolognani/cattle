@@ -42,8 +42,7 @@ CLEANFILES = $(GENMARSHAL_GENERATED) \
 
 cattleincludedir = $(includedir)/cattle
 
-cattle_headers = cattle-version.h       \
-                 cattle-error.h         \
+cattle_headers = cattle-error.h         \
                  cattle-instruction.h   \
                  cattle-program.h       \
                  cattle-tape.h          \
@@ -55,6 +54,7 @@ cattle_headers = cattle-version.h       \
 #                        cattle-enums.h
 
 noinst_HEADERS = $(cattle_headers) \
+                 cattle-version.h  \
                  cattle-enums.h
 
 #lib_LTLIBRARIES = libcattle.la
