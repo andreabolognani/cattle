@@ -86,7 +86,7 @@ dnl *******************************
 AC_OUTPUT([Makefile
            cattle/Makefile
            cattle/cattle-version.h
-           cattle.pc
+           cattle-1.0.pc
            examples/Makefile
            tests/Makefile
            docs/Makefile
