@@ -55,5 +55,3 @@ cattle_error_quark (void)
 {
 	return g_quark_from_static_string ("cattle-error-quark");
 }
-
-
