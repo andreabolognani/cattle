@@ -6,29 +6,29 @@ noinst_PROGRAMS = tape        \
                   interpreter \
                   references
 
-tape_DEPENDENCIES = ${top_builddir}/cattle/libcattle.la
+tape_DEPENDENCIES = ${top_builddir}/cattle/libcattle-1.0.la
 tape_SOURCES = tape.c
 tape_CPPFLAGS = @CFLAGS@ @GLIB_CFLAGS@
 tape_LDFLAGS = @GLIB_LIBS@
-tape_LDADD = ${top_builddir}/cattle/libcattle.la
+tape_LDADD = ${top_builddir}/cattle/libcattle-1.0.la
 
-interpreter_DEPENDENCIES = ${top_builddir}/cattle/libcattle.la
+interpreter_DEPENDENCIES = ${top_builddir}/cattle/libcattle-1.0.la
 interpreter_SOURCES = interpreter.c
 interpreter_CPPFLAGS = @CFLAGS@ @GLIB_CFLAGS@
 interpreter_LDFLAGS = @GLIB_LIBS@
-interpreter_LDADD = ${top_builddir}/cattle/libcattle.la
+interpreter_LDADD = ${top_builddir}/cattle/libcattle-1.0.la
 
-program_DEPENDENCIES = ${top_builddir}/cattle/libcattle.la
+program_DEPENDENCIES = ${top_builddir}/cattle/libcattle-1.0.la
 program_SOURCES = program.c
 program_CPPFLAGS = @CFLAGS@ @GLIB_CFLAGS@
 program_LDFLAGS = @GLIB_LIBS@
-program_LDADD = ${top_builddir}/cattle/libcattle.la
+program_LDADD = ${top_builddir}/cattle/libcattle-1.0.la
 
-references_DEPENDENCIES = ${top_builddir}/cattle/libcattle.la
+references_DEPENDENCIES = ${top_builddir}/cattle/libcattle-1.0.la
 references_SOURCES = references.c
 references_CPPFLAGS = @CFLAGS@ @GLIB_CFLAGS@
 references_LDFLAGS = @GLIB_LIBS@
-references_LDADD = ${top_builddir}/cattle/libcattle.la
+references_LDADD = ${top_builddir}/cattle/libcattle-1.0.la
 
 GTESTER = gtester
 

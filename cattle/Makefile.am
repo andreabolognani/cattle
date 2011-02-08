@@ -59,28 +59,28 @@ noinst_HEADERS = $(cattle_headers) \
 
 #lib_LTLIBRARIES = libcattle.la
 
-noinst_LTLIBRARIES = libcattle.la
+noinst_LTLIBRARIES = libcattle-1.0.la
 
-libcattle_la_LDFLAGS = -version-info \
-                       $(CATTLE_CURRENT):$(CATTLE_REVISION):$(CATTLE_AGE)
+libcattle_1_0_la_LDFLAGS = -version-info \
+                           $(CATTLE_CURRENT):$(CATTLE_REVISION):$(CATTLE_AGE)
 
-libcattle_la_LIBADD = $(GLIB_LIBS)
+libcattle_1_0_la_LIBADD = $(GLIB_LIBS)
 
-libcattle_la_SOURCES = $(BUILT_SOURCES)       \
-                       cattle-version.c       \
-                       cattle-error.c         \
-                       cattle-instruction.c   \
-                       cattle-program.c       \
-                       cattle-tape.c          \
-                       cattle-configuration.c \
-                       cattle-interpreter.c
+libcattle_1_0_la_SOURCES = $(BUILT_SOURCES)       \
+                           cattle-version.c       \
+                           cattle-error.c         \
+                           cattle-instruction.c   \
+                           cattle-program.c       \
+                           cattle-tape.c          \
+                           cattle-configuration.c \
+                           cattle-interpreter.c
 
-libcattle_la_CFLAGS = $(CFLAGS)      \
+libcattle_1_0_la_CFLAGS = $(CFLAGS)      \
                       $(GLIB_CFLAGS)
 
-libcattle_la_CPPFLAGS = -DG_LOG_DOMAIN=\"Cattle\" \
-                        -DCATTLE_COMPILATION      \
-                        -DG_DISABLE_DEPRECATED
+libcattle_1_0_la_CPPFLAGS = -DG_LOG_DOMAIN=\"Cattle\" \
+                            -DCATTLE_COMPILATION      \
+                            -DG_DISABLE_DEPRECATED
 
 EXTRA_DIST = cattle-marshal.list \
              cattle-enums.h.tmpl \
