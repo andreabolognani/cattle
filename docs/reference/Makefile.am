@@ -49,7 +49,7 @@ expand_content_files =
 GTKDOC_CFLAGS = -I$(top_srcdir) 	\
 		      	-I$(top_builddir)	\
 			  	$(GLIB_CFLAGS)
-GTKDOC_LIBS = $(top_builddir)/cattle/libcattle.la	\
+GTKDOC_LIBS = $(top_builddir)/cattle/libcattle-1.0.la	\
 			  $(GLIB_LIBS)
 
 # This includes the standard gtk-doc make rules, copied by gtkdocize.
