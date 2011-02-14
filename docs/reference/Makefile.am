@@ -4,7 +4,7 @@ AUTOMAKE_OPTIONS = 1.6
 DOC_MODULE = cattle
 
 # The top-level SGML file.
-DOC_MAIN_SGML_FILE = $(DOC_MODULE)-docs.sgml
+DOC_MAIN_SGML_FILE = $(DOC_MODULE)-docs.xml
 
 # The directory containing the source code. Relative to $(srcdir).
 DOC_SOURCE_DIR = $(top_srcdir)/cattle
@@ -38,8 +38,7 @@ HTML_IMAGES =
 
 # Extra SGML files that are included by $(DOC_MAIN_SGML_FILE).
 content_files = contents/overview.xml \
-				contents/io-handling.xml \
-				version.xml
+                contents/io-handling.xml
 
 # SGML files where gtk-doc abbrevations (#GtkWidget) are expanded.
 # e.g. expand_content_files=running.sgml
@@ -47,14 +46,14 @@ expand_content_files =
 
 # CFLAGS and LDFLAGS for compiling gtkdoc-scangobj with your library.
 GTKDOC_CFLAGS = -I$(top_srcdir) 	\
-		      	-I$(top_builddir)	\
-			  	$(GLIB_CFLAGS)
+                -I$(top_builddir)	\
+                $(GLIB_CFLAGS)
 GTKDOC_LIBS = $(top_builddir)/cattle/libcattle-1.0.la	\
-			  $(GLIB_LIBS)
+              $(GLIB_LIBS)
 
 # This includes the standard gtk-doc make rules, copied by gtkdocize.
 include $(top_srcdir)/gtk-doc.make
 
 # Other files to distribute
 # e.g. EXTRA_DIST += version.xml.in
-EXTRA_DIST += version.xml.in
+EXTRA_DIST +=

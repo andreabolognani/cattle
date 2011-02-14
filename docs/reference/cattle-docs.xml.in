@@ -10,7 +10,7 @@
 <!ENTITY CattleConfiguration SYSTEM "xml/cattle-configuration.xml">
 <!ENTITY CattleInterpreter SYSTEM "xml/cattle-interpreter.xml">
 <!ENTITY io-handling SYSTEM "contents/io-handling.xml">
-<!ENTITY version SYSTEM "version.xml">
+<!ENTITY version "@CATTLE_VERSION@">
 ]>
 <book id="index">
 

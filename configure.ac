@@ -91,4 +91,4 @@ AC_OUTPUT([Makefile
            tests/Makefile
            docs/Makefile
            docs/reference/Makefile
-           docs/reference/version.xml])
+           docs/reference/cattle-docs.xml])
