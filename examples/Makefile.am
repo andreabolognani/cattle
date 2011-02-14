@@ -1,21 +1,44 @@
-INCLUDES = -I$(top_srcdir)   \
-           -I$(top_builddir)
+NULL =
 
-noinst_PROGRAMS = run      \
-                  indent   \
-                  minimize
+INCLUDES = \
+	-I$(top_srcdir) \
+	-I$(top_builddir) \
+	$(NULL)
 
-run_SOURCES = run.c common.c common.h
-run_CPPFLAGS = @CFLAGS@ @GLIB_CFLAGS@ @GIO_CFLAGS@
-run_LDFLAGS = @GLIB_LIBS@ @GIO_LIBS@
-run_LDADD = $(top_builddir)/cattle/libcattle-1.0.la
+AM_CPPFLAGS = \
+	$(GLIB_CFLAGS) \
+	$(GIO_CFLAGS) \
+	$(NULL)
 
-indent_SOURCES = indent.c common.c common.h
-indent_CPPFLAGS = @CFLAGS@ @GLIB_CFLAGS@ @GIO_CFLAGS@
-indent_LDFLAGS = @GLIB_LIBS@ @GIO_LIBS@
-indent_LDADD = $(top_builddir)/cattle/libcattle-1.0.la
+AM_LDFLAGS = \
+	$(GLIB_LIBS) \
+	$(GIO_LIBS) \
+	$(NULL)
 
-minimize_SOURCES = minimize.c common.c common.h
-minimize_CPPFLAGS = @CFLAGS@ @GLIB_CFLAGS@ @GIO_CFLAGS@
-minimize_LDFLAGS = @GLIB_LIBS@ @GIO_LIBS@
-minimize_LDADD = $(top_builddir)/cattle/libcattle-1.0.la
+LDADD = \
+	$(top_builddir)/cattle/libcattle-1.0.la \
+	$(NULL)
+
+noinst_PROGRAMS = \
+	run \
+	indent \
+	minimize \
+	$(NULL)
+
+run_SOURCES = \
+	common.h \
+	common.c \
+	run.c \
+	$(NULL)
+
+indent_SOURCES = \
+	common.h \
+	common.c \
+	indent.c \
+	$(NULL)
+
+minimize_SOURCES = \
+	common.h \
+	common.c \
+	minimize.c \
+	$(NULL)

@@ -1,1 +1,5 @@
-SUBDIRS = reference
+NULL =
+
+SUBDIRS = \
+	reference \
+	$(NULL)

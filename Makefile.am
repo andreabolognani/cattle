@@ -1,17 +1,25 @@
-AUTOMAKE_OPTIONS = 1.6
+NULL =
 
-SUBDIRS = cattle   \
-          examples \
-          tests    \
-          docs
+SUBDIRS = \
+	cattle \
+	examples \
+	tests \
+	docs \
+	$(NULL)
 
-EXTRA_DIST = ChangeLog.pre-0.9.2 \
-             gtk-doc.make        \
-             cattle-1.0.pc.in
+EXTRA_DIST = \
+	ChangeLog.pre-0.9.2 \
+	gtk-doc.make \
+	cattle-1.0.pc.in \
+	$(NULL)
 
-CLEANFILES = $(srcdir)/ChangeLog
+CLEANFILES = \
+	$(srcdir)/ChangeLog \
+	$(NULL)
 
-DISTCHECK_CONFIGURE_FLAGS = --enable-gtk-doc
+DISTCHECK_CONFIGURE_FLAGS = \
+	--enable-gtk-doc \
+	$(NULL)
 
 distclean-local:
 	if test "$(srcdir)" = "."; then \

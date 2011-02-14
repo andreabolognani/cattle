@@ -1,30 +1,44 @@
-INCLUDES = -I$(top_srcdir)   \
-           -I$(top_builddir)
+NULL =
 
-noinst_PROGRAMS = tape        \
-                  program     \
-                  interpreter \
-                  references
+INCLUDES = \
+	-I$(top_srcdir) \
+    -I$(top_builddir) \
+	$(NULL)
 
-tape_SOURCES = tape.c
-tape_CPPFLAGS = @CFLAGS@ @GLIB_CFLAGS@
-tape_LDFLAGS = @GLIB_LIBS@
-tape_LDADD = $(top_builddir)/cattle/libcattle-1.0.la
+AM_CPPFLAGS = \
+	$(GLIB_CFLAGS) \
+	$(NULL)
 
-interpreter_SOURCES = interpreter.c
-interpreter_CPPFLAGS = @CFLAGS@ @GLIB_CFLAGS@
-interpreter_LDFLAGS = @GLIB_LIBS@
-interpreter_LDADD = $(top_builddir)/cattle/libcattle-1.0.la
+AM_LDFLAGS = \
+	$(GLIB_LIBS) \
+	$(NULL)
 
-program_SOURCES = program.c
-program_CPPFLAGS = @CFLAGS@ @GLIB_CFLAGS@
-program_LDFLAGS = @GLIB_LIBS@
-program_LDADD = $(top_builddir)/cattle/libcattle-1.0.la
+LDADD = \
+	$(top_builddir)/cattle/libcattle-1.0.la \
+	$(NULL)
 
-references_SOURCES = references.c
-references_CPPFLAGS = @CFLAGS@ @GLIB_CFLAGS@
-references_LDFLAGS = @GLIB_LIBS@
-references_LDADD = $(top_builddir)/cattle/libcattle-1.0.la
+noinst_PROGRAMS = \
+	tape \
+	program \
+	interpreter \
+	references \
+	$(NULL)
+
+tape_SOURCES = \
+	tape.c \
+	$(NULL)
+
+interpreter_SOURCES = \
+	interpreter.c \
+	$(NULL)
+
+program_SOURCES = \
+	program.c \
+	$(NULL)
+
+references_SOURCES = \
+	references.c \
+	$(NULL)
 
 GTESTER = gtester
 
