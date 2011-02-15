@@ -1,4 +1,4 @@
-cattle.pc
+cattle-1.0.pc
 programs
 ChangeLog
 .deps
@@ -15,6 +15,7 @@ config.sub
 config.log
 config.status
 configure
+gtk-doc.make
 depcomp
 ltmain.sh
 install-sh
