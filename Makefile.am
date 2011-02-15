@@ -12,8 +12,19 @@ pkgconfig_DATA = \
 	cattle-1.0.pc \
 	$(NULL)
 
-EXTRA_DIST = \
+doc_DATA = \
+	AUTHORS \
 	ChangeLog.pre-0.9.2 \
+	ChangeLog \
+	COPYING \
+	NEWS \
+	README \
+	TODO \
+	$(NULL)
+
+EXTRA_DIST = \
+	$(pkgconfig_DATA) \
+	$(doc_DATA) \
 	$(NULL)
 
 CLEANFILES = \
