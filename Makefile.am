@@ -7,6 +7,11 @@ SUBDIRS = \
 	docs \
 	$(NULL)
 
+pkgconfigdir = $(libdir)/pkgconfig
+pkgconfig_DATA = \
+	cattle-1.0.pc \
+	$(NULL)
+
 EXTRA_DIST = \
 	ChangeLog.pre-0.9.2 \
 	gtk-doc.make \
@@ -43,12 +48,3 @@ ChangeLog:
 	fi
 
 .PHONY: ChangeLog
-
-#pkgconfigdir = $(libdir)/pkgconfig
-
-#install-data-local:
-#	$(mkinstalldirs) $(DESTDIR)$(pkgconfigdir)
-#	$(INSTALL) -m 644 cattle.pc $(DESTDIR)$(pkgconfigdir)/
-
-#uninstall-local:
-#	rm -f $(DESTDIR)$(pkgconfigdir)/cattle.pc
