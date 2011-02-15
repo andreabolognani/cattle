@@ -73,11 +73,17 @@ PKG_CHECK_MODULES(GIO, gio-2.0 >= $GLIB_REQUIRED_VERSION)
 AC_SUBST(GIO_CFLAGS)
 AC_SUBST(GIO_LIBS)
 
+dnl ***************************************
+dnl *** Check for GObject-Introspection ***
+dnl ***************************************
+
+GOBJECT_INTROSPECTION_CHECK([0.6.7])
+
 dnl *************************
 dnl *** Check for Gtk-Doc ***
 dnl *************************
 
-GTK_DOC_CHECK(1.9)
+GTK_DOC_CHECK([1.9])
 
 dnl *******************************
 dnl *** Create the output files ***

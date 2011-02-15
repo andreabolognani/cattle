@@ -6,6 +6,8 @@ Cattle depends on the following libraries and programs:
   * The GLib library and its GObject module, with a minimum version
     of 2.16.0
 
+  * GObject Introspection, to build introspection data
+
   * The pkg-config script
 
   * Optionally, the GTK-Doc tools, if you wish to rebuild the API

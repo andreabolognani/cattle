@@ -76,6 +76,31 @@ EXTRA_DIST = \
 	cattle-enums.c.tmpl \
 	$(NULL)
 
+-include $(INTROSPECTION_MAKEFILE)
+INTROSPECTION_GIRS =
+INTROSPECTION_SCANNER_ARGS = --add-include-path=$(srcdir)
+INTROSPECTION_COMPILER_ARGS = --includedir=$(srcdir)
+
+if HAVE_INTROSPECTION
+introspection_sources = $(libcattle_1_0_la_SOURCES)
+
+Cattle-1.0.gir: libcattle-1.0.la
+Cattle_1_0_gir_NAMESPACE = Cattle
+Cattle_1_0_gir_VERSION = 1.0
+Cattle_1_0_gir_INCLUDES = GObject-2.0
+Cattle_1_0_gir_LIBS = libcattle-1.0.la
+Cattle_1_0_gir_FILES = $(introspection_sources)
+INTROSPECTION_GIRS += Cattle-1.0.gir
+
+girdir = $(datadir)/gir-1.0
+gir_DATA = $(INTROSPECTION_GIRS)
+
+typelibdir = $(libdir)/girepository-1.0
+typelib_DATA = $(INTROSPECTION_GIRS:.gir=.typelib)
+
+CLEANFILES += $(gir_DATA) $(typelib_DATA)
+endif
+
 cattle-marshal.h: cattle-marshal.list
 	$(AM_V_GEN)( $(GLIB_GENMARSHAL) --prefix=cattle_marshal       \
 	  $(srcdir)/cattle-marshal.list --header > cattle-marshal.tmp \
