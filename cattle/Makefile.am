@@ -28,13 +28,13 @@ cattle_headers = \
 	cattle.h \
 	$(NULL)
 
-#cattleincludedir = $(includedir)/cattle
-noinst_HEADERS = \
+cattleincludedir = $(includedir)/cattle-1.0/cattle
+cattleinclude_HEADERS = \
 	$(cattle_headers) \
 	cattle-version.h \
 	$(NULL)
 
-noinst_LTLIBRARIES = \
+lib_LTLIBRARIES = \
 	libcattle-1.0.la \
 	$(NULL)
 
