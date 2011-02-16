@@ -38,9 +38,7 @@ lib_LTLIBRARIES = \
 	libcattle-1.0.la \
 	$(NULL)
 
-libcattle_1_0_la_SOURCES = \
-	$(BUILT_SOURCES) \
-	$(noinst_HEADERS) \
+cattle_sources = \
 	cattle-version.c \
 	cattle-error.c \
 	cattle-instruction.c \
@@ -48,6 +46,13 @@ libcattle_1_0_la_SOURCES = \
 	cattle-tape.c \
 	cattle-configuration.c \
 	cattle-interpreter.c \
+	$(NULL)
+
+libcattle_1_0_la_SOURCES = \
+	$(cattle_sources) \
+	$(cattle_headers) \
+	cattle-version.h \
+	$(BUILT_SOURCES) \
 	$(NULL)
 
 GENMARSHAL_GENERATED = \
@@ -78,11 +83,21 @@ EXTRA_DIST = \
 
 -include $(INTROSPECTION_MAKEFILE)
 INTROSPECTION_GIRS =
-INTROSPECTION_SCANNER_ARGS = --add-include-path=$(srcdir)
-INTROSPECTION_COMPILER_ARGS = --includedir=$(srcdir)
+INTROSPECTION_SCANNER_ARGS = \
+	-I $(top_srcdir) \
+	-I $(top_builddir) \
+	-D CATTLE_COMPILATION \
+	$(NULL)
+INTROSPECTION_COMPILER_ARGS = \
+	--includedir=$(srcdir) \
+	$(NULL)
 
 if HAVE_INTROSPECTION
-introspection_sources = $(libcattle_1_0_la_SOURCES)
+introspection_sources = \
+	$(cattle_sources) \
+	$(cattle_headers) \
+	cattle-version.h \
+	$(NULL)
 
 Cattle-1.0.gir: libcattle-1.0.la
 Cattle_1_0_gir_NAMESPACE = Cattle
