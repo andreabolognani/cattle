@@ -1,19 +1,31 @@
-<para>
-	Cattle is a library implementing a flexible interpreter for the
-	Brainfuck programming language.
-</para>
-<para>
-	The library allows one to easily embed a full-featured Brainfuck
-	interpreter into any application; to make the interaction between
-	the hosting application and the Brainfuck interpreter completely
-	transparent, Cattle can be configured to use a custom set of I/O
-	routines instead of the standard ones.
-</para>
-<para>
-	The behaviour of the interpreter itself is highly configurable,
-	as to fit most needs.
-</para>
-<para>
-	The library is still under development, and some planned features
-	are only partially implemented, or not implemented at all.
-</para>
+<?xml version="1.0"?>
+<!DOCTYPE partintro PUBLIC "-//OASIS//DTD DocBook XML V4.3//EN"
+                    "http://www.oasis-open.org/docbook/xml/4.3/docbookx.dtd"
+[
+]>
+<partintro>
+
+	<para>
+		Cattle is a library implementing a flexible interpreter for the
+		Brainfuck programming language.
+	</para>
+
+	<para>
+		The library allows one to easily embed a full-featured Brainfuck
+		interpreter into any application; to make the interaction between
+		the hosting application and the Brainfuck interpreter completely
+		transparent, Cattle can be configured to use a custom set of I/O
+		routines instead of the standard ones.
+	</para>
+
+	<para>
+		The behaviour of the interpreter itself is highly configurable,
+		as to fit most needs.
+	</para>
+
+	<para>
+		The library is still under development, and some planned features
+		are only partially implemented, or not implemented at all.
+	</para>
+
+</partintro>

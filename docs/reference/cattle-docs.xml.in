@@ -1,60 +1,57 @@
 <?xml version="1.0"?>
-<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN"
-               "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd" [
-<!ENTITY overview SYSTEM "contents/overview.xml">
-<!ENTITY version-information SYSTEM "xml/cattle-version.xml">
-<!ENTITY error-types SYSTEM "xml/cattle-error.xml">
-<!ENTITY CattleInstruction SYSTEM "xml/cattle-instruction.xml">
-<!ENTITY CattleProgram SYSTEM "xml/cattle-program.xml">
-<!ENTITY CattleTape SYSTEM "xml/cattle-tape.xml">
-<!ENTITY CattleConfiguration SYSTEM "xml/cattle-configuration.xml">
-<!ENTITY CattleInterpreter SYSTEM "xml/cattle-interpreter.xml">
-<!ENTITY io-handling SYSTEM "contents/io-handling.xml">
-<!ENTITY version "@CATTLE_VERSION@">
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.3//EN"
+               "http://www.oasis-open.org/docbook/xml/4.3/docbookx.dtd"
+[
+  <!ENTITY % local.common.attrib "xmlns:xi  CDATA  #FIXED 'http://www.w3.org/2003/XInclude'">
 ]>
 <book id="index">
 
 	<bookinfo>
 		<title>Cattle Reference Manual</title>
-		<releaseinfo>for Cattle &version;</releaseinfo>
+		<releaseinfo>
+			for Cattle @CATTLE_VERSION@.
+			Latest version available at
+			<ulink role="online-location" url="http://kiyuko.org/software/cattle/development/reference/index.html">http://kiyuko.org/software/cattle/development/reference/index.html</ulink>
+		</releaseinfo>
 	</bookinfo>
 
 	<chapter>
 		<title>Overview</title>
-		&overview;
+		<xi:include href="contents/overview.xml" />
 	</chapter>
 
 	<chapter>
 		<title>Core Features</title>
-		&version-information;
-		&error-types;
+		<xi:include href="xml/cattle-version.xml" />
+		<xi:include href="xml/cattle-error.xml" />
 	</chapter>
 
 	<chapter>
 		<title>Objects</title>
-		&CattleInstruction;
-		&CattleProgram;
-		&CattleTape;
-		&CattleConfiguration;
-		&CattleInterpreter;
+		<xi:include href="xml/cattle-configuration.xml" />
+		<xi:include href="xml/cattle-program.xml" />
+		<xi:include href="xml/cattle-interpreter.xml" />
+		<xi:include href="xml/cattle-instruction.xml" />
+		<xi:include href="xml/cattle-tape.xml" />
 	</chapter>
 
 	<chapter>
 		<title>Miscellaneous Topics</title>
-		&io-handling;
+		<xi:include href="contents/io-handling.xml" />
 	</chapter>
 
-	<index>
-		<title>Index</title>
+<!--
+	<chapter id="object-tree">
+		<title>Object Hierarchy</title>
+		<xi:include href="xml/tree_index.sgml" />
+	</chapter>
+-->
+
+	<index id="api-index-full">
+		<title>API Index</title>
+		<xi:include href="xml/api-index-full.xml" />
 	</index>
-	<index role="0.9.1">
-		<title>Index of new symbols in 0.9.1</title>
-	</index>
-	<index role="0.9.2">
-		<title>Index of new symbols in 0.9.2</title>
-	</index>
-	<index role="0.9.4">
-		<title>Index of new symbols in 0.9.4</title>
-	</index>
+
+	<xi:include href="xml/annotation-glossary.xml" />
 
 </book>
