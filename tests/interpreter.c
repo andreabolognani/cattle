@@ -31,7 +31,8 @@ input_success (CattleInterpreter  *interpreter,
                GError            **error,
                gpointer            data)
 {
-	*input = "whatever";
+	cattle_interpreter_feed (interpreter,
+	                         "whatever");
 
 	return TRUE;
 }
@@ -44,7 +45,8 @@ input_invalid_utf8 (CattleInterpreter  *interpreter,
                     gpointer            data)
 {
 	/* Return some malformed UTF-8 */
-	*input = "\xe2\x28\xa1";
+	cattle_interpreter_feed (interpreter,
+	                         "\xe2\x28\xa1");
 
 	return TRUE;
 }

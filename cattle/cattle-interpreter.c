@@ -143,10 +143,13 @@ cattle_interpreter_dispose (GObject *object)
 static void
 cattle_interpreter_finalize (GObject *object)
 {
-	/* FIXME
-	 * We should release the input here, but we don't do it because
-	 * it would be really tricky: since the allocator is chosen by
-	 * the user, we have no way to know how to release it */
+	CattleInterpreter *self;
+
+	self = CATTLE_INTERPRETER (object);
+
+	if (self->priv->input != NULL) {
+		g_free (self->priv->input);
+	}
 
 	G_OBJECT_CLASS (cattle_interpreter_parent_class)->finalize (object);
 }
@@ -163,6 +166,7 @@ run (CattleInterpreter  *self,
 	CattleInstructionValue value;
 	GSList *stack;
 	GError *inner_error;
+	gchar *input;
 	gboolean success;
 	gchar temp;
 	gint quantity;
@@ -292,7 +296,7 @@ run (CattleInterpreter  *self,
 							g_signal_emit (self,
 							               signals[INPUT_REQUEST],
 							               0,
-							               &(self->priv->input),
+							               &input,
 							               &inner_error,
 							               &success);
 
@@ -319,31 +323,28 @@ run (CattleInterpreter  *self,
 
 								return FALSE;
 							}
-
-							/* Check the input is valid UTF-8, and
-							 * raise an error if it isn't */
-							if (!g_utf8_validate (self->priv->input, -1, NULL)) {
-								g_set_error_literal (error,
-								                     CATTLE_ERROR,
-								                     CATTLE_ERROR_BAD_UTF8,
-								                     "Invalid UTF-8 input");
-
-								g_object_unref (current);
-
-								return FALSE;
-							}
-
-							/* A return value of NULL from the signal
-							 * handler means the end of input was
-							 * reached. We set the appropriate flag */
-							if (self->priv->input == NULL) {
-								self->priv->end_of_input_reached = TRUE;
-							}
-
-							/* Move the cursor to the beginning of the
-							 * new input line */
-							self->priv->input_cursor = self->priv->input;
 						}
+					}
+
+					/* Safety measure against misbehaving input handlers: if
+					 * no input has been fed to the interpreter so far, it
+					 * means there is no input to be processed */
+					if (self->priv->input == NULL) {
+
+						self->priv->end_of_input_reached = TRUE;
+					}
+
+					/* Make sure the input is valid UTF-8 */
+					if (!g_utf8_validate (self->priv->input, -1, NULL)) {
+
+						g_set_error_literal (error,
+						                     CATTLE_ERROR,
+						                     CATTLE_ERROR_BAD_UTF8,
+						                     "Invalid UTF-8 input");
+
+						g_object_unref (current);
+
+						return FALSE;
 					}
 
 					/* STEP 2: Get the char and normalize it */
@@ -378,6 +379,12 @@ run (CattleInterpreter  *self,
 				}
 
 				/* STEP 3: Perform the actual operation */
+
+				/* XXX If there are multiple read instructions in a row,
+				 *     only the last one is actually performed, because
+				 *     it would overwrite the results of all the previous
+				 *     ones anyway.
+				 */
 
 				/* We are at the end of the input: we have to check
 				 * the configuration to know which action we should
@@ -537,13 +544,6 @@ input_default_handler (CattleInterpreter  *self,
 {
 	gchar *buffer;
 
-	/* The previous input buffer is not needed anymore */
-	if (*input != NULL) {
-
-		g_free (*input);
-		*input = NULL;
-	}
-
 	/* The buffer size is not really important: if the input cannot
 	 * fit a single buffer, the signal will be emitted again */
 	buffer = g_new0 (gchar, 256);
@@ -555,7 +555,9 @@ input_default_handler (CattleInterpreter  *self,
 		 * In the latter case, we have to notify the interpreter */
 		if (G_LIKELY (feof (stdin))) {
 
-			*input = NULL;
+			cattle_interpreter_feed (self,
+			                         NULL);
+
 			return TRUE;
 		}
 		else {
@@ -568,7 +570,10 @@ input_default_handler (CattleInterpreter  *self,
 		}
 	}
 
-	*input = buffer;
+	cattle_interpreter_feed (self,
+	                         buffer);
+	g_free (buffer);
+
 	return TRUE;
 }
 
@@ -782,6 +787,54 @@ cattle_interpreter_run (CattleInterpreter  *self,
 	g_object_unref (instruction);
 
 	return success;
+}
+
+/**
+ * cattle_interpreter_feed:
+ * @interpreter: a #CattleInterpreter
+ * @input: more input to be used by @interpreter, or %NULL
+ *
+ * Feed @interpreter with more input.
+ *
+ * This method is meant to be used inside an handler connected to the
+ * CattleInterpreter::input-request signal; using it in any other
+ * way is pointless, since the input is reset when
+ * cattle_interpreter_run() is called.
+ */
+void
+cattle_interpreter_feed (CattleInterpreter *self,
+                         gchar             *input)
+{
+	gchar *temp;
+	glong offset;
+
+	/* A return value of NULL from the signal
+	 * handler means the end of input was
+	 * reached. We set the appropriate flag */
+	if (input == NULL) {
+
+		self->priv->end_of_input_reached = TRUE;
+		return;
+	}
+
+	offset = g_utf8_pointer_to_offset (self->priv->input,
+									   self->priv->input_cursor);
+
+	if (self->priv->input == NULL) {
+		temp = g_strdup (input);
+	}
+	else {
+		temp = g_strconcat (self->priv->input,
+		                    input,
+		                    NULL);
+	}
+
+	g_free (self->priv->input);
+	self->priv->input = temp;
+
+	/* Move the cursor back to its position */
+	self->priv->input_cursor = g_utf8_offset_to_pointer (self->priv->input,
+	                                                     offset);
 }
 
 /**
