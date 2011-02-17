@@ -331,18 +331,20 @@ run (CattleInterpreter  *self,
 
 						self->priv->end_of_input_reached = TRUE;
 					}
+					else {
 
-					/* Make sure the input is valid UTF-8 */
-					if (!g_utf8_validate (self->priv->input, -1, NULL)) {
+						/* Make sure the input is valid UTF-8 */
+						if (!g_utf8_validate (self->priv->input, -1, NULL)) {
 
-						g_set_error_literal (error,
-						                     CATTLE_ERROR,
-						                     CATTLE_ERROR_BAD_UTF8,
-						                     "Invalid UTF-8 input");
+							g_set_error_literal (error,
+							                     CATTLE_ERROR,
+							                     CATTLE_ERROR_BAD_UTF8,
+							                     "Invalid UTF-8 input");
 
-						g_object_unref (current);
+							g_object_unref (current);
 
-						return FALSE;
+							return FALSE;
+						}
 					}
 
 					/* STEP 2: Get the char and normalize it */
@@ -802,36 +804,25 @@ void
 cattle_interpreter_feed (CattleInterpreter *self,
                          gchar             *input)
 {
-	gchar *temp;
-	glong offset;
-
 	/* A return value of NULL from the signal
 	 * handler means the end of input was
 	 * reached. We set the appropriate flag */
 	if (input == NULL) {
 
+		self->priv->input = NULL;
+		self->priv->input_cursor = NULL;
 		self->priv->end_of_input_reached = TRUE;
+
 		return;
 	}
 
-	offset = g_utf8_pointer_to_offset (self->priv->input,
-									   self->priv->input_cursor);
+	if (self->priv->input != NULL) {
 
-	if (self->priv->input == NULL) {
-		temp = g_strdup (input);
-	}
-	else {
-		temp = g_strconcat (self->priv->input,
-		                    input,
-		                    NULL);
+		g_free (self->priv->input);
 	}
 
-	g_free (self->priv->input);
-	self->priv->input = temp;
-
-	/* Move the cursor back to its position */
-	self->priv->input_cursor = g_utf8_offset_to_pointer (self->priv->input,
-	                                                     offset);
+	self->priv->input = g_strdup (input);
+	self->priv->input_cursor = self->priv->input;
 }
 
 /**
