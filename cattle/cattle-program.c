@@ -266,7 +266,7 @@ load (gchar  **program)
  * interpreters, as long as the object is not modified after it
  * has been initialized.
  *
- * Return: a new #CattleProgram.
+ * Returns: (transfer full): a new #CattleProgram.
  **/
 CattleProgram*
 cattle_program_new (void)
@@ -278,7 +278,7 @@ cattle_program_new (void)
  * cattle_program_load:
  * @program: a #CattleProgram
  * @string: the source code of the program
- * @error: a #GError
+ * @error: (allow-none): a #GError
  *
  * Load @program from @string.
  *
@@ -290,8 +290,7 @@ cattle_program_new (void)
  * The error domain is %CATTLE_ERROR, and the error code is from the
  * #CattleError enumeration.
  *
- * Return: #TRUE if @program was loaded successfully, #FALSE
- * otherwise.
+ * Returns: %TRUE if @program was loaded successfully, %FALSE otherwise.
  */
 gboolean
 cattle_program_load (CattleProgram  *self,
@@ -405,7 +404,7 @@ cattle_program_set_instructions (CattleProgram     *self,
  *
  * The returned object must be unreferenced when no longer needed.
  *
- * Return: a #CattleInstruction.
+ * Returns: (transfer full): the first instruction in @program.
  */
 CattleInstruction*
 cattle_program_get_instructions (CattleProgram *self)
@@ -421,7 +420,7 @@ cattle_program_get_instructions (CattleProgram *self)
 /**
  * cattle_program_set_input:
  * @program: a #CattleProgram
- * @input: input for the program, or %NULL
+ * @input: (allow-none): input for the program, or %NULL
  *
  * Set the input for @program.
  */
@@ -446,7 +445,7 @@ cattle_program_set_input (CattleProgram *self,
  *
  * The returned string must be freed after use.
  *
- * Return: input for the program, or %NULL.
+ * Returns: (transfer full): input for the program, or %NULL.
  */
 gchar*
 cattle_program_get_input (CattleProgram *self)

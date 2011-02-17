@@ -43,13 +43,13 @@
  *
  * Instead of creating nine separate objects, with all the involved
  * overhead, Cattle creates just three objects (one with value
- * #CATTLE_INSTRUCTION_INCREASE, one with value #CATTLE_INSTRUCTION_PRINT,
- * and one with value #CATTLE_INSTRUCTION_DECREASE) and set their quantity
+ * %CATTLE_INSTRUCTION_INCREASE, one with value %CATTLE_INSTRUCTION_PRINT,
+ * and one with value %CATTLE_INSTRUCTION_DECREASE) and set their quantity
  * to three, one and five respectively.
  *
  * Each instruction maintains a reference to the next instruction in the
  * execution flow. If the instruction starts a loop (its value is
- * #CATTLE_INSTRUCTION_LOOP_BEGIN) it also holds a reference to the first
+ * %CATTLE_INSTRUCTION_LOOP_BEGIN) it also holds a reference to the first
  * instruction in the loop.
  */
 
@@ -73,7 +73,7 @@ G_DEFINE_TYPE (CattleInstruction, cattle_instruction, G_TYPE_OBJECT)
  *
  * Brainfuck instructions supported by Cattle, as #gunichar<!-- -->s.
  *
- * #CATTLE_INSTRUCTION_DEBUG is not part of the Brainfuck language, but
+ * %CATTLE_INSTRUCTION_DEBUG is not part of the Brainfuck language, but
  * it's often used for debugging and implemented in many interpreters,
  * so it's included in Cattle as well.
  */
@@ -159,9 +159,9 @@ cattle_instruction_finalize (GObject *object)
  * Create and initialize a new instruction.
  *
  * The newly-created instruction has a #CattleInstruction:quantity of
- * one, and its #CattleInstruction:value is #CATTLE_INSTRUCTION_NONE.
+ * one, and its #CattleInstruction:value is %CATTLE_INSTRUCTION_NONE.
  *
- * Returns: a new #CattleInstruction.
+ * Returns: (transfer full): a new #CattleInstruction.
  **/
 CattleInstruction*
 cattle_instruction_new (void)
@@ -203,7 +203,7 @@ cattle_instruction_set_value (CattleInstruction      *self,
  *
  * Get the value of @instruction. See cattle_instruction_set_value().
  *
- * Return: the current value of @instruction.
+ * Returns: the current value of @instruction.
  */
 CattleInstructionValue
 cattle_instruction_get_value (CattleInstruction *self)
@@ -244,7 +244,7 @@ cattle_instruction_set_quantity (CattleInstruction *self,
  * Get the quantity of @instruction.
  * See cattle_instruction_set_quantity().
  *
- * Return: the current quantity of @instruction.
+ * Returns: the current quantity of @instruction.
  */
 gint
 cattle_instruction_get_quantity (CattleInstruction *self)
@@ -258,11 +258,11 @@ cattle_instruction_get_quantity (CattleInstruction *self)
 /**
  * cattle_instruction_set_next:
  * @instruction: a #CattleInstruction
- * @next: next #CattleInstruction to execute, or %NULL
+ * @next: (allow-none): next #CattleInstruction to execute, or %NULL
  *
  * Set the next instruction to be executed.
  *
- * If @instruction has value #CATTLE_INSTRUCTION_LOOP_BEGIN, @next
+ * If @instruction has value %CATTLE_INSTRUCTION_LOOP_BEGIN, @next
  * will be executed only after the loop has returned.
  */
 void
@@ -293,13 +293,13 @@ cattle_instruction_set_next (CattleInstruction *self,
  *
  * Please note that the returned instruction might not be the next
  * instruction in the execution flow: if @instruction marks the
- * beginning of a loop (its value is #CATTLE_INSTRUCTION_LOOP_BEGIN),
+ * beginning of a loop (its value is %CATTLE_INSTRUCTION_LOOP_BEGIN),
  * the returned instruction will be executed only after the loop has
  * ended.
  *
  * The returned object must be unreferenced when no longer needed.
  *
- * Return: the next instruction, or %NULL.
+ * Returns: (transfer full): the next instruction, or %NULL.
  */
 CattleInstruction*
 cattle_instruction_get_next (CattleInstruction *self)
@@ -317,12 +317,12 @@ cattle_instruction_get_next (CattleInstruction *self)
 /**
  * cattle_instruction_set_loop:
  * @instruction: a #CattleInstruction
- * @loop: first #CattleInstruction in the loop, or %NULL
+ * @loop: (allow-none): first #CattleInstruction in the loop, or %NULL
  *
  * Set the instructions to be executed in the loop.
  *
  * This method should only be called on instructions whose value is
- * #CATTLE_INSTRUCTION_LOOP_BEGIN.
+ * %CATTLE_INSTRUCTION_LOOP_BEGIN.
  */
 void
 cattle_instruction_set_loop (CattleInstruction *self,
@@ -354,11 +354,11 @@ cattle_instruction_set_loop (CattleInstruction *self,
  * Get the first instruction of the loop.
  *
  * This method should only be called on instructions whose value is
- * #CATTLE_INSTRUCTION_LOOP_BEGIN.
+ * %CATTLE_INSTRUCTION_LOOP_BEGIN.
  *
  * The returned object must be unreferenced when no longer needed.
  *
- * Return: a #CattleInstruction.
+ * Returns: (transfer full): a #CattleInstruction, or %NULL.
  */
 CattleInstruction*
 cattle_instruction_get_loop (CattleInstruction *self)
@@ -528,7 +528,7 @@ cattle_instruction_class_init (CattleInstructionClass *self)
 	 * CattleInstruction:loop:
 	 *
 	 * Instructions to be executed in the loop. Should be %NULL unless
-	 * the value of the instruction is #CATTLE_INSTRUCTION_LOOP_BEGIN.
+	 * the value of the instruction is %CATTLE_INSTRUCTION_LOOP_BEGIN.
 	 *
 	 * Changes to this property are not notified.
 	 */

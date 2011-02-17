@@ -737,7 +737,7 @@ debug_default_handler (CattleInterpreter  *self,
  *
  * Create and initialize a new interpreter.
  *
- * Returns: a new #CattleInterpreter.
+ * Returns: (transfer full): a new #CattleInterpreter.
  **/
 CattleInterpreter*
 cattle_interpreter_new (void)
@@ -748,12 +748,12 @@ cattle_interpreter_new (void)
 /**
  * cattle_interpreter_run:
  * @interpreter: a #CattleInterpreter
- * @error: #GError used for error reporting
+ * @error: (allow-none): #GError used for error reporting
  *
  * Make the interpreter run the loaded program.
  *
- * Return: #TRUE if @interpreter completed the execution of its
- * program successfully, #FALSE otherwise.
+ * Returns: %TRUE if @interpreter completed the execution of its
+ *          program successfully, %FALSE otherwise.
  */
 gboolean
 cattle_interpreter_run (CattleInterpreter  *self,
@@ -791,7 +791,7 @@ cattle_interpreter_run (CattleInterpreter  *self,
 /**
  * cattle_interpreter_feed:
  * @interpreter: a #CattleInterpreter
- * @input: more input to be used by @interpreter, or %NULL
+ * @input: (allow-none): more input to be used by @interpreter, or %NULL
  *
  * Feed @interpreter with more input.
  *
@@ -799,6 +799,8 @@ cattle_interpreter_run (CattleInterpreter  *self,
  * #CattleInterpreter::input-request signal; using it in any other
  * way is pointless, since the input is reset when
  * cattle_interpreter_run() is called.
+ *
+ * Since: 1.0.0
  */
 void
 cattle_interpreter_feed (CattleInterpreter *self,
@@ -862,7 +864,7 @@ cattle_interpreter_set_configuration (CattleInterpreter   *self,
  * The returned object must be unreferenced when no longer
  * needed.
  *
- * Return: configuration for @interpreter.
+ * Returns: (transfer full): configuration for @interpreter.
  */
 CattleConfiguration*
 cattle_interpreter_get_configuration (CattleInterpreter *self)
@@ -912,7 +914,7 @@ cattle_interpreter_set_program (CattleInterpreter *self,
  * The returned object must be unreferenced when no longer
  * needed.
  *
- * Return: the program @interpreter will run.
+ * Returns: (transfer full): the program @interpreter will run.
  */
 CattleProgram*
 cattle_interpreter_get_program (CattleInterpreter *self)
@@ -957,7 +959,7 @@ cattle_interpreter_set_tape (CattleInterpreter *self,
  * The returned object must be unreferenced when no longer
  * needed.
  *
- * Return: the memory tape for @interpreter.
+ * Returns: (transfer full): the memory tape for @interpreter.
  */
 CattleTape*
 cattle_interpreter_get_tape (CattleInterpreter *self)
@@ -1113,15 +1115,14 @@ cattle_interpreter_class_init (CattleInterpreterClass *self)
 	/**
 	 * CattleInterpreter::input-request:
 	 * @interpreter: a #CattleInterpreter
-	 * @error: a #GError to be used for reporting, or %NULL
+	 * @error: (allow-none): a #GError to be used for reporting, or %NULL
 	 *
 	 * Emitted whenever the interpreter needs input.
 	 *
 	 * If the operation fails, @error must be filled with
 	 * detailed information about the error.
 	 *
-	 * Return: #TRUE if the operation is successful, #FALSE
-	 * otherwise.
+	 * Returns: %TRUE if the operation is successful, %FALSE otherwise.
 	 *
 	 * Since: 0.9.1
 	 */
@@ -1144,15 +1145,14 @@ cattle_interpreter_class_init (CattleInterpreterClass *self)
 	 * CattleInterpreter::output-request:
 	 * @interpreter: a #CattleInterpreter
 	 * @output: the character that needs to be printed
-	 * @error: a #GError to be used for reporting, or %NULL
+	 * @error: (allow-none): a #GError to be used for reporting, or %NULL
 	 *
 	 * Emitted whenever the interpreter needs to perform output.
 	 *
 	 * If the operation fails, @error has to be filled with
 	 * detailed information about the error.
 	 *
-	 * Return: #TRUE if the operation is successful, #FALSE
-	 * otherwise.
+	 * Returns: %TRUE if the operation is successful, %FALSE otherwise.
 	 *
 	 * Since: 0.9.1
 	 */
@@ -1175,15 +1175,14 @@ cattle_interpreter_class_init (CattleInterpreterClass *self)
 	/**
 	 * CattleInterpreter::debug-request:
 	 * @interpreter: a #CattleInterpreter
-	 * @error: a #GError used for error reporting, or %NULL
+	 * @error: (allow-none): a #GError used for error reporting, or %NULL
 	 *
 	 * Emitted whenever debugging information are needed.
 	 *
 	 * If the operation fails, @error has to be filled with
 	 * detailed information about the error.
 	 *
-	 * Return: #TRUE if the operation is successful, #FALSE
-	 * otherwise.
+	 * Returns: %TRUE if the operation is successful, %FALSE otherwise.
 	 *
 	 * Since: 0.9.2
 	 */

@@ -143,7 +143,7 @@ cattle_tape_finalize (GObject *object)
  *
  * Create and initialize a new memory tape.
  *
- * Return: an empty #CattleTape.
+ * Returns: (transfer full): an empty #CattleTape.
  */
 CattleTape*
 cattle_tape_new (void)
@@ -181,7 +181,7 @@ cattle_tape_set_current_value (CattleTape *self,
  * Get the value of the current cell. See
  * cattle_tape_set_current_value().
  *
- * Return: the value of the current cell.
+ * Returns: the value of the current cell.
  */
 gchar
 cattle_tape_get_current_value (CattleTape *self)
@@ -446,8 +446,7 @@ cattle_tape_move_right_by (CattleTape *self,
  * Since the tape grows automatically as more cells are needed, it is
  * possible to move left from the first cell.
  *
- * Return: #TRUE if the current cell is the first one, #FALSE
- * otherwise
+ * Returns: %TRUE if the current cell is the first one, %FALSE otherwise.
  */
 gboolean
 cattle_tape_is_at_beginning (CattleTape *self)
@@ -476,8 +475,7 @@ cattle_tape_is_at_beginning (CattleTape *self)
  * Since the tape grows automatically as more cells are needed, it is
  * possible to move right from the last cell.
  *
- * Return: #TRUE if the current cell is the last one, #FALSE
- * otherwise
+ * Returns: %TRUE if the current cell is the last one, %FALSE otherwise.
  */
 gboolean
 cattle_tape_is_at_end (CattleTape *self)
@@ -528,7 +526,7 @@ cattle_tape_push_bookmark (CattleTape *self)
  * Restore the previously-saved tape position.
  * See cattle_tape_push_bookmark().
  *
- * Return: #FALSE if the bookmarks stack is empty, #TRUE otherwise.
+ * Returns: %FALSE if the bookmarks stack is empty, %TRUE otherwise.
  *
  * Since: 0.9.2
  */

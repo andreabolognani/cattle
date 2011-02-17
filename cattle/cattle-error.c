@@ -27,7 +27,7 @@
  * Cattle uses the facilities provided by GLib for error reporting.
  *
  * Functions that can fail take a #GError as last argument; errors raised
- * are in the #CATTLE_ERROR domain with error codes from the #CattleError
+ * are in the %CATTLE_ERROR domain with error codes from the #CattleError
  * enumeration.
  */
 

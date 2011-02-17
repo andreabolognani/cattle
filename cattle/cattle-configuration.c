@@ -105,7 +105,7 @@ cattle_configuration_finalize (GObject *object)
  * interpreters, but modifying it while an interpreter is running can
  * lead to unexpected and unpredictable results.
  *
- * Returns: a new #CattleConfiguration.
+ * Returns: (transfer full): a new #CattleConfiguration.
  **/
 CattleConfiguration*
 cattle_configuration_new (void)
@@ -150,7 +150,7 @@ cattle_configuration_set_on_eof_action (CattleConfiguration *self,
  * Get the action to be performed when an EOF character is read from
  * the input source. See cattle_configuration_set_on_eof_action().
  *
- * Return: the current action.
+ * Returns: the current action.
  */
 CattleOnEOFAction
 cattle_configuration_get_on_eof_action (CattleConfiguration *self)
@@ -190,7 +190,7 @@ cattle_configuration_set_debug_is_enabled (CattleConfiguration *self,
  * Get the current status of the debugging support.
  * See cattle_configuration_set_debug_is_enabled().
  *
- * Return: %TRUE if debugging is enabled, %FALSE otherwise.
+ * Returns: %TRUE if debugging is enabled, %FALSE otherwise.
  */
 gboolean
 cattle_configuration_get_debug_is_enabled (CattleConfiguration *self)
@@ -300,7 +300,7 @@ cattle_configuration_class_init (CattleConfigurationClass *self)
 	 * CattleConfiguration:debug-is-enabled:
 	 *
 	 * If %FALSE, instructions whose value is
-	 * #CATTLE_INSTRUCTION_DEBUG are not executed by the interpreter.
+	 * %CATTLE_INSTRUCTION_DEBUG are not executed by the interpreter.
 	 *
 	 * Changes to this property are not notified.
 	 */

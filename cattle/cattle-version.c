@@ -67,8 +67,8 @@
  * Check the Cattle library used for compilation is compatible with
  * the required version described by @major, @minor and @micro.
  *
- * Return: %TRUE if the library used for compilation is compatible,
- *         %FALSE otherwise.
+ * Returns: %TRUE if the library used for compilation is compatible,
+ *          %FALSE otherwise.
  *
  * Since: 0.9.4
  */
@@ -110,7 +110,7 @@ const guint cattle_micro_version = CATTLE_MICRO_VERSION;
  * required version described by @required_major, @required_minor and
  * @required_micro.
  *
- * Return: %TRUE if the runtime library is compatible, %FALSE otherwise.
+ * Returns: %TRUE if the runtime library is compatible, %FALSE otherwise.
  *
  * Since: 0.9.4
  */
