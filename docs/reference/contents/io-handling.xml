@@ -140,12 +140,6 @@
 		<title>Input handler</title>
 
 		<para>
-			Input is a little more complicated than output, but it's
-			still quite easy to write custom handlers, as long as one
-			follows the conventions explained here.
-		</para>
-
-		<para>
 			Here is an input handler which uses readline to fetch input
 			from the user:
 		</para>
@@ -153,37 +147,38 @@
 		<informalexample><programlisting>
 			gboolean
 			input_handler (CattleInterpreter  *interpreter,
-			               gchar             **input,
 			               GError            **error,
 			               gpointer            data)
 			{
+				char *input;
 				char *temp;
 
-				/* If *input is NULL, a previously read line of input has
-				 * been completely processed by the interpreter and is's
-				 * not needed anymore, so free it */
-				if (*input != NULL) {
-					g_free (*input);
-				}
-
 				/* Read an input line using readline (no prompt) */
-				temp = readline (NULL);
+				input = readline (NULL);
 
-				if (temp != NULL) {
+				if (input != NULL) {
 
 					/* A line of input has been read: since readline
 					 * strips the trailing newline but the interpreter
 					 * needs it, a new string with a trailing newline is
-					 * created and returned to the interpreter */
-					*input = g_strdup_printf ("%s\n", temp);
-					free (temp);
+					 * created and fed the interpreter */
+					temp = g_strdup_printf ("%s\n", input);
+
+					cattle_interpreter_feed (interpreter,
+					                         temp);
+
+					/* The interpreter keeps a copy of the input around,
+					 * so any allocated buffer can be freed */
+					g_free (temp);
+					free (input);
 				}
 				else {
 
 					/* readline returns NULL when the end of input has
 					 * been reached; to let the interpreter know no more
-					 * input is available, set *input to NULL */
-					*input = NULL;
+					 * input is available, feed it a NULL */
+					cattle_interpreter_feed (interpreter,
+					                         NULL);
 				}
 
 				return TRUE;
@@ -203,23 +198,8 @@
 		</para>
 
 		<para>
-			Since the interpreter doesn't make a copy of the input string,
-			the handler must make sure it will be accessible as long as
-			the interpreter needs it. This usually means a newly-allocated
-			string must be returned.
-		</para>
-
-		<para>
-			No allocator choice is forced on the user: the handler is
-			responsible of releasing the allocated buffer when the
-			interpreter is done processing it. This condition is notified
-			to the handler by passing a non-null pointer as the second
-			argument.
-		</para>
-
-		<para>
 			When the whole input has been consumed (EOF condition), the
-			handler must set to NULL the pointer to let the interpreter
+			handler must feed the interpreter a NULL pointer to let it
 			know no more input is available.
 		</para>
 

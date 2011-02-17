@@ -794,7 +794,7 @@ cattle_interpreter_run (CattleInterpreter  *self,
  * Feed @interpreter with more input.
  *
  * This method is meant to be used inside an handler connected to the
- * CattleInterpreter::input-request signal; using it in any other
+ * #CattleInterpreter::input-request signal; using it in any other
  * way is pointless, since the input is reset when
  * cattle_interpreter_run() is called.
  */

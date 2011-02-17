@@ -73,6 +73,7 @@ CattleProgramPrivate
 CattleInterpreter
 cattle_interpreter_new
 cattle_interpreter_run
+cattle_interpreter_feed
 cattle_interpreter_set_configuration
 cattle_interpreter_get_configuration
 cattle_interpreter_set_program
