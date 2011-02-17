@@ -166,7 +166,6 @@ run (CattleInterpreter  *self,
 	CattleInstructionValue value;
 	GSList *stack;
 	GError *inner_error;
-	gchar *input;
 	gboolean success;
 	gchar temp;
 	gint quantity;
@@ -296,7 +295,6 @@ run (CattleInterpreter  *self,
 							g_signal_emit (self,
 							               signals[INPUT_REQUEST],
 							               0,
-							               &input,
 							               &inner_error,
 							               &success);
 
@@ -538,7 +536,6 @@ single_handler_accumulator (GSignalInvocationHint *hint,
 
 static gboolean
 input_default_handler (CattleInterpreter  *self,
-                       gchar             **input,
                        GError            **error,
                        gpointer            data)
 {
@@ -1125,7 +1122,6 @@ cattle_interpreter_class_init (CattleInterpreterClass *self)
 	/**
 	 * CattleInterpreter::input-request:
 	 * @interpreter: a #CattleInterpreter
-	 * @input: return location for the input
 	 * @error: a #GError to be used for reporting, or %NULL
 	 *
 	 * Emitted whenever the interpreter needs input.
@@ -1139,7 +1135,6 @@ cattle_interpreter_class_init (CattleInterpreterClass *self)
 	 * Since: 0.9.1
 	 */
 	ptypes[0] = G_TYPE_POINTER;
-	ptypes[1] = G_TYPE_POINTER;
 	closure = g_cclosure_new (G_CALLBACK (input_default_handler),
 	                          NULL,
 	                          NULL);
@@ -1149,9 +1144,9 @@ cattle_interpreter_class_init (CattleInterpreterClass *self)
 	                                        closure,
 	                                        single_handler_accumulator,
 	                                        NULL,
-	                                        cattle_marshal_BOOLEAN__POINTER_POINTER,
+	                                        cattle_marshal_BOOLEAN__POINTER,
 	                                        G_TYPE_BOOLEAN,
-	                                        2,
+	                                        1,
 	                                        ptypes);
 
 	/**

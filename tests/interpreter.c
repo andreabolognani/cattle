@@ -27,7 +27,6 @@
 /* Succesful input handler */
 static gboolean
 input_success (CattleInterpreter  *interpreter,
-               gchar             **input,
                GError            **error,
                gpointer            data)
 {
@@ -40,7 +39,6 @@ input_success (CattleInterpreter  *interpreter,
 /* Succesful input handler that returns an invalid UTF-8 string */
 static gboolean
 input_invalid_utf8 (CattleInterpreter  *interpreter,
-                    gchar             **input,
                     GError            **error,
                     gpointer            data)
 {
@@ -54,7 +52,6 @@ input_invalid_utf8 (CattleInterpreter  *interpreter,
 /* Unsuccesful input handler that sets the error */
 static gboolean
 input_fail_set_error (CattleInterpreter  *interpreter,
-                      gchar             **input,
                       GError            **error,
                       gpointer            data)
 {
@@ -69,7 +66,6 @@ input_fail_set_error (CattleInterpreter  *interpreter,
 /* Unsuccesful input handler that doesn't set the error */
 static gboolean
 input_fail_no_set_error (CattleInterpreter  *interpreter,
-                         gchar             **input,
                          GError            **error,
                          gpointer            data)
 {
