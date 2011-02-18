@@ -37,8 +37,11 @@ IGNORE_HFILES = cattle-enums.h \
 HTML_IMAGES =
 
 # Extra SGML files that are included by $(DOC_MAIN_SGML_FILE).
-content_files = contents/overview.xml \
-                contents/io-handling.xml
+content_files = \
+	contents/overview.xml \
+	contents/io-handling.xml \
+	version.xml \
+	$(NULL)
 
 # SGML files where gtk-doc abbrevations (#GtkWidget) are expanded.
 # e.g. expand_content_files=running.sgml
