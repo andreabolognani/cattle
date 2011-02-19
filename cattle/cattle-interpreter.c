@@ -167,7 +167,7 @@ run (CattleInterpreter  *self,
 	GSList *stack;
 	GError *inner_error;
 	gboolean success;
-	gchar temp;
+	gunichar temp;
 	gint quantity;
 	gint i;
 
@@ -352,7 +352,7 @@ run (CattleInterpreter  *self,
 					/* If we have already reached the end of input,
 					 * the current char is obviously an EOF */
 					if (self->priv->end_of_input_reached) {
-						temp = (gchar) EOF;
+						temp = (gunichar) EOF;
 					}
 
 					else {
@@ -365,7 +365,7 @@ run (CattleInterpreter  *self,
 						if (temp == 0) {
 
 							if (self->priv->had_input == FALSE) {
-								temp = (gchar) EOF;
+								temp = (gunichar) EOF;
 								self->priv->end_of_input_reached = TRUE;
 							}
 						}
@@ -375,6 +375,19 @@ run (CattleInterpreter  *self,
 						else {
 							self->priv->input_cursor = g_utf8_next_char (self->priv->input_cursor);
 						}
+					}
+
+					/* Make sure the char is in the supported range */
+					if (!((temp >= 0 && temp <= 127) || temp == EOF)) {
+
+						g_set_error_literal (error,
+						                     CATTLE_ERROR,
+						                     CATTLE_ERROR_INPUT_OUT_OF_RANGE,
+						                     "Non-ASCII input is not supported");
+
+						g_object_unref (current);
+
+						return FALSE;
 					}
 				}
 

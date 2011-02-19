@@ -45,6 +45,18 @@ input_no_feed (CattleInterpreter  *interpreter,
 	return TRUE;
 }
 
+/* Successful input handler that returns a valid UTF-8 string */
+static gboolean
+input_utf8 (CattleInterpreter  *interpreter,
+            GError            **error,
+            gpointer            data)
+{
+	cattle_interpreter_feed (interpreter,
+	                         "\xe2\x84\xa2 (Trademark symbol)");
+
+	return TRUE;
+}
+
 /* Succesful input handler that returns an invalid UTF-8 string */
 static gboolean
 input_invalid_utf8 (CattleInterpreter  *interpreter,
@@ -455,6 +467,40 @@ test_interpreter_input_no_feed (void)
 }
 
 /**
+ * test_interpreter_unicode_input:
+ *
+ * Feed the interpreter with non-ASCII input.
+ */
+static void
+test_interpreter_unicode_input (void)
+{
+	CattleInterpreter *interpreter;
+	CattleProgram *program;
+	GError *error;
+	gboolean success;
+
+	interpreter = cattle_interpreter_new ();
+
+	program = cattle_interpreter_get_program (interpreter);
+	cattle_program_load (program, ",", NULL);
+	g_object_unref (program);
+
+	g_signal_connect (interpreter,
+	                  "input-request",
+	                  G_CALLBACK (input_utf8),
+	                  NULL);
+
+	error = NULL;
+	success = cattle_interpreter_run (interpreter, &error);
+	g_assert (!success);
+	g_assert (g_error_matches (error, CATTLE_ERROR, CATTLE_ERROR_INPUT_OUT_OF_RANGE));
+
+	g_error_free (error);
+
+	g_object_unref (interpreter);
+}
+
+/**
  * test_interpreter_invalid_input:
  *
  * Feed the interpreter with some input not encoded in UTF-8.
@@ -465,6 +511,7 @@ test_interpreter_invalid_input (void)
 	CattleInterpreter *interpreter;
 	CattleProgram *program;
 	GError *error;
+	gboolean success;
 
 	interpreter = cattle_interpreter_new ();
 
@@ -478,7 +525,8 @@ test_interpreter_invalid_input (void)
 	                  NULL);
 
 	error = NULL;
-	g_assert (!cattle_interpreter_run (interpreter, &error));
+	success = cattle_interpreter_run (interpreter, &error);
+	g_assert (!success);
 	g_assert (g_error_matches (error, CATTLE_ERROR, CATTLE_ERROR_BAD_UTF8));
 
 	g_error_free (error);
@@ -569,6 +617,8 @@ main (gint argc, gchar **argv)
 	                 test_interpreter_failed_debug);
 	g_test_add_func ("/interpreter/input-no-feed",
 	                 test_interpreter_input_no_feed);
+	g_test_add_func ("/interpreter/unicode-input",
+	                 test_interpreter_unicode_input);
 	g_test_add_func ("/interpreter/invalid-input",
 	                 test_interpreter_invalid_input);
 	g_test_add_func ("/interpreter/unbalanced-brackets",

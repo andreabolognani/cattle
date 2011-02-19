@@ -5,7 +5,8 @@ Overview of changes from Cattle 0.9.4 to 1.0.0
     - check for unbalanced brackets at runtime;
     - return a generic error if an I/O handler has failed without
       providing detailed information about the error;
-    - check input for UTF-8 correctness.
+    - check input for UTF-8 correctness;
+    - check input for non-ASCII characters.
 
   * CattleError: merge the CattleProgramError and CattleInterpreterError
                  enumerations into a single enumeration.
