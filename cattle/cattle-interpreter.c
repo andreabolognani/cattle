@@ -817,7 +817,7 @@ cattle_interpreter_run (CattleInterpreter  *self,
  */
 void
 cattle_interpreter_feed (CattleInterpreter *self,
-                         gchar             *input)
+                         const gchar       *input)
 {
 	/* A return value of NULL from the signal
 	 * handler means the end of input was

@@ -58,7 +58,7 @@ CattleInterpreter*   cattle_interpreter_new               (void);
 gboolean             cattle_interpreter_run               (CattleInterpreter    *interpreter,
                                                            GError              **error);
 void                 cattle_interpreter_feed              (CattleInterpreter    *interpreter,
-                                                           gchar                *input);
+                                                           const gchar          *input);
 void                 cattle_interpreter_set_configuration (CattleInterpreter    *interpreter,
                                                            CattleConfiguration  *configuration);
 CattleConfiguration* cattle_interpreter_get_configuration (CattleInterpreter    *interpreter);
