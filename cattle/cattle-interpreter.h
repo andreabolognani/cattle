@@ -54,20 +54,40 @@ struct _CattleInterpreterClass
 	GObjectClass parent;
 };
 
-CattleInterpreter*   cattle_interpreter_new               (void);
-gboolean             cattle_interpreter_run               (CattleInterpreter    *interpreter,
-                                                           GError              **error);
-void                 cattle_interpreter_feed              (CattleInterpreter    *interpreter,
-                                                           const gchar          *input);
-void                 cattle_interpreter_set_configuration (CattleInterpreter    *interpreter,
-                                                           CattleConfiguration  *configuration);
-CattleConfiguration* cattle_interpreter_get_configuration (CattleInterpreter    *interpreter);
-void                 cattle_interpreter_set_program       (CattleInterpreter    *interpreter,
-                                                           CattleProgram        *program);
-CattleProgram*       cattle_interpreter_get_program       (CattleInterpreter    *interpreter);
-void                 cattle_interpreter_set_tape          (CattleInterpreter    *interpreter,
-                                                           CattleTape           *tape);
-CattleTape*          cattle_interpreter_get_tape          (CattleInterpreter    *interpreter);
+typedef gboolean (*CattleInputHandler)  (CattleInterpreter  *interpreter,
+                                         gpointer            data,
+                                         GError            **error);
+typedef gboolean (*CattleOutputHandler) (CattleInterpreter  *interpreter,
+                                         gchar               output,
+                                         gpointer            data,
+                                         GError            **error);
+typedef gboolean (*CattleDebugHandler)  (CattleInterpreter  *interpreter,
+                                         gpointer            data,
+                                         GError            **error);
+
+CattleInterpreter*   cattle_interpreter_new                (void);
+gboolean             cattle_interpreter_run                (CattleInterpreter    *interpreter,
+                                                            GError              **error);
+void                 cattle_interpreter_feed               (CattleInterpreter    *interpreter,
+                                                            const gchar          *input);
+void                 cattle_interpreter_set_configuration  (CattleInterpreter    *interpreter,
+                                                            CattleConfiguration  *configuration);
+CattleConfiguration* cattle_interpreter_get_configuration  (CattleInterpreter    *interpreter);
+void                 cattle_interpreter_set_program        (CattleInterpreter    *interpreter,
+                                                            CattleProgram        *program);
+CattleProgram*       cattle_interpreter_get_program        (CattleInterpreter    *interpreter);
+void                 cattle_interpreter_set_tape           (CattleInterpreter    *interpreter,
+                                                            CattleTape           *tape);
+CattleTape*          cattle_interpreter_get_tape           (CattleInterpreter    *interpreter);
+void                 cattle_interpreter_set_input_handler  (CattleInterpreter    *interpreter,
+                                                            CattleInputHandler    handler,
+                                                            gpointer              data);
+void                 cattle_interpreter_set_output_handler (CattleInterpreter    *interpreter,
+                                                            CattleOutputHandler   handler,
+                                                            gpointer              data);
+void                 cattle_interpreter_set_debug_handler  (CattleInterpreter    *interpreter,
+                                                            CattleInputHandler    handler,
+                                                            gpointer              data);
 
 GType                cattle_interpreter_get_type          (void) G_GNUC_CONST;
 
