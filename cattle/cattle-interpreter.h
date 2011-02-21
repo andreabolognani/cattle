@@ -81,13 +81,13 @@ void                 cattle_interpreter_set_tape           (CattleInterpreter   
 CattleTape*          cattle_interpreter_get_tape           (CattleInterpreter    *interpreter);
 void                 cattle_interpreter_set_input_handler  (CattleInterpreter    *interpreter,
                                                             CattleInputHandler    handler,
-                                                            gpointer              data);
+                                                            gpointer              user_data);
 void                 cattle_interpreter_set_output_handler (CattleInterpreter    *interpreter,
                                                             CattleOutputHandler   handler,
-                                                            gpointer              data);
+                                                            gpointer              user_data);
 void                 cattle_interpreter_set_debug_handler  (CattleInterpreter    *interpreter,
                                                             CattleInputHandler    handler,
-                                                            gpointer              data);
+                                                            gpointer              user_data);
 
 GType                cattle_interpreter_get_type          (void) G_GNUC_CONST;
 

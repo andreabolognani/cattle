@@ -801,54 +801,54 @@ cattle_interpreter_get_tape (CattleInterpreter *self)
  * cattle_interpreter_set_input_handler:
  * @interpreter: a #CattleInterpreter
  * @handler: (scope call) (allow-none): input handler, or %NULL
- * @data: (allow-none): callback data
+ * @user_data: (allow-none): callback data
  */
 void
 cattle_interpreter_set_input_handler (CattleInterpreter  *self,
                                       CattleInputHandler  handler,
-                                      gpointer            data)
+                                      gpointer            user_data)
 {
 	g_return_if_fail (CATTLE_IS_INTERPRETER (self));
 	g_return_if_fail (!self->priv->disposed);
 
 	self->priv->input_handler = handler;
-	self->priv->input_handler_data = data;
+	self->priv->input_handler_data = user_data;
 }
 
 /**
  * cattle_interpreter_set_output_handler:
  * @interpreter: a #CattleInterpreter
  * @handler: (scope call) (allow-none): output handler, or %NULL
- * @data: (allow-none): callback data
+ * @user_data: (allow-none): callback data
  */
 void
 cattle_interpreter_set_output_handler (CattleInterpreter   *self,
                                        CattleOutputHandler  handler,
-                                       gpointer             data)
+                                       gpointer             user_data)
 {
 	g_return_if_fail (CATTLE_IS_INTERPRETER (self));
 	g_return_if_fail (!self->priv->disposed);
 
 	self->priv->output_handler = handler;
-	self->priv->output_handler_data = data;
+	self->priv->output_handler_data = user_data;
 }
 
 /**
  * cattle_interpreter_set_debug_handler:
  * @interpreter: a #CattleInterpreter
  * @handler: (scope call) (allow-none): debug handler, or %NULL
- * @data: (allow-none): callback data
+ * @user_data: (allow-none): callback data
  */
 void
 cattle_interpreter_set_debug_handler (CattleInterpreter  *self,
                                       CattleDebugHandler  handler,
-                                      gpointer            data)
+                                      gpointer            user_data)
 {
 	g_return_if_fail (CATTLE_IS_INTERPRETER (self));
 	g_return_if_fail (!self->priv->disposed);
 
 	self->priv->debug_handler = handler;
-	self->priv->debug_handler_data = data;
+	self->priv->debug_handler_data = user_data;
 }
 
 static gboolean
