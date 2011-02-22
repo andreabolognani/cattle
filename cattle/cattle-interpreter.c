@@ -800,7 +800,7 @@ cattle_interpreter_get_tape (CattleInterpreter *self)
 /**
  * cattle_interpreter_set_input_handler:
  * @interpreter: a #CattleInterpreter
- * @handler: (scope call) (allow-none): input handler, or %NULL
+ * @handler: (scope notified) (allow-none): input handler, or %NULL
  * @user_data: (allow-none): callback data
  */
 void
@@ -818,7 +818,7 @@ cattle_interpreter_set_input_handler (CattleInterpreter  *self,
 /**
  * cattle_interpreter_set_output_handler:
  * @interpreter: a #CattleInterpreter
- * @handler: (scope call) (allow-none): output handler, or %NULL
+ * @handler: (scope notified) (allow-none): output handler, or %NULL
  * @user_data: (allow-none): callback data
  */
 void
@@ -836,7 +836,7 @@ cattle_interpreter_set_output_handler (CattleInterpreter   *self,
 /**
  * cattle_interpreter_set_debug_handler:
  * @interpreter: a #CattleInterpreter
- * @handler: (scope call) (allow-none): debug handler, or %NULL
+ * @handler: (scope notified) (allow-none): debug handler, or %NULL
  * @user_data: (allow-none): callback data
  */
 void
