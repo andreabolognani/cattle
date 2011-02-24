@@ -322,6 +322,7 @@ run (CattleInterpreter  *self,
 							success = (*input_handler) (self,
 							                            self->priv->input_handler_data,
 							                            &inner_error);
+							success &= (inner_error == NULL);
 
 							/* The operation failed: we abort
 							 * immediately */
@@ -466,6 +467,7 @@ run (CattleInterpreter  *self,
 					                             cattle_tape_get_current_value (tape),
 					                             self->priv->output_handler_data,
 					                             &inner_error);
+					success &= (inner_error == NULL);
 
 					/* Stop at the first error, even if we should
 					 * output the content of the current cell more
@@ -507,6 +509,7 @@ run (CattleInterpreter  *self,
 						success = (*debug_handler) (self,
 						                            self->priv->debug_handler_data,
 						                            &inner_error);
+						success &= (inner_error == NULL);
 
 						if (G_UNLIKELY (success == FALSE)) {
 

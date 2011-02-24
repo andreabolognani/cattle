@@ -93,6 +93,20 @@ input_fail_no_set_error (CattleInterpreter  *interpreter,
 	return FALSE;
 }
 
+/* Unsuccesful input handler that sets the error but returns TRUE */
+static gboolean
+input_fail_only_error (CattleInterpreter  *interpreter,
+                       gpointer            data,
+                       GError            **error)
+{
+	g_set_error_literal (error,
+	                     CATTLE_ERROR,
+	                     CATTLE_ERROR_BAD_UTF8,
+	                     "Spurious error");
+
+	return TRUE;
+}
+
 /* Successful output handler */
 static gboolean
 output_success (CattleInterpreter  *interpreter,
@@ -145,6 +159,21 @@ output_fail_no_set_error (CattleInterpreter  *interpreter,
 	return FALSE;
 }
 
+/* Unsuccesful output handler that sets the error but returns TRUE */
+static gboolean
+output_fail_only_error (CattleInterpreter  *interpreter,
+                        gchar               output,
+                        gpointer            data,
+                        GError            **error)
+{
+	g_set_error_literal (error,
+	                     CATTLE_ERROR,
+	                     CATTLE_ERROR_BAD_UTF8,
+	                     "Spurious error");
+
+	return TRUE;
+}
+
 /* Succesful debug handler */
 static gboolean
 debug_success (CattleInterpreter  *interpreter,
@@ -191,6 +220,20 @@ debug_fail_no_set_error (CattleInterpreter  *interpreter,
                          GError            **error)
 {
 	return FALSE;
+}
+
+/* Unsuccesful debug handler which sets the error but returns TRUE */
+static gboolean
+debug_fail_only_error (CattleInterpreter  *interpreter,
+                       gpointer            data,
+                       GError            **error)
+{
+	g_set_error_literal (error,
+	                     CATTLE_ERROR,
+	                     CATTLE_ERROR_BAD_UTF8,
+	                     "Spurious error");
+
+	return TRUE;
 }
 
 /**
@@ -281,6 +324,18 @@ test_interpreter_failed_input (void)
 
 	g_error_free (error);
 
+	/* Replace the signal handler */
+	cattle_interpreter_set_input_handler (interpreter,
+	                                      input_fail_only_error,
+	                                      NULL);
+
+	error = NULL;
+	success = cattle_interpreter_run (interpreter, &error);
+	g_assert (!success);
+	g_assert (g_error_matches (error, CATTLE_ERROR, CATTLE_ERROR_BAD_UTF8));
+
+	g_error_free (error);
+
 	g_object_unref (interpreter);
 }
 
@@ -326,6 +381,18 @@ test_interpreter_failed_output (void)
 	success = cattle_interpreter_run (interpreter, &error);
 	g_assert (!success);
 	g_assert (g_error_matches (error, CATTLE_ERROR, CATTLE_ERROR_IO));
+
+	g_error_free (error);
+
+	/* Replace the signal handler */
+	cattle_interpreter_set_output_handler (interpreter,
+	                                       output_fail_only_error,
+	                                       NULL);
+
+	error = NULL;
+	success = cattle_interpreter_run (interpreter, &error);
+	g_assert (!success);
+	g_assert (g_error_matches (error, CATTLE_ERROR, CATTLE_ERROR_BAD_UTF8));
 
 	g_error_free (error);
 
@@ -378,6 +445,18 @@ test_interpreter_failed_debug (void)
 	success = cattle_interpreter_run (interpreter, &error);
 	g_assert (!success);
 	g_assert (g_error_matches (error, CATTLE_ERROR, CATTLE_ERROR_IO));
+
+	g_error_free (error);
+
+	/* Replace the signal handler */
+	cattle_interpreter_set_debug_handler (interpreter,
+	                                      debug_fail_only_error,
+	                                      NULL);
+
+	error = NULL;
+	success = cattle_interpreter_run (interpreter, &error);
+	g_assert (!success);
+	g_assert (g_error_matches (error, CATTLE_ERROR, CATTLE_ERROR_BAD_UTF8));
 
 	g_error_free (error);
 
