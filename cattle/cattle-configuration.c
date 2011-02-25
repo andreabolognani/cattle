@@ -33,13 +33,13 @@ G_DEFINE_TYPE (CattleConfiguration, cattle_configuration, G_TYPE_OBJECT)
 
 /**
  * CattleOnEOFAction:
- * @CATTLE_ON_EOF_STORE_ZERO: store a zero in the current cell. This is
- * the default behaviour.
- * @CATTLE_ON_EOF_STORE_EOF: store an EOF character in the current cell.
- * @CATTLE_ON_EOF_DO_NOTHING: do nothing.
+ * @CATTLE_ON_EOF_STORE_ZERO: Store a zero in the current cell. This is
+ * the default behaviour
+ * @CATTLE_ON_EOF_STORE_EOF: Store an EOF character in the current cell
+ * @CATTLE_ON_EOF_DO_NOTHING: Do nothing.
  *
- * Possible actions to be performed by the interpreter when an EOF
- * character is read from the input source.
+ * Possible actions to be performed by a #CattleInterpreter when an EOF
+ * character is encountered in the input.
  */
 
 /**
@@ -105,7 +105,7 @@ cattle_configuration_finalize (GObject *object)
  * interpreters, but modifying it while an interpreter is running can
  * lead to unexpected and unpredictable results.
  *
- * Returns: (transfer full): a new #CattleConfiguration.
+ * Returns: (transfer full): a new #CattleConfiguration
  **/
 CattleConfiguration*
 cattle_configuration_new (void)
@@ -118,8 +118,8 @@ cattle_configuration_new (void)
  * @configuration: a #CattleConfiguration
  * @action: the action to be performed
  *
- * Set the action to be performed when an EOF character is read from
- * the input source.
+ * Set the action to be performed when an EOF character is encountered
+ * in the input.
  *
  * Accepted values are from the #CattleOnEOFAction enumeration.
  */
@@ -150,7 +150,7 @@ cattle_configuration_set_on_eof_action (CattleConfiguration *self,
  * Get the action to be performed when an EOF character is read from
  * the input source. See cattle_configuration_set_on_eof_action().
  *
- * Returns: the current action.
+ * Returns: the current action
  */
 CattleOnEOFAction
 cattle_configuration_get_on_eof_action (CattleConfiguration *self)
@@ -166,7 +166,7 @@ cattle_configuration_get_on_eof_action (CattleConfiguration *self)
 /**
  * cattle_configuration_set_debug_is_enabled:
  * @configuration: a #CattleConfiguration
- * @enabled: whether or not debug should be enabled
+ * @enabled: %TRUE to enable debug, %FALSE otherwise
  *
  * Set the status of the debugging support. It is disabled by default.
  *
@@ -190,7 +190,7 @@ cattle_configuration_set_debug_is_enabled (CattleConfiguration *self,
  * Get the current status of the debugging support.
  * See cattle_configuration_set_debug_is_enabled().
  *
- * Returns: %TRUE if debugging is enabled, %FALSE otherwise.
+ * Returns: %TRUE if debugging is enabled, %FALSE otherwise
  */
 gboolean
 cattle_configuration_get_debug_is_enabled (CattleConfiguration *self)
@@ -281,8 +281,8 @@ cattle_configuration_class_init (CattleConfigurationClass *self)
 	/**
 	 * CattleConfiguration:on-eof-action:
 	 *
-	 * Action to be performed when an EOF character is read from the
-	 * input source.
+	 * Action to be performed when an EOF character is encountered in
+	 * the input.
 	 *
 	 * Changes to this property are not notified.
 	 */

@@ -143,7 +143,7 @@ cattle_tape_finalize (GObject *object)
  *
  * Create and initialize a new memory tape.
  *
- * Returns: (transfer full): an empty #CattleTape.
+ * Returns: (transfer full): a new #CattleTape
  */
 CattleTape*
 cattle_tape_new (void)
@@ -181,7 +181,7 @@ cattle_tape_set_current_value (CattleTape *self,
  * Get the value of the current cell. See
  * cattle_tape_set_current_value().
  *
- * Returns: the value of the current cell.
+ * Returns: the value of the current cell
  */
 gchar
 cattle_tape_get_current_value (CattleTape *self)
@@ -311,10 +311,10 @@ cattle_tape_decrease_current_value_by (CattleTape *self,
  * cattle_tape_move_left:
  * @tape: a #CattleTape
  *
- * Move the tape one cell to the left.
+ * Move @tape one cell to the left.
  *
  * If there are no memory cells on the left of the current one,
- * one is created on the fly.
+ * one will be created on the fly.
  */
 void
 cattle_tape_move_left (CattleTape *self)
@@ -327,7 +327,7 @@ cattle_tape_move_left (CattleTape *self)
  * @tape: a #CattleTape
  * @steps: number of steps
  *
- * Move the tape @steps cells to the left.
+ * Move @tape @steps cells to the left.
  *
  * Moving this way is much faster than calling
  * cattle_tape_move_left() multiple times.
@@ -376,10 +376,10 @@ cattle_tape_move_left_by (CattleTape *self,
  * cattle_tape_move_right:
  * @tape: a #CattleTape
  *
- * Move the tape one cell to the right.
+ * Move @tape one cell to the right.
  *
  * If there are no memory cells on the right of the current one,
- * one is created on the fly.
+ * one will be created on the fly.
  */
 void
 cattle_tape_move_right (CattleTape *self)
@@ -392,7 +392,7 @@ cattle_tape_move_right (CattleTape *self)
  * @tape: a #CattleTape
  * @steps: number of steps
  *
- * Move the tape @steps cells to the right.
+ * Move @tape @steps cells to the right.
  *
  * Moving this way is much faster than calling
  * cattle_tape_move_right() multiple times.
@@ -441,12 +441,12 @@ cattle_tape_move_right_by (CattleTape *self,
  * cattle_tape_is_at_beginning:
  * @tape: a #CattleTape
  *
- * Check if the current cell is the first one of the tape.
+ * Check if the current cell is the first one of @tape.
  *
  * Since the tape grows automatically as more cells are needed, it is
  * possible to move left from the first cell.
  *
- * Returns: %TRUE if the current cell is the first one, %FALSE otherwise.
+ * Returns: %TRUE if the current cell is the first one, %FALSE otherwise
  */
 gboolean
 cattle_tape_is_at_beginning (CattleTape *self)
@@ -470,12 +470,12 @@ cattle_tape_is_at_beginning (CattleTape *self)
  * cattle_tape_is_at_end:
  * @tape: a #CattleTape
  *
- * Check if the current cell is the last one of the tape.
+ * Check if the current cell is the last one of @tape.
  * 
  * Since the tape grows automatically as more cells are needed, it is
  * possible to move right from the last cell.
  *
- * Returns: %TRUE if the current cell is the last one, %FALSE otherwise.
+ * Returns: %TRUE if the current cell is the last one, %FALSE otherwise
  */
 gboolean
 cattle_tape_is_at_end (CattleTape *self)
@@ -526,7 +526,7 @@ cattle_tape_push_bookmark (CattleTape *self)
  * Restore the previously-saved tape position.
  * See cattle_tape_push_bookmark().
  *
- * Returns: %FALSE if the bookmarks stack is empty, %TRUE otherwise.
+ * Returns: %FALSE if the bookmarks stack is empty, %TRUE otherwise
  *
  * Since: 0.9.2
  */

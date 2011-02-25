@@ -24,7 +24,7 @@
 
 /**
  * SECTION:cattle-program
- * @short_description: A Brainfuck program (and possibly its input)
+ * @short_description: Brainfuck program (and possibly its input)
  *
  * A #CattleProgram represents a complete Brainfuck program, that is,
  * the instructions to be executed and possibly its input.
@@ -33,9 +33,9 @@
  * file, and it's separated from the program code by a bang (!)
  * symbol. For example, given the following input:
  *
- * <informalexample><programlisting>
+ * |[
  * ,+.!sometext
- * </programlisting></informalexample>
+ * ]|
  *
  * the program's code is ",+." while the program's input is
  * "sometext".
@@ -259,14 +259,13 @@ load (gchar  **program)
 /**
  * cattle_program_new:
  *
- * Create a new #CattleProgram. The returned object represent a
- * Brainfuck program and possibly its input.
+ * Create a new #CattleProgram.
  *
  * A single instance of a program can be shared between multiple
  * interpreters, as long as the object is not modified after it
  * has been initialized.
  *
- * Returns: (transfer full): a new #CattleProgram.
+ * Returns: (transfer full): a new #CattleProgram
  **/
 CattleProgram*
 cattle_program_new (void)
@@ -278,7 +277,7 @@ cattle_program_new (void)
  * cattle_program_load:
  * @program: a #CattleProgram
  * @string: the source code of the program
- * @error: (allow-none): a #GError
+ * @error: (allow-none): return location for a #GError
  *
  * Load @program from @string.
  *
@@ -290,7 +289,7 @@ cattle_program_new (void)
  * The error domain is %CATTLE_ERROR, and the error code is from the
  * #CattleError enumeration.
  *
- * Returns: %TRUE if @program was loaded successfully, %FALSE otherwise.
+ * Returns: %TRUE on success, %FALSE otherwise
  */
 gboolean
 cattle_program_load (CattleProgram  *self,
@@ -374,7 +373,7 @@ cattle_program_load (CattleProgram  *self,
 /**
  * cattle_program_set_instructions:
  * @program: a #CattleProgram
- * @instructions: instructions for the program
+ * @instructions: instructions for @program
  *
  * Set the instructions for @program.
  *
@@ -401,10 +400,9 @@ cattle_program_set_instructions (CattleProgram     *self,
  * @program: a #CattleProgram
  *
  * Get the instructions for @program.
+ * See cattle_program_load() and cattle_program_set_instructions().
  *
- * The returned object must be unreferenced when no longer needed.
- *
- * Returns: (transfer full): the first instruction in @program.
+ * Returns: (transfer full): the first instruction in @program
  */
 CattleInstruction*
 cattle_program_get_instructions (CattleProgram *self)
@@ -420,9 +418,11 @@ cattle_program_get_instructions (CattleProgram *self)
 /**
  * cattle_program_set_input:
  * @program: a #CattleProgram
- * @input: (allow-none): input for the program, or %NULL
+ * @input: (allow-none): input for @program, or %NULL
  *
  * Set the input for @program.
+ *
+ * If @input is %NULL, the input will be retrieved at runtime.
  */
 void
 cattle_program_set_input (CattleProgram *self,
@@ -441,11 +441,10 @@ cattle_program_set_input (CattleProgram *self,
  * cattle_program_get_input:
  * @program: a #CattleProgram
  *
- * Get the input for the program.
+ * Get the input for @program.
+ * See cattle_program_set_input().
  *
- * The returned string must be freed after use.
- *
- * Returns: (transfer full): input for the program, or %NULL.
+ * Returns: (transfer full): input for @program, or %NULL
  */
 gchar*
 cattle_program_get_input (CattleProgram *self)
@@ -536,7 +535,7 @@ cattle_program_class_init (CattleProgramClass *self)
 	/**
 	 * CattleProgram:instructions:
 	 *
-	 * Instructions to be executed.
+	 * Instructions for the program.
 	 *
 	 * Changes to this property are not notified.
 	 */
@@ -552,7 +551,7 @@ cattle_program_class_init (CattleProgramClass *self)
 	/**
 	 * CattleProgram:input:
 	 *
-	 * Input for this program, or %NULL if no input is available
+	 * Input for the program, or %NULL if no input was available
 	 * at the time of loading.
 	 *
 	 * Changes to this property are not notified.

@@ -33,11 +33,11 @@
 
 /**
  * CattleError:
- * @CATTLE_ERROR_BAD_UTF8: the provided input is not valid UTF-8.
- * @CATTLE_ERROR_IO: generic I/O error.
- * @CATTLE_ERROR_UNBALANCED_BRACKETS: the number of open and
- * closed brackets don't match.
- * @CATTLE_ERROR_INPUT_OUT_OF_RANGE: the input cannot be stored in a tape cell.
+ * @CATTLE_ERROR_BAD_UTF8: The provided input is not valid UTF-8
+ * @CATTLE_ERROR_IO: Generic I/O error
+ * @CATTLE_ERROR_UNBALANCED_BRACKETS: The number of open and
+ * closed brackets don't match
+ * @CATTLE_ERROR_INPUT_OUT_OF_RANGE: The input cannot be stored in a tape cell
  *
  * Errors detected either on code loading or at runtime.
  *

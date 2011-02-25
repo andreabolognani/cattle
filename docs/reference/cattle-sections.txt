@@ -80,6 +80,12 @@ cattle_interpreter_set_program
 cattle_interpreter_get_program
 cattle_interpreter_set_tape
 cattle_interpreter_get_tape
+CattleInputHandler
+cattle_interpreter_set_input_handler
+CattleOutputHandler
+cattle_interpreter_set_output_handler
+CattleDebugHandler
+cattle_interpreter_set_debug_handler
 <SUBSECTION Standard>
 CATTLE_INTERPRETER
 CATTLE_IS_INTERPRETER

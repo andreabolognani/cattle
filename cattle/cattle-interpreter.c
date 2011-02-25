@@ -43,7 +43,7 @@
  *
  * Once initialized, a #CattleInterpreter can run the assigned program
  * as many times as needed; the memory tape, however, is not
- * re-initialized automatically between executions.
+ * automatically cleared between executions.
  */
 
 G_DEFINE_TYPE (CattleInterpreter, cattle_interpreter, G_TYPE_OBJECT)
@@ -565,7 +565,7 @@ run (CattleInterpreter  *self,
  *
  * Create and initialize a new interpreter.
  *
- * Returns: (transfer full): a new #CattleInterpreter.
+ * Returns: (transfer full): a new #CattleInterpreter
  **/
 CattleInterpreter*
 cattle_interpreter_new (void)
@@ -576,12 +576,11 @@ cattle_interpreter_new (void)
 /**
  * cattle_interpreter_run:
  * @interpreter: a #CattleInterpreter
- * @error: (allow-none): #GError used for error reporting
+ * @error: (allow-none): return location for a #GError
  *
  * Make the interpreter run the loaded program.
  *
- * Returns: %TRUE if @interpreter completed the execution of its
- *          program successfully, %FALSE otherwise.
+ * Returns: %TRUE on success, %FALSE otherwise
  */
 gboolean
 cattle_interpreter_run (CattleInterpreter  *self,
@@ -623,9 +622,8 @@ cattle_interpreter_run (CattleInterpreter  *self,
  *
  * Feed @interpreter with more input.
  *
- * This method is meant to be used inside an handler connected to the
- * #CattleInterpreter::input-request signal; using it in any other
- * way is pointless, since the input is reset when
+ * This method is meant to be used inside an input handler assigned to
+ * @interpreter; way is pointless, since the input is reset when
  * cattle_interpreter_run() is called.
  *
  * Since: 1.0.0
@@ -658,7 +656,7 @@ cattle_interpreter_feed (CattleInterpreter *self,
 /**
  * cattle_interpreter_set_configuration:
  * @interpreter: a #CattleInterpreter
- * @configuration: configuration for the interpreter
+ * @configuration: configuration for @interpreter
  *
  * Set the configuration for @interpreter.
  *
@@ -689,10 +687,7 @@ cattle_interpreter_set_configuration (CattleInterpreter   *self,
  * Get the configuration for @interpreter.
  * See cattle_interpreter_set_configuration().
  *
- * The returned object must be unreferenced when no longer
- * needed.
- *
- * Returns: (transfer full): configuration for @interpreter.
+ * Returns: (transfer full): configuration for @interpreter
  */
 CattleConfiguration*
 cattle_interpreter_get_configuration (CattleInterpreter *self)
@@ -736,13 +731,10 @@ cattle_interpreter_set_program (CattleInterpreter *self,
  * cattle_interpreter_get_program:
  * @interpreter: a #CattleInterpreter
  *
- * Get the current program for @interpreter.
+ * Get the program for @interpreter.
  * See cattle_interpreter_set_program().
  *
- * The returned object must be unreferenced when no longer
- * needed.
- *
- * Returns: (transfer full): the program @interpreter will run.
+ * Returns: (transfer full): the program for @interpreter
  */
 CattleProgram*
 cattle_interpreter_get_program (CattleInterpreter *self)
@@ -758,7 +750,7 @@ cattle_interpreter_get_program (CattleInterpreter *self)
 /**
  * cattle_interpreter_set_tape:
  * @interpreter: a #CattleInterpreter
- * @tape: memory tape for the interpreter
+ * @tape: a #CattleTape
  *
  * Set the memory tape used by @interpreter.
  */
@@ -784,10 +776,7 @@ cattle_interpreter_set_tape (CattleInterpreter *self,
  * Get the memory tape used by @interpreter.
  * See cattle_interpreter_set_tape().
  *
- * The returned object must be unreferenced when no longer
- * needed.
- *
- * Returns: (transfer full): the memory tape for @interpreter.
+ * Returns: (transfer full): the memory tape for @interpreter
  */
 CattleTape*
 cattle_interpreter_get_tape (CattleInterpreter *self)
@@ -801,10 +790,27 @@ cattle_interpreter_get_tape (CattleInterpreter *self)
 }
 
 /**
+ * CattleInputHandler:
+ * @interpreter: a #CattleInterpreter
+ * @data: user data passed to the handler
+ * @error: return location for a #GError
+ *
+ * Handler for an input operation.
+ *
+ * Returns: %TRUE on success, %FALSE otherwise
+ */
+
+/**
  * cattle_interpreter_set_input_handler:
  * @interpreter: a #CattleInterpreter
  * @handler: (scope notified) (allow-none): input handler, or %NULL
- * @user_data: (allow-none): callback data
+ * @user_data: (allow-none): user data for @handler
+ *
+ * Set the input handler for @interpreter.
+ *
+ * The handler will be invoked every time @interpreter needs to perform
+ * an input action; if @handler is %NULL, the default input handler will
+ * be used.
  */
 void
 cattle_interpreter_set_input_handler (CattleInterpreter  *self,
@@ -819,10 +825,28 @@ cattle_interpreter_set_input_handler (CattleInterpreter  *self,
 }
 
 /**
+ * CattleOutputHandler:
+ * @interpreter: a #CattleInterpreter
+ * @output: a #gchar to output
+ * @data: user data passed to the handler
+ * @error: return location for a #GError
+ *
+ * Handler for an output operation.
+ *
+ * Returns: %TRUE on success, %FALSE otherwise
+ */
+
+/**
  * cattle_interpreter_set_output_handler:
  * @interpreter: a #CattleInterpreter
  * @handler: (scope notified) (allow-none): output handler, or %NULL
- * @user_data: (allow-none): callback data
+ * @user_data: (allow-none): user data for @handler
+ *
+ * Set the output handler for @interpreter.
+ *
+ * The handler will be invoked every time @interpreter needs to perform
+ * an output action; if @handler is %NULL, the default output handler will
+ * be used.
  */
 void
 cattle_interpreter_set_output_handler (CattleInterpreter   *self,
@@ -837,10 +861,27 @@ cattle_interpreter_set_output_handler (CattleInterpreter   *self,
 }
 
 /**
+ * CattleDebugHandler:
+ * @interpreter: a #CattleInterpreter
+ * @data: user data passed to the handler
+ * @error: return location for a #GError
+ *
+ * Handler for a debug operation.
+ *
+ * Returns: %TRUE on success, %FALSE otherwise
+ */
+
+/**
  * cattle_interpreter_set_debug_handler:
  * @interpreter: a #CattleInterpreter
  * @handler: (scope notified) (allow-none): debug handler, or %NULL
- * @user_data: (allow-none): callback data
+ * @user_data: (allow-none): user data for @handler
+ *
+ * Set the debug handler for @interpreter.
+ *
+ * The handler will be invoked every time @interpreter needs to perform
+ * a debug action; if @handler is %NULL, the default debug handler will
+ * be used.
  */
 void
 cattle_interpreter_set_debug_handler (CattleInterpreter  *self,

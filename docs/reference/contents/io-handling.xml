@@ -14,7 +14,7 @@
 	<refnamediv>
 		<refname>I/O Handling</refname>
 		<refpurpose>
-			Explanation of the way Cattle performs input and output
+			Explanation of the way Cattle performs I/O
 		</refpurpose>
 	</refnamediv>
 
@@ -28,37 +28,42 @@
 		</para>
 
 		<para>
-			The I/O mechanism is based on the GObject signal system:
-			every time a
+			The I/O mechanism is based on callbacks: every time a
 			<link linkend="CattleInterpreter">CattleInterpreter</link>
 			executes a Brainfuck instruction which requires some sort of
-			I/O, it emits a signal, and expects the installed signal
-			handler to perform the I/O operation.
+			I/O, it invokes a user provided handler, and expects it to
+			perform the I/O operation.
 		</para>
 
 		<para>
-			The signals for input, output and debug output are
-			&quot;<link linkend="CattleInterpreter-input-request">input-request</link>&quot;,
-			&quot;<link linkend="CattleInterpreter-output-request">output-request</link>&quot;
-			and
-			&quot;<link linkend="CattleInterpreter-debug-request">debug-request</link>&quot;
-			respectively; default signal handlers are built into Cattle,
-			removing the need to write custom I/O routines in most cases.
+			Default I/O handlers are provided, so usually there is no
+			need to define a custom handler.
+		</para>
+
+	</refsect2>
+
+	<refsect2>
+
+		<title>Error reporting</title>
+
+		<para>
+			Since I/O is not guaranteed to always be succesful, handlers
+			are provided a mean to report errors to the caller.
 		</para>
 
 		<para>
-			Only the first connected handler will be executed on signal
-			emission; connecting a custom handler will prevent the default
-			signal handler from running.
+			All handlers are passed a <link linkend="GError">GError</link>
+			as last argument: if a handler fails, it is required to return
+			<link linkend="FALSE:CAPS">FALSE</link> and to fill the
+			error with detailed information.
 		</para>
 
 		<para>
-			All signal handlers are passed the running
-			<link linkend="CattleInterpreter">CattleInterpreter</link>
-			as first argument and a <link linkend="GError">GError</link>
-			as last argument; handlers are required to fill in the latter
-			with a detailed error message if the operation couldn't be
-			completed.
+			If the hanler returns <link linkend="TRUE:CAPS">TRUE</link>, but
+			the error is set, the operation is not considered succesful;
+			this is because handlers written in languages other than C might
+			not be able to both return a value and fill the error at the
+			same time.
 		</para>
 
 	</refsect2>
@@ -68,9 +73,9 @@
 		<title>Output handler</title>
 
 		<para>
-			The output handler is pretty straightforward: the handler
-			is passed a single <link linkend="gchar">gchar</link> and
-			has to display it to the user in some way.
+			Implementing an output handler is pretty straightforward: the
+			handler is passed a single <link linkend="gchar">gchar</link>
+			and has to display it to the user in some way.
 		</para>
 
 		<para>
@@ -83,8 +88,8 @@
 			gboolean
 			output_handler (CattleInterpreter  *interpreter,
 			                gchar               output,
-			                GError            **error,
-			                gpointer            data)
+			                gpointer            data,
+			                GError            **error)
 			{
 				GtkTextView *view;
 				GtkTextBuffer *buffer;
@@ -115,8 +120,8 @@
 
 		<para>
 			The code assumes a <link linkend="GtkTextView">GtkTextView</link>
-			has been passed as the <code>data</code> argument at signal
-			connection time, like in the following code:
+			has been provided when the signal handler has been assigned to
+			the interpreter, like in the following code:
 		</para>
 
 		<informalexample><programlisting>
@@ -126,10 +131,9 @@
 				interpreter = cattle_interpreter_new ();
 				view = gtk_text_view_new ();
 
-				g_signal_connect (interpreter,
-				                  "output-request",
-				                  G_CALLBACK (output_handler),
-				                  (gpointer) view);
+				cattle_interpreter_set_output_handler (interpreter,
+				                                       output_handler,
+				                                       (gpointer) view);
 		</programlisting></informalexample>
 
 		<para>
@@ -152,8 +156,8 @@
 		<informalexample><programlisting>
 			gboolean
 			input_handler (CattleInterpreter  *interpreter,
-			               GError            **error,
-			               gpointer            data)
+			               gpointer            data,
+			               GError            **error)
 			{
 				char *input;
 				char *temp;
@@ -191,7 +195,7 @@
 		</programlisting></informalexample>
 
 		<para>
-			Input works on a per-line basis: the signal handler must
+			Input works on a per-line basis: the handler must
 			retrieve a full, null-terminated line of input, including the
 			trailing newline character, and feed it to the interpreter.
 		</para>
@@ -204,8 +208,9 @@
 
 		<para>
 			When the whole input has been consumed (EOF condition), the
-			handler must feed the interpreter a NULL pointer to let it
-			know no more input is available.
+			handler must feed the interpreter a
+			<link linkend="NULL:CAPS">NULL</link> pointer to let it know
+			no more input is available.
 		</para>
 
 	</refsect2>
@@ -229,14 +234,14 @@
 
 		<para>
 			The following handler appends the contents of the tape to
-			an log file:
+			a log file:
 		</para>
 
 		<informalexample><programlisting>
 			gboolean
 			debug_handler (CattleInterpreter  *interpreter,
-			               GError            **error,
-			               gpointer            data)
+			               gpointer            data,
+			               GError            **error)
 			{
 				CattleTape *tape;
 				gchar value;
@@ -305,8 +310,9 @@
 			state it was before the signal emission, including the
 			position. The best way to ensure it is to use
 			<link linkend="cattle-tape-push-bookmark">cattle_tape_push_bookmark()</link>
-			and
-			<link linkend="cattle-tape-pop-bookmark">cattle_tape_pop_bookmark()</link>.
+			at the beginning of the handler and
+			<link linkend="cattle-tape-pop-bookmark">cattle_tape_pop_bookmark()</link>
+			at the end.
 		</para>
 
 	</refsect2>

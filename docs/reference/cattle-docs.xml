@@ -29,11 +29,11 @@
 
 	<chapter>
 		<title>Objects</title>
-		<xi:include href="xml/cattle-configuration.xml" />
-		<xi:include href="xml/cattle-program.xml" />
 		<xi:include href="xml/cattle-interpreter.xml" />
-		<xi:include href="xml/cattle-instruction.xml" />
+		<xi:include href="xml/cattle-program.xml" />
 		<xi:include href="xml/cattle-tape.xml" />
+		<xi:include href="xml/cattle-configuration.xml" />
+		<xi:include href="xml/cattle-instruction.xml" />
 	</chapter>
 
 	<chapter>

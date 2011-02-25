@@ -23,7 +23,7 @@
 
 /**
  * SECTION:cattle-instruction
- * @short_description: A single Brainfuck instruction
+ * @short_description: Brainfuck instruction
  *
  * A #CattleInstruction represents a single Brainfuck instruction,
  * repeated one or more times in a row.
@@ -34,9 +34,9 @@
  *
  * Consider the following piece of Brainfuck code:
  *
- * <informalexample><programlisting>
+ * |[
  * +++.-----
- * </programlisting></informalexample>
+ * ]|
  *
  * There are nine instructions: three increment instructions, a print
  * instruction, and five decrement instructions.
@@ -57,18 +57,18 @@ G_DEFINE_TYPE (CattleInstruction, cattle_instruction, G_TYPE_OBJECT)
 
 /**
  * CattleInstructionValue:
- * @CATTLE_INSTRUCTION_NONE: do nothing.
- * @CATTLE_INSTRUCTION_MOVE_LEFT: move the tape to the left.
- * @CATTLE_INSTRUCTION_MOVE_RIGHT: move the tape to the right.
- * @CATTLE_INSTRUCTION_INCREASE: increase the current value.
- * @CATTLE_INSTRUCTION_DECREASE: decrease the current value.
- * @CATTLE_INSTRUCTION_LOOP_BEGIN: execute the loop until the current
- * value is zero, then proceed to the next instruction.
- * @CATTLE_INSTRUCTION_LOOP_END: exit from the currently-executing loop.
- * @CATTLE_INSTRUCTION_READ: get one character from the input and save
- * its value at the current position.
- * @CATTLE_INSTRUCTION_PRINT: send the current value to the output.
- * @CATTLE_INSTRUCTION_DEBUG: show debugging information. This usually
+ * @CATTLE_INSTRUCTION_NONE: Do nothing
+ * @CATTLE_INSTRUCTION_MOVE_LEFT: Move the tape to the left
+ * @CATTLE_INSTRUCTION_MOVE_RIGHT: Move the tape to the right
+ * @CATTLE_INSTRUCTION_INCREASE: Increase the current value
+ * @CATTLE_INSTRUCTION_DECREASE: Decrease the current value
+ * @CATTLE_INSTRUCTION_LOOP_BEGIN: Execute the loop until the current
+ * value is zero, then proceed to the next instruction
+ * @CATTLE_INSTRUCTION_LOOP_END: Exit from the currently-executing loop
+ * @CATTLE_INSTRUCTION_READ: Get one character from the input and save
+ * its value at the current position
+ * @CATTLE_INSTRUCTION_PRINT: Send the current value to the output.
+ * @CATTLE_INSTRUCTION_DEBUG: Show debugging information. This usually
  * means dumping the contents of the tape.
  *
  * Brainfuck instructions supported by Cattle, as #gunichar<!-- -->s.
@@ -161,7 +161,7 @@ cattle_instruction_finalize (GObject *object)
  * The newly-created instruction has a #CattleInstruction:quantity of
  * one, and its #CattleInstruction:value is %CATTLE_INSTRUCTION_NONE.
  *
- * Returns: (transfer full): a new #CattleInstruction.
+ * Returns: (transfer full): a new #CattleInstruction
  **/
 CattleInstruction*
 cattle_instruction_new (void)
@@ -172,7 +172,7 @@ cattle_instruction_new (void)
 /**
  * cattle_instruction_set_value:
  * @instruction: a #CattleInstruction
- * @value: instruction to be executed
+ * @value: value of @instruction
  *
  * Set the value of @instruction. Accepted values are from the
  * #CattleInstructionValue enumeration.
@@ -203,7 +203,7 @@ cattle_instruction_set_value (CattleInstruction      *self,
  *
  * Get the value of @instruction. See cattle_instruction_set_value().
  *
- * Returns: the current value of @instruction.
+ * Returns: the value of @instruction
  */
 CattleInstructionValue
 cattle_instruction_get_value (CattleInstruction *self)
@@ -219,7 +219,7 @@ cattle_instruction_get_value (CattleInstruction *self)
 /**
  * cattle_instruction_set_quantity:
  * @instruction: a #CattleInstruction
- * @quantity: quantity of the instruction
+ * @quantity: quantity of @instruction
  *
  * Set the number of times @instruction has to be executed.
  *
@@ -244,7 +244,7 @@ cattle_instruction_set_quantity (CattleInstruction *self,
  * Get the quantity of @instruction.
  * See cattle_instruction_set_quantity().
  *
- * Returns: the current quantity of @instruction.
+ * Returns: the quantity of @instruction
  */
 gint
 cattle_instruction_get_quantity (CattleInstruction *self)
@@ -297,9 +297,7 @@ cattle_instruction_set_next (CattleInstruction *self,
  * the returned instruction will be executed only after the loop has
  * ended.
  *
- * The returned object must be unreferenced when no longer needed.
- *
- * Returns: (transfer full): the next instruction, or %NULL.
+ * Returns: (transfer full): the next instruction, or %NULL
  */
 CattleInstruction*
 cattle_instruction_get_next (CattleInstruction *self)
@@ -356,9 +354,7 @@ cattle_instruction_set_loop (CattleInstruction *self,
  * This method should only be called on instructions whose value is
  * %CATTLE_INSTRUCTION_LOOP_BEGIN.
  *
- * The returned object must be unreferenced when no longer needed.
- *
- * Returns: (transfer full): a #CattleInstruction, or %NULL.
+ * Returns: (transfer full): a #CattleInstruction, or %NULL
  */
 CattleInstruction*
 cattle_instruction_get_loop (CattleInstruction *self)
