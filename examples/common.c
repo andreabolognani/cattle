@@ -22,74 +22,53 @@
 #include <gio/gio.h>
 #include "common.h"
 
-#define BUFFER_SIZE 1024
-
 gchar*
 read_file_contents (const gchar  *path,
                     GError      **error)
 {
 	GFile *file;
-	GFileInputStream *stream;
-	GString *contents;
 	GError *inner_error;
-	gchar buffer[BUFFER_SIZE];
-	gchar *contents_str;
+	gchar *contents;
 	gchar *temp;
-	gssize count;
+	gboolean success;
 
+	g_return_val_if_fail (path != NULL, NULL);
 	g_return_val_if_fail (error == NULL || *error == NULL, NULL);
 
 	file = g_file_new_for_commandline_arg (path);
 
 	inner_error = NULL;
-	stream = g_file_read (file, NULL, &inner_error);
+	success = g_file_load_contents (file,
+	                                NULL,
+	                                &contents,
+	                                NULL,
+	                                NULL, /* No etag */
+	                                &inner_error);
 
-	if (stream == NULL) {
-		g_propagate_error (error, inner_error);
+	if (!success) {
+
+		g_propagate_error (error,
+		                   inner_error);
+
 		g_object_unref (file);
+
 		return NULL;
 	}
 
-	contents = g_string_new ("");
-
-	do {
-		inner_error = NULL;
-		count = g_input_stream_read (G_INPUT_STREAM (stream),
-		                             buffer,
-		                             BUFFER_SIZE,
-		                             NULL,
-		                             &inner_error);
-
-		if (count < 0) {
-			g_propagate_error (error, inner_error);
-			g_string_free (contents, TRUE);
-			g_object_unref (stream);
-			g_object_unref (file);
-			return NULL;
-		}
-
-		g_string_append_len (contents, buffer, count);
-
-	} while (count > 0);
-
-	contents_str = contents->str;
-
-	g_string_free (contents, FALSE);
-	g_object_unref (stream);
-	g_object_unref (file);
-
 	/* Detect magic bytes and strip the first line if present */
-	if (g_str_has_prefix (contents_str, "#!")) {
+	if (g_str_has_prefix (contents, "#!")) {
 
-		temp = contents_str;
+		temp = contents;
 
 		while (g_utf8_get_char (temp) != '\n') {
 			*temp = ' ';
 			temp = g_utf8_next_char (temp);
 		}
 
-		contents_str = g_strchug (contents_str);
+		contents = g_strchug (contents);
 	}
 
-	return contents_str;
+	g_object_unref (file);
+
+	return contents;
 }
