@@ -68,6 +68,12 @@ struct _CattleTapePrivate
 	GSList   *bookmarks;   /* Bookmarks stack */
 };
 
+/* Properties */
+enum {
+	PROP_0,
+	PROP_CURRENT_VALUE
+};
+
 typedef struct _CattleTapeBookmark CattleTapeBookmark;
 
 struct _CattleTapeBookmark
@@ -559,12 +565,85 @@ cattle_tape_pop_bookmark (CattleTape *self)
 }
 
 static void
+cattle_tape_set_property (GObject      *object,
+                          guint         property_id,
+                          const GValue *value,
+                          GParamSpec   *pspec)
+{
+	CattleTape *self = CATTLE_TAPE (object);
+	gchar t_char;
+
+	g_return_if_fail (!self->priv->disposed);
+
+	switch (property_id) {
+
+		case PROP_CURRENT_VALUE:
+			t_char = g_value_get_char (value);
+			cattle_tape_set_current_value (self, t_char);
+			break;
+
+		default:
+			G_OBJECT_WARN_INVALID_PROPERTY_ID (object,
+			                                   property_id,
+			                                   pspec);
+			break;
+	}
+}
+
+static void
+cattle_tape_get_property (GObject    *object,
+                          guint       property_id,
+                          GValue     *value,
+                          GParamSpec *pspec)
+{
+	CattleTape *self = CATTLE_TAPE (object);
+	gchar t_char;
+
+	g_return_if_fail (!self->priv->disposed);
+
+	switch (property_id) {
+
+		case PROP_CURRENT_VALUE:
+			t_char = cattle_tape_get_current_value (self);
+			g_value_set_char (value, t_char);
+			break;
+
+		default:
+			G_OBJECT_WARN_INVALID_PROPERTY_ID (object,
+			                                   property_id,
+			                                   pspec);
+			break;
+	}
+}
+
+static void
 cattle_tape_class_init (CattleTapeClass *self)
 {
 	GObjectClass *object_class = G_OBJECT_CLASS (self);
+	GParamSpec *pspec;
 
+	object_class->set_property = cattle_tape_set_property;
+	object_class->get_property = cattle_tape_get_property;
 	object_class->dispose = cattle_tape_dispose;
 	object_class->finalize = cattle_tape_finalize;
+
+	/**
+	 * CattleTape:current-value:
+	 *
+	 * Value of the current cell.
+	 *
+	 * Changes to this property are not notified.
+	 */
+	pspec = g_param_spec_char ("current-value",
+	                           "Value of the current cell",
+	                           "Get/set current value",
+	                           MIN (0, EOF),
+	                           MAX (127, EOF),
+	                           0,
+	                           G_PARAM_READWRITE);
+	g_object_class_install_property (object_class,
+	                                 PROP_CURRENT_VALUE,
+	                                 pspec);
 
 	g_type_class_add_private (object_class,
 	                          sizeof (CattleTapePrivate));

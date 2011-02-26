@@ -8,6 +8,9 @@ Overview of changes from Cattle 0.9.4 to 1.0.0
     - check input for UTF-8 correctness;
     - check input for non-ASCII characters.
 
+  * CattleTape:
+    - add a current-value property.
+
   * CattleError: merge the CattleProgramError and CattleInterpreterError
                  enumerations into a single enumeration.
 
