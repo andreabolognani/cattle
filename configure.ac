@@ -1,14 +1,9 @@
-dnl ****************************************
-dnl *** Initialize autoconf and automake ***
-dnl ****************************************
-
 AC_INIT([Cattle], [0.9.4], [eof@kiyuko.org], [cattle])
-AM_INIT_AUTOMAKE
-
 AM_CONFIG_HEADER([config.h])
 AM_MAINTAINER_MODE
-m4_ifdef([AM_SILENT_RULES],[AM_SILENT_RULES([yes])])
-AC_PROG_MAKE_SET
+AM_INIT_AUTOMAKE
+
+m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
 
 dnl ***********************
 dnl *** Release version ***
@@ -24,17 +19,17 @@ AC_SUBST(CATTLE_MINOR_VERSION)
 AC_SUBST(CATTLE_MICRO_VERSION)
 AC_SUBST(CATTLE_VERSION)
 
-dnl **************************
-dnl *** Libtool versioning ***
-dnl **************************
+dnl ***********************
+dnl *** Libtool version ***
+dnl ***********************
 
-# Increment on interface add, remove, or change.
+dnl Increment on interface add, remove, or change.
 CATTLE_CURRENT=0
 
-# Increment on source change. Reset when CURRENT changes.
+dnl Increment on source change. Reset when CURRENT changes.
 CATTLE_REVISION=0
 
-# Increment on interface addition. Reset on removal.
+dnl Increment on interface addition. Reset on removal.
 CATTLE_AGE=0
 
 AC_SUBST(CATTLE_CURRENT)
@@ -47,6 +42,7 @@ dnl ********************************
 
 AC_PROG_CC
 AM_PROG_CC_C_O
+AC_PROG_MAKE_SET
 
 AC_PROG_INSTALL
 AC_PROG_LIBTOOL
@@ -65,7 +61,7 @@ GLIB_REQUIRED_VERSION=2.16.0
 GLIB_REQUIRED_MODULES="gobject"
 
 AM_PATH_GLIB_2_0($GLIB_REQUIRED_VERSION,,
-                 AC_MSG_ERROR(GLib version $GLIB_REQUIRED_VERSION required),
+                 AC_MSG_ERROR([GLib version $GLIB_REQUIRED_VERSION required]),
                  $GLIB_REQUIRED_MODULES)
 
 # GIO is only required for the example programs
@@ -74,13 +70,13 @@ AC_SUBST(GIO_CFLAGS)
 AC_SUBST(GIO_LIBS)
 
 dnl ***************************************
-dnl *** Check for GObject-Introspection ***
+dnl *** Check for GObject Introspection ***
 dnl ***************************************
 
 GOBJECT_INTROSPECTION_CHECK([0.6.7])
 
 dnl *************************
-dnl *** Check for Gtk-Doc ***
+dnl *** Check for GTK-Doc ***
 dnl *************************
 
 GTK_DOC_CHECK([1.9])
@@ -89,12 +85,14 @@ dnl *******************************
 dnl *** Create the output files ***
 dnl *******************************
 
-AC_OUTPUT([Makefile
-           cattle/Makefile
-           cattle/cattle-version.h
-           cattle-1.0.pc
-           examples/Makefile
-           tests/Makefile
-           docs/Makefile
-           docs/reference/Makefile
-           docs/reference/version.xml])
+AC_CONFIG_FILES([Makefile
+                 cattle-1.0.pc
+                 cattle/Makefile
+                 cattle/cattle-version.h
+                 docs/Makefile
+                 docs/reference/Makefile
+                 docs/reference/version.xml
+                 examples/Makefile
+                 tests/Makefile])
+
+AC_OUTPUT
