@@ -38,24 +38,18 @@
  * CATTLE_MAJOR_VERSION:
  *
  * Major version of the Cattle library used for compilation.
- *
- * Since: 0.9.4
  */
 
 /**
  * CATTLE_MINOR_VERSION:
  *
  * Minor version of the Cattle library used for compilation.
- *
- * Since: 0.9.4
  */
 
 /**
  * CATTLE_MICRO_VERSION:
  *
  * Micro version of the Cattle library used for compilation.
- *
- * Since: 0.9.4
  */
 
 /**
@@ -69,16 +63,12 @@
  *
  * Returns: %TRUE if the library used for compilation is compatible,
  *          %FALSE otherwise
- *
- * Since: 0.9.4
  */
 
 /**
  * cattle_major_version:
  *
  * Major version of the Cattle library used at runtime.
- *
- * Since: 0.9.4
  */
 const guint cattle_major_version = CATTLE_MAJOR_VERSION;
 
@@ -86,8 +76,6 @@ const guint cattle_major_version = CATTLE_MAJOR_VERSION;
  * cattle_minor_version:
  *
  * Minor version of the Cattle library used at runtime.
- *
- * Since: 0.9.4
  */
 const guint cattle_minor_version = CATTLE_MINOR_VERSION;
 
@@ -95,8 +83,6 @@ const guint cattle_minor_version = CATTLE_MINOR_VERSION;
  * cattle_micro_version:
  *
  * Micro version of the Cattle library used at runtime.
- *
- * Since: 0.9.4
  */
 const guint cattle_micro_version = CATTLE_MICRO_VERSION;
 
@@ -111,8 +97,6 @@ const guint cattle_micro_version = CATTLE_MICRO_VERSION;
  * @required_micro.
  *
  * Returns: %TRUE if the runtime library is compatible, %FALSE otherwise
- *
- * Since: 0.9.4
  */
 gboolean
 cattle_check_version (guint required_major,

@@ -210,8 +210,6 @@ cattle_tape_get_current_value (CattleTape *self)
  *
  * If the value in the current cell has ASCII code 127, the new value
  * will have ASCII code 0.
- *
- * Since: 0.9.4
  */
 void
 cattle_tape_increase_current_value (CattleTape *self)
@@ -230,8 +228,6 @@ cattle_tape_increase_current_value (CattleTape *self)
  *
  * Increasing the value this way is much faster than calling
  * cattle_tape_increase_current_value() multiple times.
- *
- * Since: 0.9.4
  */
 void
 cattle_tape_increase_current_value_by (CattleTape *self,
@@ -283,8 +279,6 @@ cattle_tape_increase_current_value_by (CattleTape *self,
  *
  * If the value in the current cell has ASCII value 0, the new value
  * will have ASCII value 127.
- *
- * Since: 0.9.4
  */
 void
 cattle_tape_decrease_current_value (CattleTape *self)
@@ -303,8 +297,6 @@ cattle_tape_decrease_current_value (CattleTape *self)
  *
  * Decreasing the value this way is much faster than calling
  * cattle_tape_decrease_current_value() multiple times.
- *
- * Since: 0.9.4
  */
 void
 cattle_tape_decrease_current_value_by (CattleTape *self,
@@ -337,8 +329,6 @@ cattle_tape_move_left (CattleTape *self)
  *
  * Moving this way is much faster than calling
  * cattle_tape_move_left() multiple times.
- *
- * Since: 0.9.4
  */
 void
 cattle_tape_move_left_by (CattleTape *self,
@@ -402,8 +392,6 @@ cattle_tape_move_right (CattleTape *self)
  *
  * Moving this way is much faster than calling
  * cattle_tape_move_right() multiple times.
- *
- * Since: 0.9.4
  */
 void
 cattle_tape_move_right_by (CattleTape *self,
@@ -506,8 +494,6 @@ cattle_tape_is_at_end (CattleTape *self)
  *
  * Create a bookmark to the current tape position and save it on the
  * bookmark stack.
- *
- * Since: 0.9.2
  */
 void
 cattle_tape_push_bookmark (CattleTape *self)
@@ -533,8 +519,6 @@ cattle_tape_push_bookmark (CattleTape *self)
  * See cattle_tape_push_bookmark().
  *
  * Returns: %FALSE if the bookmarks stack is empty, %TRUE otherwise
- *
- * Since: 0.9.2
  */
 gboolean
 cattle_tape_pop_bookmark (CattleTape *self)

@@ -625,8 +625,6 @@ cattle_interpreter_run (CattleInterpreter  *self,
  * This method is meant to be used inside an input handler assigned to
  * @interpreter; way is pointless, since the input is reset when
  * cattle_interpreter_run() is called.
- *
- * Since: 1.0.0
  */
 void
 cattle_interpreter_feed (CattleInterpreter *self,
