@@ -1,5 +1,5 @@
-Cattle -- Flexible Brainfuck interpreter library
-================================================
+Cattle -- Brainfuck language toolkit
+====================================
 
 Cattle is a flexible Brainfuck interpreter, implemented as a GObject-based
 shared library. The Beef interpreter -- from which Cattle was derived --
