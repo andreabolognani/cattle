@@ -16,10 +16,7 @@
 		</releaseinfo>
 	</bookinfo>
 
-	<chapter>
-		<title>Overview</title>
-		<xi:include href="contents/overview.xml" />
-	</chapter>
+	<xi:include href="contents/overview.xml" />
 
 	<chapter>
 		<title>Core Features</title>

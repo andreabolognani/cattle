@@ -1,9 +1,11 @@
 <?xml version="1.0"?>
-<!DOCTYPE partintro PUBLIC "-//OASIS//DTD DocBook XML V4.3//EN"
-                    "http://www.oasis-open.org/docbook/xml/4.3/docbookx.dtd"
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.3//EN"
+                  "http://www.oasis-open.org/docbook/xml/4.3/docbookx.dtd"
 [
 ]>
-<partintro>
+<chapter>
+
+	<title>Overview</title>
 
 	<para>
 		Cattle is a toolkit for the Brainfuck programming language.
@@ -23,4 +25,4 @@
 		as to fit most needs.
 	</para>
 
-</partintro>
+</chapter>
