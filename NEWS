@@ -3,6 +3,7 @@ Overview of changes from Cattle 0.9.4 to 1.0.0
 
   * CattleInterpreter:
     - check for unbalanced brackets at runtime;
+    - use callbacks instead of signals for I/O;
     - return a generic error if an I/O handler has failed without
       providing detailed information about the error;
     - check input for UTF-8 correctness;
@@ -15,6 +16,9 @@ Overview of changes from Cattle 0.9.4 to 1.0.0
                  enumerations into a single enumeration.
 
   * Enable GObject Introspection support.
+
+  * Various bug fixes.
+
 
 Overview of changes from Cattle 0.9.3 to 0.9.4
 ==============================================
