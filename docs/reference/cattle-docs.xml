@@ -10,9 +10,9 @@
 	<bookinfo>
 		<title>Cattle Reference Manual</title>
 		<releaseinfo>
-			for Cattle &version;.
+			for Cattle &version;
 			Latest version available at
-			<ulink role="online-location" url="http://kiyuko.org/software/cattle/development/reference/index.html">http://kiyuko.org/software/cattle/development/reference/index.html</ulink>
+			<ulink role="online-location" url="http://kiyuko.org/software/cattle/reference/index.html">http://kiyuko.org/software/cattle/reference/index.html</ulink>
 		</releaseinfo>
 	</bookinfo>
 
