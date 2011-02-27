@@ -1,4 +1,4 @@
-AC_INIT([Cattle], [0.9.4], [eof@kiyuko.org], [cattle])
+AC_INIT([Cattle], [1.0.0], [eof@kiyuko.org], [cattle])
 AM_CONFIG_HEADER([config.h])
 AM_MAINTAINER_MODE
 AM_INIT_AUTOMAKE
@@ -9,9 +9,9 @@ dnl ***********************
 dnl *** Release version ***
 dnl ***********************
 
-CATTLE_MAJOR_VERSION=0
-CATTLE_MINOR_VERSION=9
-CATTLE_MICRO_VERSION=4
+CATTLE_MAJOR_VERSION=1
+CATTLE_MINOR_VERSION=0
+CATTLE_MICRO_VERSION=0
 CATTLE_VERSION=$CATTLE_MAJOR_VERSION.$CATTLE_MINOR_VERSION.$CATTLE_MICRO_VERSION
 
 AC_SUBST(CATTLE_MAJOR_VERSION)
