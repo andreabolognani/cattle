@@ -1,37 +1,50 @@
 Cattle -- Brainfuck language toolkit
 ====================================
 
-Cattle is a flexible Brainfuck interpreter, implemented as a GObject-based
-shared library. The Beef interpreter -- from which Cattle was derived --
-is supposed to be ported to this library once it gets mature enough.
+Cattle is a GObject-based library that allows one to inspect Brainfuck
+programs in various ways, and to easily embed a full-featured Brainfuck
+interpreter into any application.
 
 
-Improved features
-=================
+Features
+========
 
-The code loader used in Cattle has better error checking than the one used
-in the standalone interpreter, and is able of catching common coding error
-like unbalanced brackets.
+Cattle is able to load and execute virtually any Brainfuck program; both
+the code loader and the interpreter have good error checking, and are
+able to catch common coding errors such as unbalanced brackets.
 
-The library supports flexible I/O using signals and callbacks, which means
-you can do weird things like use the content of a GTK+ text widget as input
-for a program and send its output to a network socket, if you want to do
-so.
+Interpreters support flexible I/O using callbacks, which means it is
+possible to load a program's input from any source and send its output
+to any source. Examples include loading the program's input from a GTK+
+widget and sending its output to a network socket.
+
+The behaviour of an interpreter can be further customized, for example
+by enabling or disabling the runtime debugging support.
+
+While program execution is a very important aspect of Cattle, it is
+possible to process a loaded programs in many ways, including adding or
+removing instructions.
 
 
 Development status
 ==================
 
-The library currently provides enough features to implement a complete
-interpreter in about 70 lines of code (see examples/run.c).
+The library currently provides enough features to implement a working
+interpreter in about 70 lines of code (see examples/run.c); the API is
+stable and considered good enough for production use.
 
-However, it doesn't perform nearly as good as Beef: any program takes many
-times the time it would take on the standalone interpreter to run. Several
-optimizations are already in place, and the performance loss has decreased
-significantly since the first release.
 
-There is no API or ABI stability guarantee at this point of time.
-Everything is still subject sudden and thorough changes.
+Limitations
+===========
+
+The main limitation of Cattle lies in its performance: while it performs
+better than many interpreters written in a high-level programming language
+and than most naive interpreters written in C, it is easily outperformed
+by any optimized interpreter written in C.
+
+The reason is mainly the overhead imposed by the GObject type system; while
+it would certainly be possible to dump GObject, I feel the features it
+provides are worth the performance hit.
 
 
 Contact information

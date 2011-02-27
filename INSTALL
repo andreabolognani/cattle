@@ -3,28 +3,13 @@ Prerequisites
 
 Cattle depends on the following libraries and programs:
 
-  * The GLib library and its GObject module, with a minimum version
-    of 2.16.0
-
-  * GObject Introspection, to build introspection data
+  * The GLib library and its GObject module
 
   * The pkg-config script
+
+  * Optionally, GObject Introspection, if you want to give more
+    languages access to Cattle
 
   * Optionally, the GTK-Doc tools, if you wish to rebuild the API
     reference yourself (a pre-built copy is shipped along with the
     sources)
-
-
-Installation
-============
-
-The Cattle library is not ready for production use: this release is
-intended only as a technology preview, targeted at developers and other
-interested individuals.
-
-Installing Cattle is discouraged; as a matter of fact, it is not even
-possible without tweaking the build scripts.
-
-Since the soname is not going to be bumped until the first stable release,
-despite the changes, installing Cattle and linking anything to the
-installed copy is asking for breakage. Just don't do it.
