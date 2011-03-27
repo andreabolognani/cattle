@@ -1,4 +1,4 @@
-AC_INIT([Cattle], [1.0.0], [eof@kiyuko.org], [cattle])
+AC_INIT([Cattle], [1.0.1], [eof@kiyuko.org], [cattle])
 AM_CONFIG_HEADER([config.h])
 AM_MAINTAINER_MODE
 AM_INIT_AUTOMAKE
@@ -11,7 +11,7 @@ dnl ***********************
 
 CATTLE_MAJOR_VERSION=1
 CATTLE_MINOR_VERSION=0
-CATTLE_MICRO_VERSION=0
+CATTLE_MICRO_VERSION=1
 CATTLE_VERSION=$CATTLE_MAJOR_VERSION.$CATTLE_MINOR_VERSION.$CATTLE_MICRO_VERSION
 
 AC_SUBST(CATTLE_MAJOR_VERSION)
@@ -27,7 +27,7 @@ dnl Increment on interface add, remove, or change.
 CATTLE_CURRENT=0
 
 dnl Increment on source change. Reset when CURRENT changes.
-CATTLE_REVISION=0
+CATTLE_REVISION=1
 
 dnl Increment on interface addition. Reset on removal.
 CATTLE_AGE=0
