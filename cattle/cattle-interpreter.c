@@ -608,6 +608,8 @@ cattle_interpreter_run (CattleInterpreter  *self,
 
 	if (self->priv->had_input == TRUE) {
 		g_free (self->priv->input);
+		self->priv->input = NULL;
+		self->priv->input_cursor = NULL;
 	}
 
 	g_object_unref (instruction);
