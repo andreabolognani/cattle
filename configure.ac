@@ -79,7 +79,7 @@ dnl *************************
 dnl *** Check for GTK-Doc ***
 dnl *************************
 
-GTK_DOC_CHECK([1.9])
+GTK_DOC_CHECK([1.15])
 
 dnl *******************************
 dnl *** Create the output files ***
