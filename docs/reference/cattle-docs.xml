@@ -16,7 +16,7 @@
 		</releaseinfo>
 	</bookinfo>
 
-	<xi:include href="contents/overview.xml" />
+	<xi:include href="overview.xml" />
 
 	<chapter>
 		<title>Core Features</title>
@@ -35,7 +35,7 @@
 
 	<chapter>
 		<title>Miscellaneous Topics</title>
-		<xi:include href="contents/io-handling.xml" />
+		<xi:include href="io-handling.xml" />
 	</chapter>
 
 <!--
