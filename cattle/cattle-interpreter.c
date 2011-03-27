@@ -222,6 +222,7 @@ run (CattleInterpreter  *self,
 
 					/* Push the current instruction on the stack */
 					stack = g_slist_prepend (stack, current);
+					self->priv->stack = stack;
 					current = next;
 
 					continue;
@@ -248,6 +249,7 @@ run (CattleInterpreter  *self,
 				g_object_unref (current);
 				current = CATTLE_INSTRUCTION (stack->data);
 				stack = g_slist_delete_link (stack, stack);
+				self->priv->stack = stack;
 
 				continue;
 
@@ -594,11 +596,13 @@ cattle_interpreter_run (CattleInterpreter  *self,
 	g_return_val_if_fail (error == NULL || *error == NULL, FALSE);
 	g_return_val_if_fail (!self->priv->disposed, FALSE);
 
+	self->priv->stack = NULL;
+	self->priv->had_input = FALSE;
+
 	program = self->priv->program;
 	instruction = cattle_program_get_instructions (program);
-	self->priv->stack = NULL;
-
 	self->priv->input = cattle_program_get_input (program);
+
 	if (self->priv->input != NULL) {
 		self->priv->had_input = TRUE;
 	}
@@ -611,6 +615,12 @@ cattle_interpreter_run (CattleInterpreter  *self,
 		self->priv->input = NULL;
 		self->priv->input_cursor = NULL;
 	}
+	self->priv->had_input = FALSE;
+
+	if (self->priv->stack != NULL) {
+		g_slist_free (self->priv->stack);
+	}
+	self->priv->stack = NULL;
 
 	g_object_unref (instruction);
 
