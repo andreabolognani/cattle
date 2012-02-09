@@ -18,6 +18,9 @@ cattle_check_version
 <TITLE>Error Types</TITLE>
 CattleError
 CATTLE_ERROR
+<SUBSECTION Standard>
+CATTLE_TYPE_ERROR
+cattle_error_get_type
 <SUBSECTION Private>
 cattle_error_quark
 </SECTION>
@@ -40,6 +43,8 @@ cattle_configuration_get_type
 CATTLE_CONFIGURATION_CLASS
 CATTLE_IS_CONFIGURATION_CLASS
 CATTLE_CONFIGURATION_GET_CLASS
+CATTLE_TYPE_ON_EOF_ACTION
+cattle_on_eof_action_get_type
 <SUBSECTION Private>
 CattleConfigurationPrivate
 </SECTION>
@@ -119,6 +124,8 @@ cattle_instruction_get_type
 CATTLE_INSTRUCTION_CLASS
 CATTLE_IS_INSTRUCTION_CLASS
 CATTLE_INSTRUCTION_GET_CLASS
+CATTLE_TYPE_INSTRUCTION_VALUE
+cattle_instruction_value_get_type
 <SUBSECTION Private>
 CattleInstructionPrivate
 </SECTION>
