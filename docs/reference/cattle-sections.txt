@@ -20,7 +20,6 @@ CattleError
 CATTLE_ERROR
 <SUBSECTION Private>
 cattle_error_quark
-</SUBSECTION>
 </SECTION>
 
 <SECTION>
