@@ -1,7 +1,7 @@
 AUTOMAKE_OPTIONS = 1.6
 
 # The name of the module.
-DOC_MODULE = cattle
+DOC_MODULE = cattle-1.0
 
 # The top-level SGML file.
 DOC_MAIN_SGML_FILE = $(DOC_MODULE)-docs.xml
