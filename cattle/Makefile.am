@@ -56,8 +56,6 @@ libcattle_1_0_la_SOURCES = \
 	$(NULL)
 
 GENMARSHAL_GENERATED = \
-	cattle-marshal.h \
-	cattle-marshal.c \
 	$(NULL)
 
 MKENUMS_GENERATED = \
@@ -76,7 +74,6 @@ CLEANFILES = \
 	$(NULL)
 
 EXTRA_DIST = \
-	cattle-marshal.list \
 	cattle-enums.h.tmpl \
 	cattle-enums.c.tmpl \
 	$(NULL)
@@ -115,19 +112,6 @@ typelib_DATA = $(INTROSPECTION_GIRS:.gir=.typelib)
 
 CLEANFILES += $(gir_DATA) $(typelib_DATA)
 endif
-
-cattle-marshal.h: cattle-marshal.list
-	$(AM_V_GEN)( $(GLIB_GENMARSHAL) --prefix=cattle_marshal       \
-	  $(srcdir)/cattle-marshal.list --header > cattle-marshal.tmp \
-	&& mv cattle-marshal.tmp cattle-marshal.h )                   \
-	|| ( rm -f cattle-marshal.tmp && exit 1 )
-
-cattle-marshal.c: cattle-marshal.h
-	$(AM_V_GEN)( ( echo '#include "cattle-marshal.h"';            \
-	  $(GLIB_GENMARSHAL) --prefix=cattle_marshal                  \
-	  $(srcdir)/cattle-marshal.list --body ) > cattle-marshal.tmp \
-	&& mv cattle-marshal.tmp cattle-marshal.c )                   \
-	|| ( rm -f cattle-marshal.tmp && exit 1 )
 
 cattle-enums.h: $(cattle_headers)
 	$(AM_V_GEN)( cd $(srcdir) &&                     \

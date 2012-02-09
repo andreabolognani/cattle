@@ -29,9 +29,7 @@ HFILE_GLOB = $(top_srcdir)/cattle/*.h
 CFILE_GLOB = $(top_srcdir)/cattle/*.c
 
 # Header files to ignore when scanning.
-IGNORE_HFILES = cattle-enums.h \
-                cattle-marshal.h \
-                cattle.h
+IGNORE_HFILES =
 
 # Images to copy into HTML directory.
 HTML_IMAGES =
