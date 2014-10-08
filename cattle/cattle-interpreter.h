@@ -58,7 +58,7 @@ typedef gboolean (*CattleInputHandler)  (CattleInterpreter  *interpreter,
                                          gpointer            data,
                                          GError            **error);
 typedef gboolean (*CattleOutputHandler) (CattleInterpreter  *interpreter,
-                                         gchar               output,
+                                         gint8               output,
                                          gpointer            data,
                                          GError            **error);
 typedef gboolean (*CattleDebugHandler)  (CattleInterpreter  *interpreter,
@@ -69,7 +69,7 @@ CattleInterpreter*   cattle_interpreter_new                (void);
 gboolean             cattle_interpreter_run                (CattleInterpreter    *interpreter,
                                                             GError              **error);
 void                 cattle_interpreter_feed               (CattleInterpreter    *interpreter,
-                                                            const gchar          *input);
+                                                            const gint8          *input);
 void                 cattle_interpreter_set_configuration  (CattleInterpreter    *interpreter,
                                                             CattleConfiguration  *configuration);
 CattleConfiguration* cattle_interpreter_get_configuration  (CattleInterpreter    *interpreter);

@@ -74,8 +74,8 @@ struct _CattleInterpreterPrivate
 	GSList              *stack; /* Instruction stack */
 
 	gboolean             had_input;
-	gchar               *input;
-	gchar               *input_cursor;
+	gint8               *input;
+	gint                 input_offset;
 	gboolean             end_of_input_reached;
 };
 
@@ -95,7 +95,7 @@ static gboolean default_input_handler      (CattleInterpreter      *interpreter,
                                             gpointer                data,
                                             GError                **error);
 static gboolean default_output_handler     (CattleInterpreter      *interpreter,
-                                            gchar                   output,
+                                            gint8                   output,
                                             gpointer                data,
                                             GError                **error);
 static gboolean default_debug_handler      (CattleInterpreter      *interpreter,
@@ -122,7 +122,7 @@ cattle_interpreter_init (CattleInterpreter *self)
 
 	self->priv->had_input = FALSE;
 	self->priv->input = NULL;
-	self->priv->input_cursor = NULL;
+	self->priv->input_offset = 0;
 	self->priv->end_of_input_reached = FALSE;
 
 	self->priv->disposed = FALSE;
@@ -179,7 +179,7 @@ run (CattleInterpreter  *self,
 	GSList *stack;
 	GError *inner_error;
 	gboolean success;
-	gunichar temp;
+	gint8 temp;
 	gint quantity;
 	gint i;
 
@@ -317,7 +317,7 @@ run (CattleInterpreter  *self,
 						 * input, or we haven't fetched any input yet.
 						 * We need to emit the "input-request" signal
 						 * to get more input */
-						if (self->priv->input_cursor == NULL || g_utf8_get_char (self->priv->input_cursor) == 0) {
+						if (self->priv->input == NULL || self->priv->input[self->priv->input_offset] == 0) {
 
 							inner_error = NULL;
 							success = (*input_handler) (self,
@@ -379,11 +379,11 @@ run (CattleInterpreter  *self,
 					/* If we have already reached the end of input,
 					 * the current char is obviously an EOF */
 					if (self->priv->end_of_input_reached) {
-						temp = (gunichar) EOF;
+						temp = (gint8) EOF;
 					}
 
 					else {
-						temp = g_utf8_get_char (self->priv->input_cursor);
+						temp = self->priv->input[self->priv->input_offset];
 
 						/* The end of the saved input is converted into
 						 * an EOF character for consistency. We don't
@@ -392,7 +392,7 @@ run (CattleInterpreter  *self,
 						if (temp == 0) {
 
 							if (self->priv->had_input == FALSE) {
-								temp = (gunichar) EOF;
+								temp = (gint8) EOF;
 								self->priv->end_of_input_reached = TRUE;
 							}
 						}
@@ -400,17 +400,17 @@ run (CattleInterpreter  *self,
 						/* There is some more input: we have to move
 						 * the cursor one position forward */
 						else {
-							self->priv->input_cursor = g_utf8_next_char (self->priv->input_cursor);
+							self->priv->input_offset++;
 						}
 					}
 
 					/* Make sure the char is in the supported range */
-					if (!((temp >= 0 && temp <= 127) || temp == EOF)) {
+					if (temp < G_MININT8 || temp > G_MAXINT8) {
 
 						g_set_error_literal (error,
 						                     CATTLE_ERROR,
 						                     CATTLE_ERROR_INPUT_OUT_OF_RANGE,
-						                     "Non-ASCII input is not supported");
+						                     "Input out of range");
 
 						g_object_unref (current);
 
@@ -429,12 +429,12 @@ run (CattleInterpreter  *self,
 				/* We are at the end of the input: we have to check
 				 * the configuration to know which action we should
 				 * perform */
-				if (temp == (gchar) EOF) {
+				if (temp == (gint8) EOF) {
 
 					switch (cattle_configuration_get_on_eof_action (configuration)) {
 
 						case CATTLE_ON_EOF_STORE_ZERO:
-							cattle_tape_set_current_value (tape, (gchar) 0);
+							cattle_tape_set_current_value (tape, 0);
 							break;
 
 						case CATTLE_ON_EOF_STORE_EOF:
@@ -605,14 +605,14 @@ cattle_interpreter_run (CattleInterpreter  *self,
 	if (self->priv->input != NULL) {
 		self->priv->had_input = TRUE;
 	}
-	self->priv->input_cursor = self->priv->input;
+	self->priv->input_offset = 0;
 
 	success = run (self, error);
 
 	if (self->priv->had_input == TRUE) {
 		g_free (self->priv->input);
 		self->priv->input = NULL;
-		self->priv->input_cursor = NULL;
+		self->priv->input_offset = 0;
 	}
 	self->priv->had_input = FALSE;
 
@@ -639,7 +639,7 @@ cattle_interpreter_run (CattleInterpreter  *self,
  */
 void
 cattle_interpreter_feed (CattleInterpreter *self,
-                         const gchar       *input)
+                         const gint8       *input)
 {
 	/* A return value of NULL from the signal
 	 * handler means the end of input was
@@ -647,7 +647,7 @@ cattle_interpreter_feed (CattleInterpreter *self,
 	if (input == NULL) {
 
 		self->priv->input = NULL;
-		self->priv->input_cursor = NULL;
+		self->priv->input_offset = 0;
 		self->priv->end_of_input_reached = TRUE;
 
 		return;
@@ -659,7 +659,7 @@ cattle_interpreter_feed (CattleInterpreter *self,
 	}
 
 	self->priv->input = g_strdup (input);
-	self->priv->input_cursor = self->priv->input;
+	self->priv->input_offset = 0;
 }
 
 /**
@@ -909,11 +909,11 @@ default_input_handler (CattleInterpreter  *self,
                        gpointer            data,
                        GError            **error)
 {
-	gchar *buffer;
+	char *buffer;
 
 	/* The buffer size is not really important: if the input cannot
 	 * fit a single buffer, the signal will be emitted again */
-	buffer = g_new0 (gchar, 256);
+	buffer = g_new0 (char, 256);
 
 	if (fgets (buffer, 256, stdin) == NULL) {
 
@@ -938,7 +938,7 @@ default_input_handler (CattleInterpreter  *self,
 	}
 
 	cattle_interpreter_feed (self,
-	                         buffer);
+	                         (gint8 *) buffer);
 	g_free (buffer);
 
 	return TRUE;
@@ -946,11 +946,11 @@ default_input_handler (CattleInterpreter  *self,
 
 static gboolean
 default_output_handler (CattleInterpreter  *self,
-                        gchar               output,
+                        gint8               output,
                         gpointer            data,
                         GError            **error)
 {
-	if (G_UNLIKELY (fputc (output, stdout) == EOF)) {
+	if (G_UNLIKELY (fputc ((char) output, stdout) == EOF)) {
 
 		g_set_error_literal (error,
 		                     CATTLE_ERROR,
@@ -968,7 +968,7 @@ default_debug_handler (CattleInterpreter  *self,
                        GError            **error)
 {
 	CattleTape *tape;
-	gchar value;
+	gint8 value;
 	gint steps;
 
 	tape = cattle_interpreter_get_tape (self);
@@ -1019,8 +1019,8 @@ default_debug_handler (CattleInterpreter  *self,
 
 		/* Print the value of the current cell if it is a graphical char;
 		 * otherwise, print its hexadecimal value */
-		if (g_ascii_isgraph (value)) {
-			if (G_UNLIKELY (fputc (value, stderr) == EOF)) {
+		if (g_ascii_isgraph ((gchar) value)) {
+			if (G_UNLIKELY (fputc ((char) value, stderr) == EOF)) {
 				g_set_error_literal (error,
 				                     CATTLE_ERROR,
 				                     CATTLE_ERROR_IO,
@@ -1031,7 +1031,7 @@ default_debug_handler (CattleInterpreter  *self,
 			}
 		}
 		else {
-			if (G_UNLIKELY (fprintf (stderr, "0x%X", (gint) value) < 0)) {
+			if (G_UNLIKELY (fprintf (stderr, "0x%X", value) < 0)) {
 				g_set_error_literal (error,
 				                     CATTLE_ERROR,
 				                     CATTLE_ERROR_IO,

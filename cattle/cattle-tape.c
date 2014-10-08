@@ -88,7 +88,7 @@ struct _CattleTapeBookmark
 static void
 cattle_tape_init (CattleTape *self)
 {
-	gchar *chunk;
+	gint8 *chunk;
 
 	self->priv = CATTLE_TAPE_GET_PRIVATE (self);
 
@@ -96,7 +96,7 @@ cattle_tape_init (CattleTape *self)
 	self->priv->current = NULL;
 
 	/* Create the first chunk and make it the current one */
-	chunk = (gchar *) g_slice_alloc0 (CHUNK_SIZE * sizeof (gchar));
+	chunk = (gint8 *) g_slice_alloc0 (CHUNK_SIZE * sizeof (gint8));
 	self->priv->head = g_list_append (self->priv->head, (gpointer) chunk);
 	self->priv->current = self->priv->head;
 
@@ -127,7 +127,7 @@ static void
 chunk_free (gpointer chunk,
             gpointer data)
 {
-	g_slice_free1 (CHUNK_SIZE * sizeof (gchar), chunk);
+	g_slice_free1 (CHUNK_SIZE * sizeof (gint8), chunk);
 }
 
 static void
@@ -164,19 +164,18 @@ cattle_tape_new (void)
  *
  * Set the value of the current cell.
  *
- * Accepted values are ASCII values or EOF.
+ * Accepted values range from #G_MINGINT8 to #G_MAXGINT8.
  */
 void
 cattle_tape_set_current_value (CattleTape *self,
-                               gchar       value)
+                               gint8       value)
 {
-	gchar *chunk = NULL;
+	gint8 *chunk = NULL;
 
 	g_return_if_fail (CATTLE_IS_TAPE (self));
 	g_return_if_fail (!self->priv->disposed);
-	g_return_if_fail ((value >= 0 && value <= 127) || value	== EOF);
 
-	chunk = (char *) self->priv->current->data;
+	chunk = (gint8 *) self->priv->current->data;
 	chunk[self->priv->offset] = value;
 }
 
@@ -189,15 +188,15 @@ cattle_tape_set_current_value (CattleTape *self,
  *
  * Returns: the value of the current cell
  */
-gchar
+gint8
 cattle_tape_get_current_value (CattleTape *self)
 {
-	gchar *chunk;
+	gint8 *chunk;
 
-	g_return_val_if_fail (CATTLE_IS_TAPE (self), (gchar) 0);
-	g_return_val_if_fail (!self->priv->disposed, (gchar) 0);
+	g_return_val_if_fail (CATTLE_IS_TAPE (self), 0);
+	g_return_val_if_fail (!self->priv->disposed, 0);
 
-	chunk = (gchar *) self->priv->current->data;
+	chunk = (gint8 *) self->priv->current->data;
 
 	return chunk[self->priv->offset];
 }
@@ -207,9 +206,6 @@ cattle_tape_get_current_value (CattleTape *self)
  * @tape: a #CattleTape
  *
  * Increase the value in the current cell by one.
- *
- * If the value in the current cell has ASCII code 127, the new value
- * will have ASCII code 0.
  */
 void
 cattle_tape_increase_current_value (CattleTape *self)
@@ -224,8 +220,6 @@ cattle_tape_increase_current_value (CattleTape *self)
  *
  * Increase the value in the current cell by @value.
  *
- * The value is wrapped if needed to keep it in the ASCII code.
- *
  * Increasing the value this way is much faster than calling
  * cattle_tape_increase_current_value() multiple times.
  */
@@ -233,8 +227,8 @@ void
 cattle_tape_increase_current_value_by (CattleTape *self,
                                        gint        value)
 {
-	gchar *chunk;
-	gchar current;
+	gint8 *chunk;
+	gint8 current;
 
 	g_return_if_fail (CATTLE_IS_TAPE (self));
 	g_return_if_fail (!self->priv->disposed);
@@ -244,31 +238,8 @@ cattle_tape_increase_current_value_by (CattleTape *self,
 		return;
 	}
 
-	chunk = (gchar *) self->priv->current->data;
-	current = chunk[self->priv->offset];
-
-	/* Special handling for EOF character */
-	if (current == EOF) {
-		if (value > 0) {
-			chunk[self->priv->offset] = 0;
-			cattle_tape_increase_current_value_by (self, value - 1);
-			return;
-		}
-		else {
-			chunk[self->priv->offset] = 127;
-			cattle_tape_increase_current_value_by (self, value + 1);
-			return;
-		}
-	}
-
-	current = (current + value) % 128;
-
-	/* If the remainder is negative the value needs to be adjusted */
-	if (current < 0) {
-		current = 128 + current;
-	}
-
-	chunk[self->priv->offset] = current;
+	chunk = (gint8 *) self->priv->current->data;
+	chunk[self->priv->offset] += value;
 }
 
 /**
@@ -276,9 +247,6 @@ cattle_tape_increase_current_value_by (CattleTape *self,
  * @tape: a #CattleTape
  *
  * Decrease the value in the current cell by one.
- *
- * If the value in the current cell has ASCII value 0, the new value
- * will have ASCII value 127.
  */
 void
 cattle_tape_decrease_current_value (CattleTape *self)
@@ -292,8 +260,6 @@ cattle_tape_decrease_current_value (CattleTape *self)
  * @value: decrease amount
  *
  * Decrease the value in the current cell by @value.
- *
- * The value is wrapped if needed to keep it in the ASCII code.
  *
  * Decreasing the value this way is much faster than calling
  * cattle_tape_decrease_current_value() multiple times.
@@ -334,7 +300,7 @@ void
 cattle_tape_move_left_by (CattleTape *self,
                           gint        steps)
 {
-	gchar *chunk;
+	gint8 *chunk;
 
 	g_return_if_fail (CATTLE_IS_TAPE (self));
 	g_return_if_fail (!self->priv->disposed);
@@ -345,7 +311,7 @@ cattle_tape_move_left_by (CattleTape *self,
 		/* If there is no previous chunk, create it */
 		if (g_list_previous (self->priv->current) == NULL) {
 
-			chunk = (gchar *) g_slice_alloc0 (CHUNK_SIZE * sizeof (gchar));
+			chunk = (gint8 *) g_slice_alloc0 (CHUNK_SIZE * sizeof (gint8));
 			self->priv->head = g_list_prepend (self->priv->head, chunk);
 			self->priv->lower_limit = CHUNK_SIZE - 1;
 		}
@@ -397,7 +363,7 @@ void
 cattle_tape_move_right_by (CattleTape *self,
                            gint        steps)
 {
-	gchar *chunk;
+	gint8 *chunk;
 
 	g_return_if_fail (CATTLE_IS_TAPE (self));
 	g_return_if_fail (!self->priv->disposed);
@@ -408,7 +374,7 @@ cattle_tape_move_right_by (CattleTape *self,
 		/* If there is no next chunk, create it */
 		if (g_list_next (self->priv->current) == NULL) {
 
-			chunk = (gchar *) g_slice_alloc0 (CHUNK_SIZE * sizeof (gchar));
+			chunk = (gint8 *) g_slice_alloc0 (CHUNK_SIZE * sizeof (gint8));
 			self->priv->head = g_list_append (self->priv->head, chunk);
 			self->priv->upper_limit = 0;
 		}
@@ -555,15 +521,15 @@ cattle_tape_set_property (GObject      *object,
                           GParamSpec   *pspec)
 {
 	CattleTape *self = CATTLE_TAPE (object);
-	gchar t_char;
+	gint8 v_char;
 
 	g_return_if_fail (!self->priv->disposed);
 
 	switch (property_id) {
 
 		case PROP_CURRENT_VALUE:
-			t_char = g_value_get_char (value);
-			cattle_tape_set_current_value (self, t_char);
+			v_char = g_value_get_schar (value);
+			cattle_tape_set_current_value (self, v_char);
 			break;
 
 		default:
@@ -581,15 +547,15 @@ cattle_tape_get_property (GObject    *object,
                           GParamSpec *pspec)
 {
 	CattleTape *self = CATTLE_TAPE (object);
-	gchar t_char;
+	gint8 v_char;
 
 	g_return_if_fail (!self->priv->disposed);
 
 	switch (property_id) {
 
 		case PROP_CURRENT_VALUE:
-			t_char = cattle_tape_get_current_value (self);
-			g_value_set_char (value, t_char);
+			v_char = cattle_tape_get_current_value (self);
+			g_value_set_schar (value, v_char);
 			break;
 
 		default:
@@ -621,8 +587,8 @@ cattle_tape_class_init (CattleTapeClass *self)
 	pspec = g_param_spec_char ("current-value",
 	                           "Value of the current cell",
 	                           "Get/set current value",
-	                           MIN (0, EOF),
-	                           MAX (127, EOF),
+	                           G_MININT8,
+	                           G_MAXINT8,
 	                           0,
 	                           G_PARAM_READWRITE);
 	g_object_class_install_property (object_class,

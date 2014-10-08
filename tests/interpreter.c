@@ -110,7 +110,7 @@ input_fail_only_error (CattleInterpreter  *interpreter,
 /* Successful output handler */
 static gboolean
 output_success (CattleInterpreter  *interpreter,
-                gchar               output,
+                gint8               output,
                 gpointer            data,
                 GError            **error)
 {
@@ -120,7 +120,7 @@ output_success (CattleInterpreter  *interpreter,
 /* Succesfull output handler working on a buffer */
 static gboolean
 output_success_buffer (CattleInterpreter  *interpreter,
-                       gchar               output,
+                       gint8               output,
                        gpointer            data,
                        GError            **error)
 {
@@ -129,7 +129,7 @@ output_success_buffer (CattleInterpreter  *interpreter,
 	buffer = (GString*) data;
 
 	g_string_append_c (buffer,
-	                   output);
+	                   (gchar) output);
 
 	return TRUE;
 }
@@ -137,7 +137,7 @@ output_success_buffer (CattleInterpreter  *interpreter,
 /* Unsuccesful output handler that sets the error */
 static gboolean
 output_fail_set_error (CattleInterpreter  *interpreter,
-                       gchar               output,
+                       gint8               output,
                        gpointer            data,
                        GError            **error)
 {
@@ -152,7 +152,7 @@ output_fail_set_error (CattleInterpreter  *interpreter,
 /* Unsuccesful output handler that doesn't set the error */
 static gboolean
 output_fail_no_set_error (CattleInterpreter  *interpreter,
-                          gchar               output,
+                          gint8               output,
                           gpointer            data,
                           GError            **error)
 {
@@ -162,7 +162,7 @@ output_fail_no_set_error (CattleInterpreter  *interpreter,
 /* Unsuccesful output handler that sets the error but returns TRUE */
 static gboolean
 output_fail_only_error (CattleInterpreter  *interpreter,
-                        gchar               output,
+                        gint8               output,
                         gpointer            data,
                         GError            **error)
 {

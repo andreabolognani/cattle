@@ -54,8 +54,8 @@ struct _CattleTapeClass
 
 CattleTape* cattle_tape_new                       (void);
 void        cattle_tape_set_current_value         (CattleTape *tape,
-                                                   gchar       value);
-gchar       cattle_tape_get_current_value         (CattleTape *tape);
+                                                   gint8       value);
+gint8       cattle_tape_get_current_value         (CattleTape *tape);
 void        cattle_tape_increase_current_value    (CattleTape *tape);
 void        cattle_tape_increase_current_value_by (CattleTape *tape,
                                                    gint        value);
