@@ -120,7 +120,10 @@ main (gint argc, gchar **argv)
 	GError *error;
 	gchar *contents;
 
+#if !GLIB_CHECK_VERSION(2, 36, 0)
 	g_type_init ();
+#endif
+
 	g_set_prgname ("indent");
 
 	if (argc != 2) {

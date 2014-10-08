@@ -631,7 +631,10 @@ test_interpreter_unbalanced_brackets (void)
 gint
 main (gint argc, gchar **argv)
 {
+#if !GLIB_CHECK_VERSION(2, 36, 0)
 	g_type_init ();
+#endif
+
 	g_test_init (&argc, &argv, NULL);
 
 	g_test_add_func ("/interpreter/handlers",

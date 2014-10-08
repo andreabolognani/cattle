@@ -231,7 +231,7 @@ test_tape_current_value (void)
  * test_tape_increase_current_value:
  *
  * Increase the current value several times and then decrease it by
- * the number of increase steps taken before.
+ * the number of increase steps taken before. Avoid wrapping.
  */
 static void
 test_tape_increase_current_value (void)
@@ -241,16 +241,15 @@ test_tape_increase_current_value (void)
 
 	tape = cattle_tape_new ();
 
-	for (i = 0; i < 128; i++) {
+	for (i = 0; i < 127; i++) {
 
 		g_assert (cattle_tape_get_current_value (tape) == i);
 		cattle_tape_increase_current_value (tape);
 	}
 
-	cattle_tape_decrease_current_value_by (tape, 128);
-	g_assert (cattle_tape_get_current_value (tape) == 0);
+	g_assert (cattle_tape_get_current_value (tape) == 127);
 
-	cattle_tape_increase_current_value_by (tape, 128 * 5);
+	cattle_tape_decrease_current_value_by (tape, 127);
 	g_assert (cattle_tape_get_current_value (tape) == 0);
 
 	g_object_unref (tape);
@@ -260,7 +259,7 @@ test_tape_increase_current_value (void)
  * test_tape_decrease_current_value:
  *
  * Decrease the current value several times and then increase it by
- * the number of decrease steps taken before.
+ * the number of decrease steps taken before. Avoid wrapping.
  */
 static void
 test_tape_decrease_current_value (void)
@@ -270,18 +269,17 @@ test_tape_decrease_current_value (void)
 
 	tape = cattle_tape_new ();
 
-	cattle_tape_increase_current_value_by (tape, 127);
-	g_assert (cattle_tape_get_current_value (tape) == 127);
+	cattle_tape_set_current_value (tape, 127);
 
-	for (i = 127; i >= 0; i--) {
+	for (i = 127; i > 0; i--) {
 
 		g_assert (cattle_tape_get_current_value (tape) == i);
 		cattle_tape_decrease_current_value (tape);
 	}
 
-	g_assert (cattle_tape_get_current_value (tape) == 127);
+	g_assert (cattle_tape_get_current_value (tape) == 0);
 
-	cattle_tape_decrease_current_value_by (tape, 128 * 5);
+	cattle_tape_increase_current_value_by (tape, 127);
 	g_assert (cattle_tape_get_current_value (tape) == 127);
 
 	g_object_unref (tape);
@@ -384,7 +382,10 @@ test_tape_eof_wrap (void)
 gint
 main (gint argc, gchar **argv)
 {
+#if !GLIB_CHECK_VERSION(2, 36, 0)
 	g_type_init ();
+#endif
+
 	g_test_init (&argc, &argv, NULL);
 
 	g_test_add_func ("/tape/initial-position",
