@@ -1,5 +1,5 @@
 /* program -- Tests related to program loading
- * Copyright (C) 2009-2011  Andrea Bolognani <eof@kiyuko.org>
+ * Copyright (C) 2008-2014  Andrea Bolognani <eof@kiyuko.org>
  * This file is part of Cattle
  *
  * This program is free software; you can redistribute it and/or modify
