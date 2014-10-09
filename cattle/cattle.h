@@ -24,8 +24,8 @@
 #define __CATTLE_H_INSIDE__
 
 #include <cattle/cattle-version.h>
-#include <cattle/cattle-constants.h>
 #include <cattle/cattle-error.h>
+#include <cattle/cattle-constants.h>
 #include <cattle/cattle-instruction.h>
 #include <cattle/cattle-program.h>
 #include <cattle/cattle-tape.h>

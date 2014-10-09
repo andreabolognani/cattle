@@ -20,6 +20,7 @@
 
 #include "cattle-enums.h"
 #include "cattle-error.h"
+#include "cattle-constants.h"
 #include "cattle-interpreter.h"
 #include <stdio.h>
 #include <string.h>

@@ -22,7 +22,7 @@
 
 /**
  * SECTION:cattle-constants
- * @short_description: Constants used in Cattle
+ * @short_description: Useful constants
  */
 
 /**
