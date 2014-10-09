@@ -22,6 +22,7 @@
 		<title>Core Features</title>
 		<xi:include href="xml/cattle-version.xml" />
 		<xi:include href="xml/cattle-error.xml" />
+		<xi:include href="xml/cattle-constants.xml" />
 	</chapter>
 
 	<chapter>

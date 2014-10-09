@@ -26,6 +26,12 @@ cattle_error_quark
 </SECTION>
 
 <SECTION>
+<FILE>cattle-constants</FILE>
+<TITLE>Constants</TITLE>
+CATTLE_EOF
+</SECTION>
+
+<SECTION>
 <FILE>cattle-configuration</FILE>
 <TITLE>CattleConfiguration</TITLE>
 CattleOnEOFAction
