@@ -35,11 +35,11 @@ G_DEFINE_TYPE (CattleConfiguration, cattle_configuration, G_TYPE_OBJECT)
  * CattleOnEOFAction:
  * @CATTLE_ON_EOF_STORE_ZERO: Store a zero in the current cell. This is
  * the default behaviour
- * @CATTLE_ON_EOF_STORE_EOF: Store an EOF character in the current cell
+ * @CATTLE_ON_EOF_STORE_EOF: Store @CATTLE_EOF in the current cell
  * @CATTLE_ON_EOF_DO_NOTHING: Do nothing.
  *
- * Possible actions to be performed by a #CattleInterpreter when an EOF
- * character is encountered in the input.
+ * Possible actions to be performed by a #CattleInterpreter when the end
+ * of input is reached.
  */
 
 /**
@@ -118,8 +118,7 @@ cattle_configuration_new (void)
  * @configuration: a #CattleConfiguration
  * @action: the action to be performed
  *
- * Set the action to be performed when an EOF character is encountered
- * in the input.
+ * Set the action to be performed when the end of input is reached.
  *
  * Accepted values are from the #CattleOnEOFAction enumeration.
  */
@@ -147,8 +146,8 @@ cattle_configuration_set_on_eof_action (CattleConfiguration *self,
  * cattle_configuration_get_on_eof_action:
  * @configuration: a #CattleConfiguration
  *
- * Get the action to be performed when an EOF character is read from
- * the input source. See cattle_configuration_set_on_eof_action().
+ * Get the action to be performed when the end of input is reached.
+ * See cattle_configuration_set_on_eof_action().
  *
  * Returns: the current action
  */
@@ -281,13 +280,12 @@ cattle_configuration_class_init (CattleConfigurationClass *self)
 	/**
 	 * CattleConfiguration:on-eof-action:
 	 *
-	 * Action to be performed when an EOF character is encountered in
-	 * the input.
+	 * Action to be performed when the end of input is reached.
 	 *
 	 * Changes to this property are not notified.
 	 */
 	pspec = g_param_spec_enum ("on-eof-action",
-	                           "Action to be performed when an EOF is read",
+	                           "Action to be performed on end of input",
 	                           "Get/set on EOF action",
 	                           CATTLE_TYPE_ON_EOF_ACTION,
 	                           CATTLE_ON_EOF_STORE_ZERO,

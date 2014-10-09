@@ -377,22 +377,22 @@ run (CattleInterpreter  *self,
 					/* STEP 2: Get the char and normalize it */
 
 					/* If we have already reached the end of input,
-					 * the current char is obviously an EOF */
+					 * the current char is CATTLE_EOF */
 					if (self->priv->end_of_input_reached) {
-						temp = (gint8) EOF;
+						temp = CATTLE_EOF;
 					}
 
 					else {
 						temp = self->priv->input[self->priv->input_offset];
 
 						/* The end of the saved input is converted into
-						 * an EOF character for consistency. We don't
-						 * need to move the cursor forward if we are
-						 * already at the end of the input */
+						 * CATTLE_EOF to guarantee consistent behaviour.
+						 * We don't need to move the cursor forward in this
+						 * case, as we're already at the end of input */
 						if (temp == 0) {
 
 							if (self->priv->had_input == FALSE) {
-								temp = (gint8) EOF;
+								temp = CATTLE_EOF;
 								self->priv->end_of_input_reached = TRUE;
 							}
 						}
@@ -429,7 +429,7 @@ run (CattleInterpreter  *self,
 				/* We are at the end of the input: we have to check
 				 * the configuration to know which action we should
 				 * perform */
-				if (temp == (gint8) EOF) {
+				if (temp == CATTLE_EOF) {
 
 					switch (cattle_configuration_get_on_eof_action (configuration)) {
 

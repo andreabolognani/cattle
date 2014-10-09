@@ -18,20 +18,19 @@
  * Homepage: http://kiyuko.org/software/cattle
  */
 
-#ifndef __CATTLE_H__
-#define __CATTLE_H__
+#if !defined (__CATTLE_H_INSIDE__) && !defined (CATTLE_COMPILATION)
+#error "Only <cattle/cattle.h> can be included directly."
+#endif
 
-#define __CATTLE_H_INSIDE__
+#ifndef __CATTLE_CONSTANTS_H__
+#define __CATTLE_CONSTANTS_H__
 
-#include <cattle/cattle-version.h>
-#include <cattle/cattle-constants.h>
-#include <cattle/cattle-error.h>
-#include <cattle/cattle-instruction.h>
-#include <cattle/cattle-program.h>
-#include <cattle/cattle-tape.h>
-#include <cattle/cattle-configuration.h>
-#include <cattle/cattle-interpreter.h>
+#include <glib.h>
 
-#undef __CATTLE_H_INSIDE__
+G_BEGIN_DECLS
 
-#endif /* __CATTLE_H__ */
+extern const gint8 CATTLE_EOF;
+
+G_END_DECLS
+
+#endif /* __CATTLE_CONSTANTS_H__ */

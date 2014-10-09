@@ -18,20 +18,19 @@
  * Homepage: http://kiyuko.org/software/cattle
  */
 
-#ifndef __CATTLE_H__
-#define __CATTLE_H__
+#include "cattle-version.h"
 
-#define __CATTLE_H_INSIDE__
+/**
+ * SECTION:cattle-constants
+ * @short_description: Constants used in Cattle
+ */
 
-#include <cattle/cattle-version.h>
-#include <cattle/cattle-constants.h>
-#include <cattle/cattle-error.h>
-#include <cattle/cattle-instruction.h>
-#include <cattle/cattle-program.h>
-#include <cattle/cattle-tape.h>
-#include <cattle/cattle-configuration.h>
-#include <cattle/cattle-interpreter.h>
-
-#undef __CATTLE_H_INSIDE__
-
-#endif /* __CATTLE_H__ */
+/**
+ * CATTLE_EOF:
+ *
+ * End-of-file value. Defined as a #gint8 with value -1 on every platform.
+ *
+ * The value of EOF is not guaranteed to be consistent across C libraries,
+ * so this value is used instead.
+ */
+const gint8 CATTLE_EOF = -1;

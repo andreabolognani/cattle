@@ -19,6 +19,7 @@ AM_LDFLAGS = \
 	$(NULL)
 
 cattle_headers = \
+	cattle-constants.h \
 	cattle-error.h \
 	cattle-instruction.h \
 	cattle-program.h \
@@ -40,6 +41,7 @@ lib_LTLIBRARIES = \
 
 cattle_sources = \
 	cattle-version.c \
+	cattle-constants.c \
 	cattle-error.c \
 	cattle-instruction.c \
 	cattle-program.c \
