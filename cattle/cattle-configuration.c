@@ -35,7 +35,7 @@ G_DEFINE_TYPE (CattleConfiguration, cattle_configuration, G_TYPE_OBJECT)
  * CattleOnEOFAction:
  * @CATTLE_ON_EOF_STORE_ZERO: Store a zero in the current cell. This is
  * the default behaviour
- * @CATTLE_ON_EOF_STORE_EOF: Store @CATTLE_EOF in the current cell
+ * @CATTLE_ON_EOF_STORE_EOF: Store %CATTLE_EOF in the current cell
  * @CATTLE_ON_EOF_DO_NOTHING: Do nothing.
  *
  * Possible actions to be performed by a #CattleInterpreter when the end
