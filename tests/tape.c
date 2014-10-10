@@ -141,65 +141,112 @@ test_tape_in_between (void)
 }
 
 /**
- * test_tape_move_right_by:
+ * test_tape_move_right:
  *
- * Move the tape a bunch of cells to the right in a single step,
- * then move left the same amount of cells one at a time.
+ * Ensure moving right a certain number of steps one of the time or with
+ * a single call yields the same result.
  */
 static void
-test_tape_move_right_by (void)
+test_tape_move_right (void)
 {
 	CattleTape *tape;
 	gint i;
-	gint j;
 
 	tape = cattle_tape_new ();
 
-	for (i = 1; i <= 5; i++) {
+	/* Mark the initial position */
+	cattle_tape_set_current_value (tape, G_MININT8);
 
-		cattle_tape_set_current_value (tape, i);
-		cattle_tape_move_right_by (tape, STEPS);
+	/* Move right */
+	for (i = 1; i <= STEPS; i++)
+	{
+		cattle_tape_move_right (tape);
 	}
 
-	for (i = 5; i >= 1; i--) {
-		for (j = 0; j < STEPS; j++) {
+	/* Mark the final position */
+	cattle_tape_set_current_value (tape, G_MAXINT8);
 
-			cattle_tape_move_left (tape);
-		}
-		g_assert (cattle_tape_get_current_value (tape) == i);
+	/* Move left by looking for the initial value */
+	while (cattle_tape_get_current_value (tape) != G_MININT8)
+	{
+		cattle_tape_move_left (tape);
 	}
+	g_assert (cattle_tape_get_current_value (tape) == G_MININT8);
+
+	/* Move right in a single leap */
+	cattle_tape_move_right_by (tape, STEPS);
+	g_assert (cattle_tape_get_current_value (tape) == G_MAXINT8);
 
 	g_object_unref (tape);
 }
 
 /**
- * test_tape_move_left_by:
+ * test_tape_move_left:
  *
- * Move the tape a bunch of cells to the left in a single step,
- * then move right the same amount of cells one at a time.
+ * Ensure moving left a certain number of steps one of the time or with
+ * a single call yields the same result.
  */
 static void
-test_tape_move_left_by (void)
+test_tape_move_left (void)
 {
 	CattleTape *tape;
 	gint i;
-	gint j;
 
 	tape = cattle_tape_new ();
 
-	for (i = 1; i <= 5; i++) {
+	/* Mark the initial position */
+	cattle_tape_set_current_value (tape, G_MININT8);
 
-		cattle_tape_set_current_value (tape, i);
-		cattle_tape_move_left_by (tape, STEPS);
+	/* Move left */
+	for (i = 1; i <= STEPS; i++)
+	{
+		cattle_tape_move_left (tape);
 	}
 
-	for (i = 5; i >= 1; i--) {
-		for (j = 0; j < STEPS; j++) {
+	/* Mark the final position */
+	cattle_tape_set_current_value (tape, G_MAXINT8);
 
-			cattle_tape_move_right (tape);
-		}
-		g_assert (cattle_tape_get_current_value (tape) == i);
+	/* Move right by looking for the initial value */
+	while (cattle_tape_get_current_value (tape) != G_MININT8)
+	{
+		cattle_tape_move_right (tape);
 	}
+	g_assert (cattle_tape_get_current_value (tape) == G_MININT8);
+
+	/* Move left in a single leap */
+	cattle_tape_move_left_by (tape, STEPS);
+	g_assert (cattle_tape_get_current_value (tape) == G_MAXINT8);
+
+	g_object_unref (tape);
+}
+
+/**
+ * test_tape_bookmarks:
+ *
+ * Ensure bookmarks work as intended.
+ */
+static void
+test_tape_bookmarks (void)
+{
+	CattleTape *tape;
+
+	tape = cattle_tape_new ();
+
+	/* Move left a few steps */
+	cattle_tape_move_left_by (tape, 20);
+	g_assert (cattle_tape_get_current_value (tape) == 0);
+
+	/* Set a value and create a bookmark */
+	cattle_tape_set_current_value (tape, 42);
+	cattle_tape_push_bookmark (tape);
+
+	/* Move right by a few steps */
+	cattle_tape_move_right_by (tape, 70);
+	g_assert (cattle_tape_get_current_value (tape) == 0);
+
+	/* Use the bookmark to return to the saved position */
+	cattle_tape_pop_bookmark (tape);
+	g_assert (cattle_tape_get_current_value (tape) == 42);
 
 	g_object_unref (tape);
 }
@@ -207,21 +254,28 @@ test_tape_move_left_by (void)
 /**
  * test_tape_current_value:
  *
- * Set and get the current value several times.
+ * Set and get the current value several times, covering the whole
+ * possible range.
  */
 static void
 test_tape_current_value (void)
 {
 	CattleTape *tape;
-	gint i;
+	gint8 i;
 
 	tape = cattle_tape_new ();
 
-	for (i = 1; i < 128; i++) {
-
+	i = G_MININT8;
+	while (TRUE)
+	{
 		cattle_tape_set_current_value (tape, i);
-
 		g_assert (cattle_tape_get_current_value (tape) == i);
+
+		/* Stop when the end of the range has been reached
+		 * to prevent value wrapping */
+		if (i >= G_MAXINT8) break;
+
+		i++;
 	}
 
 	g_object_unref (tape);
@@ -231,7 +285,7 @@ test_tape_current_value (void)
  * test_tape_increase_current_value:
  *
  * Increase the current value several times and then decrease it by
- * the number of increase steps taken before. Avoid wrapping.
+ * the number of increase steps taken before.
  */
 static void
 test_tape_increase_current_value (void)
@@ -259,7 +313,7 @@ test_tape_increase_current_value (void)
  * test_tape_decrease_current_value:
  *
  * Decrease the current value several times and then increase it by
- * the number of decrease steps taken before. Avoid wrapping.
+ * the number of decrease steps taken before.
  */
 static void
 test_tape_decrease_current_value (void)
@@ -345,40 +399,6 @@ test_tape_negative_wrap (void)
 	g_object_unref (tape);
 }
 
-/**
- * test_tape_eof_wrap:
- *
- * Check wrapping works as expected when an EOF is involved.
- */
-static void
-test_tape_eof_wrap (void)
-{
-	CattleTape *tape;
-
-	tape = cattle_tape_new ();
-
-	cattle_tape_set_current_value (tape, EOF);
-	g_assert (cattle_tape_get_current_value (tape) == EOF);
-
-	cattle_tape_set_current_value (tape, EOF);
-	cattle_tape_increase_current_value (tape);
-	g_assert (cattle_tape_get_current_value (tape) == 0);
-
-	cattle_tape_set_current_value (tape, EOF);
-	cattle_tape_increase_current_value_by (tape, 5 + (5 * 128));
-	g_assert (cattle_tape_get_current_value (tape) == 4);
-
-	cattle_tape_set_current_value (tape, EOF);
-	cattle_tape_decrease_current_value (tape);
-	g_assert (cattle_tape_get_current_value (tape) == 127);
-
-	cattle_tape_set_current_value (tape, EOF);
-	cattle_tape_decrease_current_value_by (tape, 5 + (5 * 128));
-	g_assert (cattle_tape_get_current_value (tape) == 123);
-
-	g_object_unref (tape);
-}
-
 gint
 main (gint argc, gchar **argv)
 {
@@ -396,10 +416,12 @@ main (gint argc, gchar **argv)
 	                 test_tape_left_edge);
 	g_test_add_func ("/tape/in-between",
 	                 test_tape_in_between);
-	g_test_add_func ("/tape/move-right-by",
-	                 test_tape_move_right_by);
-	g_test_add_func ("/tape/move-left-by",
-	                 test_tape_move_left_by);
+	g_test_add_func ("/tape/move-right",
+	                 test_tape_move_right);
+	g_test_add_func ("/tape/move-left",
+	                 test_tape_move_left);
+	g_test_add_func ("/tape/bookmarks",
+	                 test_tape_bookmarks);
 	g_test_add_func ("/tape/current-value",
 	                 test_tape_current_value);
 	g_test_add_func ("/tape/increase-current-value",
@@ -410,8 +432,6 @@ main (gint argc, gchar **argv)
 	                 test_tape_positive_wrap);
 	g_test_add_func ("/tape/negative-wrap",
 	                 test_tape_negative_wrap);
-	g_test_add_func ("/tape/eof-wrap",
-	                 test_tape_eof_wrap);
 
 	return g_test_run ();
 }
