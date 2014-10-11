@@ -261,21 +261,14 @@ static void
 test_tape_current_value (void)
 {
 	CattleTape *tape;
-	gint8 i;
+	gint i;
 
 	tape = cattle_tape_new ();
 
-	i = G_MININT8;
-	while (TRUE)
+	for (i = G_MININT8; i <= G_MAXINT8; i++)
 	{
 		cattle_tape_set_current_value (tape, i);
 		g_assert (cattle_tape_get_current_value (tape) == i);
-
-		/* Stop when the end of the range has been reached
-		 * to prevent value wrapping */
-		if (i >= G_MAXINT8) break;
-
-		i++;
 	}
 
 	g_object_unref (tape);
@@ -284,8 +277,8 @@ test_tape_current_value (void)
 /**
  * test_tape_increase_current_value:
  *
- * Increase the current value several times and then decrease it by
- * the number of increase steps taken before.
+ * Ensure increasing the current value by one each time or in a
+ * single step yields the same result.
  */
 static void
 test_tape_increase_current_value (void)
@@ -295,16 +288,24 @@ test_tape_increase_current_value (void)
 
 	tape = cattle_tape_new ();
 
-	for (i = 0; i < 127; i++) {
+	/* Set the initial value */
+	cattle_tape_set_current_value (tape, 12);
+	g_assert (cattle_tape_get_current_value (tape) == 12);
 
-		g_assert (cattle_tape_get_current_value (tape) == i);
+	/* Increase the value by one each iteration */
+	for (i = 0; i < 30; i++)
+	{
 		cattle_tape_increase_current_value (tape);
 	}
+	g_assert (cattle_tape_get_current_value (tape) == 42);
 
-	g_assert (cattle_tape_get_current_value (tape) == 127);
+	/* Set the initial value again */
+	cattle_tape_set_current_value (tape, 12);
+	g_assert (cattle_tape_get_current_value (tape) == 12);
 
-	cattle_tape_decrease_current_value_by (tape, 127);
-	g_assert (cattle_tape_get_current_value (tape) == 0);
+	/* Increase the value by the number of iterations */
+	cattle_tape_increase_current_value_by (tape, 30);
+	g_assert (cattle_tape_get_current_value (tape) == 42);
 
 	g_object_unref (tape);
 }
@@ -312,8 +313,8 @@ test_tape_increase_current_value (void)
 /**
  * test_tape_decrease_current_value:
  *
- * Decrease the current value several times and then increase it by
- * the number of decrease steps taken before.
+ * Ensure decreasing the current value by one each time or in a
+ * single step yields the same result.
  */
 static void
 test_tape_decrease_current_value (void)
@@ -323,18 +324,24 @@ test_tape_decrease_current_value (void)
 
 	tape = cattle_tape_new ();
 
-	cattle_tape_set_current_value (tape, 127);
+	/* Set the initial value */
+	cattle_tape_set_current_value (tape, 42);
+	g_assert (cattle_tape_get_current_value (tape) == 42);
 
-	for (i = 127; i > 0; i--) {
-
-		g_assert (cattle_tape_get_current_value (tape) == i);
+	/* Decrease the value by one each iteration */
+	for (i = 0; i < 30; i++)
+	{
 		cattle_tape_decrease_current_value (tape);
 	}
+	g_assert (cattle_tape_get_current_value (tape) == 12);
 
-	g_assert (cattle_tape_get_current_value (tape) == 0);
+	/* Set the initial value again */
+	cattle_tape_set_current_value (tape, 42);
+	g_assert (cattle_tape_get_current_value (tape) == 42);
 
-	cattle_tape_increase_current_value_by (tape, 127);
-	g_assert (cattle_tape_get_current_value (tape) == 127);
+	/* Decrease the value by the number of iterations */
+	cattle_tape_decrease_current_value_by (tape, 30);
+	g_assert (cattle_tape_get_current_value (tape) == 12);
 
 	g_object_unref (tape);
 }
@@ -348,22 +355,23 @@ static void
 test_tape_positive_wrap (void)
 {
 	CattleTape *tape;
+	gint range = G_MAXINT8 - G_MININT8 + 1;
 	gint i;
 
 	tape = cattle_tape_new ();
 
+	/* Set the initial value */
 	cattle_tape_set_current_value (tape, 42);
 	g_assert (cattle_tape_get_current_value (tape) == 42);
 
-	for (i = 0; i < 128; i++) {
+	/* Increase the value by three times the whole allowed range */
+	cattle_tape_increase_current_value_by (tape, 3 * range);
+	g_assert (cattle_tape_get_current_value (tape) == 42);
 
-		g_assert (cattle_tape_get_current_value (tape) >= 0);
-		g_assert (cattle_tape_get_current_value (tape) <= 127);
-		g_assert (cattle_tape_get_current_value (tape) == mod ((42 + i), 128));
-
-		cattle_tape_increase_current_value (tape);
-	}
-
+	/* Increase the value by the whole range in two steps */
+	cattle_tape_increase_current_value_by (tape, 100);
+	g_assert (cattle_tape_get_current_value (tape) < 0);
+	cattle_tape_increase_current_value_by (tape, range - 100);
 	g_assert (cattle_tape_get_current_value (tape) == 42);
 
 	g_object_unref (tape);
@@ -378,22 +386,23 @@ static void
 test_tape_negative_wrap (void)
 {
 	CattleTape *tape;
+	gint range = G_MAXINT8 - G_MININT8 + 1;
 	gint i;
 
 	tape = cattle_tape_new ();
 
+	/* Set the initial value */
 	cattle_tape_set_current_value (tape, 42);
 	g_assert (cattle_tape_get_current_value (tape) == 42);
 
-	for (i = 0; i < 128; i++) {
+	/* Decrease the value by three times the whole allowed range */
+	cattle_tape_decrease_current_value_by (tape, 3 * range);
+	g_assert (cattle_tape_get_current_value (tape) == 42);
 
-		g_assert (cattle_tape_get_current_value (tape) >= 0);
-		g_assert (cattle_tape_get_current_value (tape) <= 127);
-		g_assert (cattle_tape_get_current_value (tape) == mod ((42 - i), 128));
-
-		cattle_tape_decrease_current_value (tape);
-	}
-
+	/* Decrease the value by the whole range in two steps */
+	cattle_tape_decrease_current_value_by (tape, 100);
+	g_assert (cattle_tape_get_current_value (tape) < 0);
+	cattle_tape_decrease_current_value_by (tape, range - 100);
 	g_assert (cattle_tape_get_current_value (tape) == 42);
 
 	g_object_unref (tape);
