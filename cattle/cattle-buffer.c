@@ -237,7 +237,7 @@ cattle_buffer_class_init (CattleBufferClass *self)
 	                            0,
 	                            G_MAXULONG,
 	                            0,
-	                            G_PARAM_READABLE|G_PARAM_CONSTRUCT_ONLY);
+	                            G_PARAM_READWRITE|G_PARAM_CONSTRUCT_ONLY);
 	g_object_class_install_property (object_class,
 	                                 PROP_SIZE,
 	                                 pspec);
