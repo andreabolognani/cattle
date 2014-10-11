@@ -59,11 +59,11 @@ struct _CattleTapePrivate
 	GList    *current;     /* Current chunk */
 	GList    *head;        /* First chunk */
 
-	gint      offset;      /* Offset of the current cell */
-	gint      lower_limit; /* Offset of the first valid byte
-                            * inside the first chunk */
-	gint      upper_limit; /* Offset of the last valid byte inside
-                            * the last chunk */
+	gulong    offset;      /* Offset of the current cell */
+	gulong    lower_limit; /* Offset of the first valid byte
+	                        * inside the first chunk */
+	gulong    upper_limit; /* Offset of the last valid byte inside
+	                        * the last chunk */
 
 	GSList   *bookmarks;   /* Bookmarks stack */
 };
@@ -79,7 +79,7 @@ typedef struct _CattleTapeBookmark CattleTapeBookmark;
 struct _CattleTapeBookmark
 {
 	GList   *chunk;
-	gint     offset;
+	gulong   offset;
 };
 
 /* Size of the tape chunk */
@@ -225,7 +225,7 @@ cattle_tape_increase_current_value (CattleTape *self)
  */
 void
 cattle_tape_increase_current_value_by (CattleTape *self,
-                                       gint        value)
+                                       gulong      value)
 {
 	gint8 *chunk;
 	gint8 current;
@@ -266,9 +266,21 @@ cattle_tape_decrease_current_value (CattleTape *self)
  */
 void
 cattle_tape_decrease_current_value_by (CattleTape *self,
-                                       gint        value)
+                                       gulong      value)
 {
-	cattle_tape_increase_current_value_by (self, -value);
+	gint8 *chunk;
+	gint8 current;
+
+	g_return_if_fail (CATTLE_IS_TAPE (self));
+	g_return_if_fail (!self->priv->disposed);
+
+	/* Return right away in case no increment is needed */
+	if (value == 0) {
+		return;
+	}
+
+	chunk = (gint8 *) self->priv->current->data;
+	chunk[self->priv->offset] -= value;
 }
 
 /**
@@ -298,7 +310,7 @@ cattle_tape_move_left (CattleTape *self)
  */
 void
 cattle_tape_move_left_by (CattleTape *self,
-                          gint        steps)
+                          gulong      steps)
 {
 	gint8 *chunk;
 
@@ -361,7 +373,7 @@ cattle_tape_move_right (CattleTape *self)
  */
 void
 cattle_tape_move_right_by (CattleTape *self,
-                           gint        steps)
+                           gulong      steps)
 {
 	gint8 *chunk;
 

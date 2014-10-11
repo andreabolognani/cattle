@@ -58,16 +58,16 @@ void        cattle_tape_set_current_value         (CattleTape *tape,
 gint8       cattle_tape_get_current_value         (CattleTape *tape);
 void        cattle_tape_increase_current_value    (CattleTape *tape);
 void        cattle_tape_increase_current_value_by (CattleTape *tape,
-                                                   gint        value);
+                                                   gulong      value);
 void        cattle_tape_decrease_current_value    (CattleTape *tape);
 void        cattle_tape_decrease_current_value_by (CattleTape *tape,
-                                                   gint        value);
+                                                   gulong      value);
 void        cattle_tape_move_left                 (CattleTape *tape);
 void        cattle_tape_move_left_by              (CattleTape *tape,
-                                                   gint        steps);
+                                                   gulong      steps);
 void        cattle_tape_move_right                (CattleTape *tape);
 void        cattle_tape_move_right_by             (CattleTape *tape,
-                                                   gint        steps);
+                                                   gulong      steps);
 gboolean    cattle_tape_is_at_beginning           (CattleTape *tape);
 gboolean    cattle_tape_is_at_end                 (CattleTape *tape);
 void        cattle_tape_push_bookmark             (CattleTape *tape);
