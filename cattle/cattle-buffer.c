@@ -68,20 +68,17 @@ cattle_buffer_constructor (GType                  gtype,
 
 	for (i = 0; i < n_properties; i++)
 	{
-		pspec = properties[i]->pspec;
-		value = properties[i]->value;
+		pspec = properties[i].pspec;
+		value = properties[i].value;
 
-		switch (g_param_spec_get_name (pspec))
+		if (g_param_spec_get_name (pspec) == g_intern_string ("size"))
 		{
-			case g_intern_string ("size"):
-				self->priv->size = g_value_get_ulong (value);
-				break;
-
-			default:
-				G_OBJECT_WARN_INVALID_PROPERTY_ID (object,
-				                                   PROP_0,
-				                                   pspec);
-				break;
+			self->priv->size = g_value_get_ulong (value);
+		}
+		else {
+			G_OBJECT_WARN_INVALID_PROPERTY_ID (object,
+			                                   PROP_0,
+			                                   pspec);
 		}
 	}
 
@@ -99,7 +96,7 @@ cattle_buffer_init (CattleBuffer *self)
 static void
 cattle_buffer_dispose (GObject *object)
 {
-	CattleBuffer *self = CATTLE_TAPE (object);
+	CattleBuffer *self = CATTLE_BUFFER (object);
 
 	g_return_if_fail (!self->priv->disposed);
 
