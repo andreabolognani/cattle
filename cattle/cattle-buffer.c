@@ -60,7 +60,7 @@ cattle_buffer_init (CattleBuffer *self)
 	priv = CATTLE_BUFFER_GET_PRIVATE (self);
 
 	priv->data = NULL;
-	priv->size = 0;
+	priv->size = 1;
 
 	priv->disposed = FALSE;
 
@@ -106,6 +106,9 @@ cattle_buffer_finalize (GObject *object)
  * @size: size of the buffer
  *
  * Create and initialize a new memory buffer.
+ *
+ * The size should be greater than zero; use %NULL to represent an
+ * empty memory buffer.
  *
  * Returns: (transfer full): a new #CattleBuffer
  */
@@ -249,9 +252,9 @@ cattle_buffer_class_init (CattleBufferClass *self)
 	pspec = g_param_spec_ulong ("size",
 	                            "Size of the memory buffer",
 	                            "Get size of the memory buffer",
-	                            0,
+	                            1,
 	                            G_MAXULONG,
-	                            0,
+	                            1,
 	                            G_PARAM_READWRITE|G_PARAM_CONSTRUCT_ONLY);
 	g_object_class_install_property (object_class,
 	                                 PROP_SIZE,
