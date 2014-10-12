@@ -68,6 +68,23 @@ cattle_buffer_init (CattleBuffer *self)
 }
 
 static void
+cattle_buffer_constructed (GObject *object)
+{
+	CattleBuffer        *self;
+	CattleBufferPrivate *priv;
+
+	self = CATTLE_BUFFER (object);
+	priv = self->priv;
+
+	G_OBJECT_CLASS (cattle_buffer_parent_class)->constructed (object);
+
+	if (priv->size > 0)
+	{
+		priv->data = (gint8 *) g_slice_alloc0 (priv->size);
+	}
+}
+
+static void
 cattle_buffer_dispose (GObject *object)
 {
 	CattleBuffer        *self;
@@ -242,6 +259,7 @@ cattle_buffer_class_init (CattleBufferClass *self)
 
 	object_class->set_property = cattle_buffer_set_property;
 	object_class->get_property = cattle_buffer_get_property;
+	object_class->constructed = cattle_buffer_constructed;
 	object_class->dispose = cattle_buffer_dispose;
 	object_class->finalize = cattle_buffer_finalize;
 
