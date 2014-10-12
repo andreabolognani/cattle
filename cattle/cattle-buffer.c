@@ -140,6 +140,7 @@ cattle_buffer_set_data (CattleBuffer *self,
 
 	g_return_if_fail (CATTLE_IS_BUFFER (self));
 	g_return_if_fail (!self->priv->disposed);
+	g_return_if_fail (data != NULL);
 
 	priv = self->priv;
 
