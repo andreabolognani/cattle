@@ -26,9 +26,7 @@
 /**
  * test_buffer_create:
  *
- * Check the initial position is reported correctly: a newly-created tape
- * is made of a single cell, so the current position is both at the
- * beginning and at the end.
+ * Ensure the size of a newly-created buffer is reported correctly.
  */
 static void
 test_buffer_create (void)
@@ -36,8 +34,12 @@ test_buffer_create (void)
 	CattleBuffer *buffer;
 
 	buffer = cattle_buffer_new (42);
-
 	g_assert (cattle_buffer_get_size (buffer) == 42);
+
+	g_object_unref (buffer);
+
+	buffer = cattle_buffer_new (-10);
+	g_assert (cattle_buffer_get_size (buffer) == -10);
 
 	g_object_unref (buffer);
 }

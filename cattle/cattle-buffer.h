@@ -53,9 +53,9 @@ struct _CattleBufferClass
 };
 
 CattleBuffer* cattle_buffer_new                  (gulong        size);
-/*
 void          cattle_buffer_set_data             (CattleBuffer *buffer,
                                                   gint8        *data);
+/*
 void          cattle_buffer_set_data_at_position (CattleBuffer *buffer,
                                                   gulong        position,
                                                   gint8         data);
