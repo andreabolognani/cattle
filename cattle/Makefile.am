@@ -86,6 +86,7 @@ INTROSPECTION_SCANNER_ARGS = \
 	-I $(top_srcdir) \
 	-I $(top_builddir) \
 	-D CATTLE_COMPILATION \
+	--warn-all \
 	$(NULL)
 INTROSPECTION_COMPILER_ARGS = \
 	--includedir=$(srcdir) \
