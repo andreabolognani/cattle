@@ -52,19 +52,17 @@ struct _CattleBufferClass
 	GObjectClass parent;
 };
 
-CattleBuffer* cattle_buffer_new                  (gulong        size);
-void          cattle_buffer_set_data             (CattleBuffer *buffer,
-                                                  gint8        *data);
-/*
-void          cattle_buffer_set_data_at_position (CattleBuffer *buffer,
-                                                  gulong        position,
-                                                  gint8         data);
-gint8         cattle_buffer_get_data_at_position (CattleBuffer *buffes,
-                                                  gulong        position);
-*/
-gulong        cattle_buffer_get_size             (CattleBuffer *buffer);
+CattleBuffer* cattle_buffer_new          (gulong        size);
+void          cattle_buffer_set_contents (CattleBuffer *buffer,
+                                          gint8        *contents);
+void          cattle_buffer_set_value    (CattleBuffer *buffer,
+                                          gulong        position,
+                                          gint8         value);
+gint8         cattle_buffer_get_value    (CattleBuffer *buffer,
+                                          gulong        position);
+gulong        cattle_buffer_get_size     (CattleBuffer *buffer);
 
-GType         cattle_buffer_get_type             (void) G_GNUC_CONST;
+GType         cattle_buffer_get_type     (void) G_GNUC_CONST;
 
 G_END_DECLS
 

@@ -37,9 +37,24 @@ test_buffer_create (void)
 	g_assert (cattle_buffer_get_size (buffer) == 42);
 
 	g_object_unref (buffer);
+}
 
-	buffer = cattle_buffer_new (-10);
-	g_assert (cattle_buffer_get_size (buffer) == -10);
+/**
+ * test_buffer_get_value:
+ *
+ * Ensure cattle_buffer_get_value() works as expected.
+ */
+void
+test_buffer_get_value (void)
+{
+	CattleBuffer *buffer;
+
+	buffer = cattle_buffer_new (3);
+	g_assert (cattle_buffer_get_size (buffer) == 3);
+
+	g_assert (cattle_buffer_get_value (buffer, 0) == 0);
+	g_assert (cattle_buffer_get_value (buffer, 1) == 0);
+	g_assert (cattle_buffer_get_value (buffer, 2) == 0);
 
 	g_object_unref (buffer);
 }
@@ -55,6 +70,8 @@ main (gint argc, gchar **argv)
 
 	g_test_add_func ("/buffer/create",
 	                 test_buffer_create);
+	g_test_add_func ("/buffer/get-value",
+	                 test_buffer_get_value);
 
 	return g_test_run ();
 }

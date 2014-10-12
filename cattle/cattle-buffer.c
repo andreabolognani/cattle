@@ -139,25 +139,26 @@ cattle_buffer_new (gulong size)
 }
 
 /**
- * cattle_buffer_set_data:
+ * cattle_buffer_set_contents:
  * @buffer: a #CattleBuffer
- * @data: data to copy inside the memory buffer
+ * @contents: data to copy inside the memory buffer
  *
  * Set the contents of a memory buffer.
  *
- * The size of @data must be the same as the size of @buffer, as returned
- * by cattle_buffer_get_size(): if it's bigger, the input will be truncated;
- * if it's smaller, the memory buffer will end up containing garbage.
+ * The size of @contents must be the same as the size of @buffer, as
+ * returned by cattle_buffer_get_size(): if it's bigger, the input will
+ * be truncated; if it's smaller, the memory buffer will end up
+ * containing garbage.
  */
 void
-cattle_buffer_set_data (CattleBuffer *self,
-                        gint8        *data)
+cattle_buffer_set_contents (CattleBuffer *self,
+                            gint8        *contents)
 {
 	CattleBufferPrivate *priv;
 
 	g_return_if_fail (CATTLE_IS_BUFFER (self));
 	g_return_if_fail (!self->priv->disposed);
-	g_return_if_fail (data != NULL);
+	g_return_if_fail (contents != NULL);
 
 	priv = self->priv;
 
@@ -167,7 +168,63 @@ cattle_buffer_set_data (CattleBuffer *self,
 		g_slice_free1 (priv->size, priv->data);
 	}
 
-	priv->data = (gint8 *) g_slice_copy (priv->size, data);
+	priv->data = (gint8 *) g_slice_copy (priv->size, contents);
+}
+
+/**
+ * cattle_buffer_set_value:
+ * @buffer: a #CattleBuffer
+ * @position: offset inside the memory buffer
+ * @value: new value
+ *
+ * Set the value of a specific byte inside the memory buffer.
+ *
+ * The value of @position must be smaller than the size of the
+ * memory buffer, as returned by cattle_buffer_get_size().
+ */
+void
+cattle_buffer_set_value (CattleBuffer *self,
+                         gulong        position,
+                         gint8         value)
+{
+	CattleBufferPrivate *priv;
+
+	g_return_if_fail (CATTLE_IS_BUFFER (self));
+	g_return_if_fail (!self->priv->disposed);
+
+	priv = self->priv;
+
+	g_return_if_fail (position < priv->size);
+
+	priv->data[position] = value;
+}
+
+/**
+ * cattle_buffer_get_value:
+ * @buffer: a #CattleBuffer
+ * @position: offset inside the memory buffer
+ *
+ * Get the value of a specific byte inside the memory buffer.
+ *
+ * The value of @position must be smaller than the size of the
+ * memory buffer, as returned by cattle_buffer_get_size().
+ *
+ * Returns: the value of the selected byte.
+ */
+gint8
+cattle_buffer_get_value (CattleBuffer *self,
+                         gulong        position)
+{
+	CattleBufferPrivate *priv;
+
+	g_return_if_fail (CATTLE_IS_BUFFER (self));
+	g_return_if_fail (!self->priv->disposed);
+
+	priv = self->priv;
+
+	g_return_if_fail (position < priv->size);
+
+	return priv->data[position];
 }
 
 /**

@@ -113,7 +113,9 @@ CattleInterpreterPrivate
 <TITLE>CattleBuffer</TITLE>
 CattleBuffer
 cattle_buffer_new
-cattle_buffer_set_data
+cattle_buffer_set_contents
+cattle_buffer_set_value
+cattle_buffer_get_value
 cattle_buffer_get_size
 <SUBSECTION Standard>
 CATTLE_BUFFER
