@@ -521,10 +521,9 @@ test_interpreter_unicode_input (void)
 
 	error = NULL;
 	success = cattle_interpreter_run (interpreter, &error);
-	g_assert (!success);
-	g_assert (g_error_matches (error, CATTLE_ERROR, CATTLE_ERROR_INPUT_OUT_OF_RANGE));
 
-	g_error_free (error);
+	g_assert (success);
+	g_assert (error == NULL);
 
 	g_object_unref (interpreter);
 }
