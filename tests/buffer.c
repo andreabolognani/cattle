@@ -60,12 +60,12 @@ test_buffer_get_value (void)
 }
 
 /**
- * test_buffer_set_contents:
+ * test_buffer_set_contents_array:
  *
- * Ensure setting contents works.
+ * Ensure setting contents using an array of gint8 values works.
  */
 void
-test_buffer_set_contents (void)
+test_buffer_set_contents_array (void)
 {
 	CattleBuffer *buffer;
 	gint8 values[5];
@@ -75,8 +75,8 @@ test_buffer_set_contents (void)
 	g_assert (cattle_buffer_get_size (buffer) == 3);
 
 	values[0] = G_MININT8;
-	values[2] = 10;
 	values[1] = 0;
+	values[2] = 10;
 	values[3] = -5;
 	values[4] = G_MAXINT8;
 
@@ -86,6 +86,28 @@ test_buffer_set_contents (void)
 	{
 		g_assert (cattle_buffer_get_value (buffer, i) == values[i]);
 	}
+
+	g_object_unref (buffer);
+}
+
+/**
+ * test_buffer_set_contents_string:
+ *
+ * Ensure setting contents using a string works.
+ */
+void
+test_buffer_set_contents_string (void)
+{
+	CattleBuffer *buffer;
+
+	buffer = cattle_buffer_new (3);
+	g_assert (cattle_buffer_get_size (buffer) == 3);
+
+	cattle_buffer_set_contents (buffer, "abcd");
+
+	g_assert (cattle_buffer_get_value (buffer, 0) == 'a');
+	g_assert (cattle_buffer_get_value (buffer, 1) == 'b');
+	g_assert (cattle_buffer_get_value (buffer, 2) == 'c');
 
 	g_object_unref (buffer);
 }
@@ -133,8 +155,10 @@ main (gint argc, gchar **argv)
 	                 test_buffer_create);
 	g_test_add_func ("/buffer/get-value",
 	                 test_buffer_get_value);
-	g_test_add_func ("/buffer/set-contents",
-	                 test_buffer_set_contents);
+	g_test_add_func ("/buffer/set-contents-array",
+	                 test_buffer_set_contents_array);
+	g_test_add_func ("/buffer/set-contents-string",
+	                 test_buffer_set_contents_string);
 	g_test_add_func ("/buffer/set-value",
 	                 test_buffer_set_value);
 
