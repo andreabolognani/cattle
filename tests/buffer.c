@@ -59,6 +59,67 @@ test_buffer_get_value (void)
 	g_object_unref (buffer);
 }
 
+/**
+ * test_buffer_set_contents:
+ *
+ * Ensure setting contents works.
+ */
+void
+test_buffer_set_contents (void)
+{
+	CattleBuffer *buffer;
+	gint8 values[5];
+	gint i;
+
+	buffer = cattle_buffer_new (3);
+	g_assert (cattle_buffer_get_size (buffer) == 3);
+
+	values[0] = G_MININT8;
+	values[2] = 10;
+	values[1] = 0;
+	values[3] = -5;
+	values[4] = G_MAXINT8;
+
+	cattle_buffer_set_contents (buffer, values);
+
+	for (i = 0; i < 3; i++)
+	{
+		g_assert (cattle_buffer_get_value (buffer, i) == values[i]);
+	}
+
+	g_object_unref (buffer);
+}
+
+/**
+ * test_buffer_set_value:
+ *
+ * Ensure that changing the value of a single byte inside the memory
+ * buffer works.
+ */
+void
+test_buffer_set_value (void)
+{
+	CattleBuffer *buffer;
+	gint8 values[3];
+	gint i;
+
+	buffer = cattle_buffer_new (3);
+	g_assert (cattle_buffer_get_size (buffer) == 3);
+
+	values[0] = 0;
+	values[1] = G_MAXINT8;
+	values[2] = 0;
+
+	cattle_buffer_set_value (buffer, 1, G_MAXINT8);
+
+	for (i = 0; i < 3; i++)
+	{
+		g_assert (cattle_buffer_get_value (buffer, i) == values[i]);
+	}
+
+	g_object_unref (buffer);
+}
+
 gint
 main (gint argc, gchar **argv)
 {
@@ -72,6 +133,10 @@ main (gint argc, gchar **argv)
 	                 test_buffer_create);
 	g_test_add_func ("/buffer/get-value",
 	                 test_buffer_get_value);
+	g_test_add_func ("/buffer/set-contents",
+	                 test_buffer_set_contents);
+	g_test_add_func ("/buffer/set-value",
+	                 test_buffer_set_value);
 
 	return g_test_run ();
 }
