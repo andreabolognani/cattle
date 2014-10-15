@@ -32,11 +32,11 @@ minimize (CattleProgram *program)
 	CattleInstruction *first;
 	CattleInstruction *current;
 	CattleInstruction *next;
-	GSList *stack;
-	gchar value;
-	gint quantity;
-	gint position;
-	gint i;
+	GSList            *stack;
+	gchar              value;
+	gulong             quantity;
+	gulong             position;
+	gulong             i;
 
 	stack = NULL;
 	position = 0;
@@ -46,8 +46,8 @@ minimize (CattleProgram *program)
 
 	current = first;
 
-	while (current != NULL) {
-
+	while (current != NULL)
+	{
 		value = cattle_instruction_get_value (current);
 		quantity = cattle_instruction_get_quantity (current);
 
@@ -55,7 +55,8 @@ minimize (CattleProgram *program)
 
 			/* When position is equal to WIDTH, print a newline
 			 * and reset it */
-			if (position >= WIDTH) {
+			if (position >= WIDTH)
+			{
 				g_print ("\n");
 				position = 0;
 			}
@@ -65,8 +66,8 @@ minimize (CattleProgram *program)
 			position++;
 		}
 
-		if (value == CATTLE_INSTRUCTION_LOOP_BEGIN) {
-
+		if (value == CATTLE_INSTRUCTION_LOOP_BEGIN)
+		{
 			/* Get the first instruction after the loop and push it
 			 * on top of the stack */
 			next = cattle_instruction_get_next (current);
@@ -77,8 +78,8 @@ minimize (CattleProgram *program)
 			g_object_unref (current);
 			current = next;
 		}
-		else if (value == CATTLE_INSTRUCTION_LOOP_END) {
-
+		else if (value == CATTLE_INSTRUCTION_LOOP_END)
+		{
 			g_assert (stack != NULL);
 
 			/* Pop the next instruction off the stack */
@@ -87,8 +88,8 @@ minimize (CattleProgram *program)
 			g_object_unref (current);
 			current = next;
 		}
-		else {
-
+		else
+		{
 			/* Go straight to the next instruction */
 			next = cattle_instruction_get_next (current);
 			g_object_unref (current);
@@ -97,7 +98,8 @@ minimize (CattleProgram *program)
 	}
 
 	/* Print an ending newline only if one hasn't just been printed */
-	if (position > 0) {
+	if (position > 0)
+	{
 		g_print ("\n");
 	}
 
@@ -105,11 +107,12 @@ minimize (CattleProgram *program)
 }
 
 gint
-main (gint argc, char **argv)
+main (gint    argc,
+      gchar **argv)
 {
 	CattleProgram *program;
-	GError *error;
-	gchar *contents;
+	CattleBuffer  *buffer;
+	GError        *error;
 
 #if !GLIB_CHECK_VERSION(2, 36, 0)
 	g_type_init ();
@@ -117,17 +120,19 @@ main (gint argc, char **argv)
 
 	g_set_prgname ("minimize");
 
-	if (argc != 2) {
+	if (argc != 2)
+	{
 		g_warning ("Usage: %s FILENAME", argv[0]);
+
 		return 1;
 	}
 
 	/* Read file contents */
 	error = NULL;
-	contents = read_file_contents (argv[1], &error);
+	buffer = read_file_contents (argv[1], &error);
 
-	if (contents == NULL) {
-
+	if (buffer == NULL)
+	{
 		g_warning ("%s: %s", argv[1], error->message);
 
 		g_error_free (error);
@@ -139,13 +144,13 @@ main (gint argc, char **argv)
 	program = cattle_program_new ();
 
 	error = NULL;
-	if (!cattle_program_load (program, contents, &error)) {
-
+	if (!cattle_program_load (program, buffer, &error))
+	{
 		g_warning ("Load error: %s", error->message);
 
 		g_error_free (error);
+		g_object_unref (buffer);
 		g_object_unref (program);
-		g_free (contents);
 
 		return 1;
 	}
@@ -153,7 +158,7 @@ main (gint argc, char **argv)
 	/* Run minimization */
 	minimize (program);
 
-	g_free (contents);
+	g_object_unref (buffer);
 	g_object_unref (program);
 
 	return 0;

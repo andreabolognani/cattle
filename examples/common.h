@@ -23,11 +23,12 @@
 #define __COMMON_H__
 
 #include <glib.h>
+#include <cattle/cattle.h>
 
 G_BEGIN_DECLS
 
-gchar* read_file_contents (const gchar  *path,
-                           GError      **error);
+CattleBuffer* read_file_contents (const gchar  *path,
+                                  GError      **error);
 
 G_END_DECLS
 

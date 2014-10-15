@@ -25,12 +25,13 @@
 #include "common.h"
 
 gint
-main (gint argc, gchar **argv)
+main (gint    argc,
+      gchar **argv)
 {
 	CattleInterpreter *interpreter;
-	CattleProgram *program;
-	GError *error;
-	gchar *contents;
+	CattleProgram     *program;
+	CattleBuffer      *buffer;
+	GError            *error;
 
 #if !GLIB_CHECK_VERSION(2, 36, 0)
 	g_type_init ();
@@ -38,16 +39,18 @@ main (gint argc, gchar **argv)
 
 	g_set_prgname ("run");
 
-	if (argc != 2) {
+	if (argc != 2)
+	{
 		g_warning ("Usage: %s FILENAME", argv[0]);
+
 		return 1;
 	}
 
 	error = NULL;
-	contents = read_file_contents (argv[1], &error);
+	buffer = read_file_contents (argv[1], &error);
 
-	if (error != NULL) {
-
+	if (error != NULL)
+	{
 		g_warning ("%s: %s", argv[1], error->message);
 
 		g_error_free (error);
@@ -62,33 +65,35 @@ main (gint argc, gchar **argv)
 
 	/* Load the program, aborting on failure */
 	error = NULL;
-	if (!cattle_program_load (program, contents, &error)) {
-
+	if (!cattle_program_load (program, buffer, &error))
+	{
 		g_warning ("Load error: %s", error->message);
 
 		g_error_free (error);
+		g_object_unref (buffer);
 		g_object_unref (program);
 		g_object_unref (interpreter);
-		g_free (contents);
 
 		return 1;
 	}
-	g_object_unref (program);
 
 	/* Start the execution */
 	error = NULL;
-	if (!cattle_interpreter_run (interpreter, &error)) {
-
+	if (!cattle_interpreter_run (interpreter, &error))
+	{
 		g_warning ("Runtime error: %s", error->message);
 
 		g_error_free (error);
+		g_object_unref (buffer);
+		g_object_unref (program);
 		g_object_unref (interpreter);
-		g_free (contents);
 
 		return 1;
 	}
+
+	g_object_unref (buffer);
+	g_object_unref (program);
 	g_object_unref (interpreter);
-	g_free (contents);
 
 	return 0;
 }

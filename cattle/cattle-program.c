@@ -61,7 +61,7 @@ struct _CattleProgramPrivate
 	gboolean           disposed;
 
 	CattleInstruction *instructions;
-	gchar             *input;
+	CattleBuffer      *input;
 };
 
 /* Properties */
@@ -73,35 +73,49 @@ enum
 };
 
 /* Internal functions */
-static CattleInstruction* load (gchar **program);
+static gulong load (CattleBuffer       *buffer,
+                    gulong              offset,
+                    CattleInstruction **instructions,
+                    CattleBuffer      **input);
 
 /* Symbols used by the code loader */
-#define SHARP_SYMBOL   0x23
-#define BANG_SYMBOL    0x21
-#define NEWLINE_SYMBOL 0x0A
+#define SHARP_SYMBOL   ((gint8) '#')
+#define BANG_SYMBOL    ((gint8) '!')
+#define NEWLINE_SYMBOL ((gint8) '\n')
 
 static void
 cattle_program_init (CattleProgram *self)
 {
-	self->priv = CATTLE_PROGRAM_GET_PRIVATE (self);
+	CattleProgramPrivate *priv;
 
-	self->priv->instructions = cattle_instruction_new ();
-	self->priv->input = NULL;
+	priv = CATTLE_PROGRAM_GET_PRIVATE (self);
 
-	self->priv->disposed = FALSE;
+	priv->instructions = cattle_instruction_new ();
+	priv->input = NULL;
+
+	priv->disposed = FALSE;
+
+	self->priv = priv;
 }
 
 static void
 cattle_program_dispose (GObject *object)
 {
-	CattleProgram *self = CATTLE_PROGRAM (object);
+	CattleProgram        *self;
+	CattleProgramPrivate *priv;
 
-	g_return_if_fail (!self->priv->disposed);
+	self = CATTLE_PROGRAM (object);
 
-	g_object_unref (self->priv->instructions);
-	self->priv->instructions = NULL;
+	priv = self->priv;
+	g_return_if_fail (!priv->disposed);
 
-	self->priv->disposed = TRUE;
+	g_object_unref (priv->instructions);
+	if (priv->input != NULL)
+	{
+		g_object_unref (priv->input);
+	}
+
+	priv->disposed = TRUE;
 
 	G_OBJECT_CLASS (cattle_program_parent_class)->dispose (object);
 }
@@ -109,77 +123,51 @@ cattle_program_dispose (GObject *object)
 static void
 cattle_program_finalize (GObject *object)
 {
-	CattleProgram *self = CATTLE_PROGRAM (object);
-
-	g_free (self->priv->input);
-	self->priv->input = NULL;
-
 	G_OBJECT_CLASS (cattle_program_parent_class)->finalize (object);
 }
 
-static CattleInstruction*
-load (gchar  **program)
+static gulong
+load (CattleBuffer       *buffer,
+      gulong              offset,
+      CattleInstruction **instructions,
+      CattleBuffer      **input)
 {
 	CattleInstruction *first;
 	CattleInstruction *current;
 	CattleInstruction *previous;
 	CattleInstruction *loop;
-	gint quantity;
-	gunichar value;
-	gunichar temp;
+	gint8              value;
+	gint8              temp;
+	gulong             quantity;
+	gulong             size;
+	gulong             i;
+	gulong             c;
 
 	first = NULL;
 	previous = NULL;
 
-	do {
+	i = offset;
+	size = cattle_buffer_get_size (buffer);
 
+	while (i < size)
+	{
 		current = NULL;
 
-		/* Pick the first symbol from the input string */
-		value = g_utf8_get_char (*program);
+		/* Read a value from the input buffer */
+		value = cattle_buffer_get_value (buffer, i);
 		quantity = 1;
 
-		/* End of input */
-		if (value == 0) {
-			break;
-		}
-
-		/* Move one position to the right */
-		*program = g_utf8_next_char (*program);
-
-		/* Start of program's input */
-		if (value == BANG_SYMBOL) {
-			break;
-		}
-
-		/* Read a sequence of identical symbols, counting them. Don't
-		 * do that for loop instructions, those can't be optimized */
-		if (value != CATTLE_INSTRUCTION_LOOP_BEGIN &&
-		    value != CATTLE_INSTRUCTION_LOOP_END)
+		/* Start of program's input, stop parsing */
+		if (value == BANG_SYMBOL)
 		{
-			do {
-				temp = g_utf8_get_char (*program);
-
-				/* Same value: increase the quantity, move the
-				 * pointer to the right */
-				if (temp == value) {
-					quantity++;
-					*program = g_utf8_next_char (*program);
-				}
-				else {
-					break;
-				}
-			} while (temp == value);
+			i++;
+			break;
 		}
-
-		g_assert (value == CATTLE_INSTRUCTION_LOOP_BEGIN ||
-		          value == CATTLE_INSTRUCTION_LOOP_END ||
-		          value != g_utf8_get_char (*program));
 
 		/* Normalize symbol: if value is not a recognized symbol,
 		 * set it to CATTLE_INSTRUCTION_NONE */
-		switch (value) {
-
+		switch (value)
+		{
 			case CATTLE_INSTRUCTION_INCREASE:
 			case CATTLE_INSTRUCTION_DECREASE:
 			case CATTLE_INSTRUCTION_MOVE_LEFT:
@@ -198,62 +186,110 @@ load (gchar  **program)
 				break;
 		}
 
-		/* Not an instruction, restart the loop */
-		if (value == CATTLE_INSTRUCTION_NONE) {
+#if 0
+		/* Not an instruction, move on */
+		if (value == CATTLE_INSTRUCTION_NONE)
+		{
 			continue;
 		} 
+#endif
 
-		/* Create a new instruction and set its value and quantity */
+		/* Read a sequence of identical symbols, counting them.
+		 * Loops can't be optimized this way */
+		if (value != CATTLE_INSTRUCTION_LOOP_BEGIN &&
+		    value != CATTLE_INSTRUCTION_LOOP_END)
+		{
+			while (i + 1 < size)
+			{
+				temp = cattle_buffer_get_value (buffer, i + 1);
+
+				if (temp == value)
+				{
+					/* Same value: increase the quantity */
+					quantity++;
+					i++;
+				}
+				else
+				{
+					break;
+				}
+			}
+		}
+
+		/* Create a new instruction */
 		current = cattle_instruction_new ();
 
 		cattle_instruction_set_value (current, value);
 		cattle_instruction_set_quantity (current, quantity);
 
-		/* This is the first instruction */
-		if (first == NULL) {
+		if (value == CATTLE_INSTRUCTION_LOOP_BEGIN)
+		{
+			/* Parse the loop */
+			i = load (buffer,
+			          i + 1,
+			          &loop,
+			          NULL);
+			i--;
+
+			cattle_instruction_set_loop (current, loop);
+			g_object_unref (loop);
+		}
+
+		if (first == NULL)
+		{
 			first = current;
+
+			/* Acquire an extra reference to the first
+			 * instruction to make sure the whole loop
+			 * is kept alive */
 			g_object_ref (first);
 		}
 
-		if (value == CATTLE_INSTRUCTION_LOOP_BEGIN) {
-
-			/* Read the loop's contents */
-			loop = load (program);
-
-			g_assert (loop != NULL);
-
-			if (loop != NULL) {
-				cattle_instruction_set_loop (current, loop);
-				g_object_unref (loop);
-			}
-		}
-
-		/* Link the current instruction to the previous one (if any) */
-		if (previous != NULL) {
+		if (previous != NULL)
+		{
+			/* Link the current instruction to the previous one */
 			cattle_instruction_set_next (previous, current);
-			g_object_unref (previous);
 		}
+
 		previous = current;
+		g_object_unref (current);
+
+		/* Move to the next byte */
+		i++;
 
 		/* Exit on loop end */
-		if (value == CATTLE_INSTRUCTION_LOOP_END) {
+		if (value == CATTLE_INSTRUCTION_LOOP_END)
+		{
 			break;
 		}
-
-	} while (value != 0);
-
-	/* Drop the remaining reference to the current instruction, or
-	 * if no current instruction is present, to the previous one */
-	if (current != NULL) {
-		g_object_unref (current);
 	}
-	else {
-		if (previous != NULL) {
-			g_object_unref (previous);
+
+	*instructions = first;
+
+	/* Collect any input */
+	if (input != NULL)
+	{
+		if (i < size)
+		{
+			*input = cattle_buffer_new (size - i + 1);
+
+			c = 0;
+			while (i < size)
+			{
+				value = cattle_buffer_get_value (buffer, i);
+				cattle_buffer_set_value (*input, c, value);
+
+				c++;
+				i++;
+			}
+		}
+		else
+		{
+			*input = NULL;
 		}
 	}
 
-	return first;
+	return i;
 }
 
 /**
@@ -276,12 +312,12 @@ cattle_program_new (void)
 /**
  * cattle_program_load:
  * @program: a #CattleProgram
- * @string: the source code of the program
+ * @buffer: a #CattleBuffer containing the code
  * @error: (allow-none): return location for a #GError
  *
- * Load @program from @string.
+ * Load @program from @buffer.
  *
- * The string can optionally contain also the input for the program:
+ * The buffer can optionally contain also the input for the program:
  * in that case, the input must be separated from the code by a bang
  * (!) character.
  *
@@ -293,50 +329,52 @@ cattle_program_new (void)
  */
 gboolean
 cattle_program_load (CattleProgram  *self,
-                     const gchar    *program,
+                     CattleBuffer   *buffer,
                      GError        **error)
 {
-	CattleInstruction *instructions;
-	GError *inner_error = NULL;
-	gchar *position;
-	gunichar temp;
-	glong brackets_count = 0;
+	CattleProgramPrivate *priv;
+	CattleInstruction    *instructions;
+	CattleBuffer         *input;
+	gint8                 value;
+	glong                 brackets_count;
+	gulong                size;
+	gulong                i;
 
 	g_return_val_if_fail (CATTLE_IS_PROGRAM (self), FALSE);
+	g_return_val_if_fail (CATTLE_IS_BUFFER (buffer), FALSE);
 	g_return_val_if_fail (error == NULL || *error == NULL, FALSE);
-	g_return_val_if_fail (!self->priv->disposed, FALSE);
 
-	/* Check the provided string is valid UTF-8 before proceeding */
-	if (!g_utf8_validate (program, -1, NULL)) {
-		g_set_error (error,
-		             CATTLE_ERROR,
-		             CATTLE_ERROR_BAD_UTF8,
-		             "Invalid UTF-8");
-		return FALSE;
-	}
+	priv = self->priv;
+	g_return_val_if_fail (!priv->disposed, FALSE);
+
+	size = cattle_buffer_get_size (buffer);
 
 	/* Check the number of brackets to ensure the loops are balanced */
-	position = (gchar *) program;
-	do {
+	brackets_count = 0;
+	for (i = 0; i < size; i++)
+	{
+		value = cattle_buffer_get_value (buffer, i);
 
-		temp = g_utf8_get_char (position);
-
-		if (temp == CATTLE_INSTRUCTION_LOOP_BEGIN) {
+		if (value == CATTLE_INSTRUCTION_LOOP_BEGIN)
+		{
 			brackets_count++;
 		}
-		else if (temp == CATTLE_INSTRUCTION_LOOP_END) {
+		else if (value == CATTLE_INSTRUCTION_LOOP_END)
+		{
 			brackets_count--;
 		}
-
-		/* Ignore brackets in the program's input, if present */
-		if (temp != 0 && temp != BANG_SYMBOL) {
-			position = g_utf8_next_char (position);
+		else if (value == BANG_SYMBOL)
+		{
+			/* Brackets in the program's input should not
+			 * be taken into account here */
+			break;
 		}
-	} while (temp != 0 && temp != BANG_SYMBOL);
+	}
 
-	/* Report an error to the caller if the number of open brackets
+	/* Report an error if the number of open brackets
 	 * is not equal to the number of closed brackets */
-	if (brackets_count != 0) {
+	if (brackets_count != 0)
+	{
 		g_set_error (error,
 		             CATTLE_ERROR,
 		             CATTLE_ERROR_UNBALANCED_BRACKETS,
@@ -344,27 +382,21 @@ cattle_program_load (CattleProgram  *self,
 		return FALSE;
 	}
 
-	/* Load the instructions from the string */
-	position = (gchar *) program;
-	instructions = load ((gchar **) &position);
+	/* Parse the program */
+	load (buffer,
+	      0,
+	      &instructions,
+	      &input);
 
-	/* The load routine returns NULL for the empty program.
-	 * Create a single instruction to use in the program */
-	if (instructions == NULL) {
-		instructions = cattle_instruction_new ();
-	}
-
-	/* Set the instructions for the program */
+	/* Set instructions */
 	cattle_program_set_instructions (self, instructions);
 	g_object_unref (instructions);
 
-	/* Set the input for the program, if present; otherwise,
-	 * reset it */
-	if (g_utf8_strlen (position, -1) > 0) {
-		cattle_program_set_input (self, position);
-	}
-	else {
-		cattle_program_set_input (self, NULL);
+	/* Set input */
+	cattle_program_set_input (self, input);
+	if (input != NULL)
+	{
+		g_object_unref (input);
 	}
 
 	return TRUE;
@@ -384,15 +416,19 @@ void
 cattle_program_set_instructions (CattleProgram     *self,
                                  CattleInstruction *instructions)
 {
+	CattleProgramPrivate *priv;
+
 	g_return_if_fail (CATTLE_IS_PROGRAM (self));
 	g_return_if_fail (CATTLE_IS_INSTRUCTION (instructions));
-	g_return_if_fail (!self->priv->disposed);
+
+	priv = self->priv;
+	g_return_if_fail (!priv->disposed);
 
 	/* Release the reference held on the current instructions */
-	g_object_unref (self->priv->instructions);
+	g_object_unref (priv->instructions);
 
-	self->priv->instructions = instructions;
-	g_object_ref (self->priv->instructions);
+	priv->instructions = instructions;
+	g_object_ref (priv->instructions);
 }
 
 /**
@@ -407,12 +443,17 @@ cattle_program_set_instructions (CattleProgram     *self,
 CattleInstruction*
 cattle_program_get_instructions (CattleProgram *self)
 {
+	CattleProgramPrivate *priv;
+
 	g_return_val_if_fail (CATTLE_IS_PROGRAM (self), NULL);
-	g_return_val_if_fail (!self->priv->disposed, NULL);
 
-	g_object_ref (self->priv->instructions);
+	priv = self->priv;
+	g_return_val_if_fail (!priv->disposed, NULL);
 
-	return self->priv->instructions;
+	/* Increase the reference count */
+	g_object_ref (priv->instructions);
+
+	return priv->instructions;
 }
 
 /**
@@ -426,15 +467,29 @@ cattle_program_get_instructions (CattleProgram *self)
  */
 void
 cattle_program_set_input (CattleProgram *self,
-                          const gchar   *input)
+                          CattleBuffer  *input)
 {
+	CattleProgramPrivate *priv;
+
 	g_return_if_fail (CATTLE_IS_PROGRAM (self));
-	g_return_if_fail (!self->priv->disposed);
+	g_return_if_fail (CATTLE_IS_BUFFER (input) || input == NULL);
 
-	/* Free the existing input */
-	g_free (self->priv->input);
+	priv = self->priv;
+	g_return_if_fail (!priv->disposed);
 
-	self->priv->input = g_strdup (input);
+	/* Release any existing input */
+	if (priv->input != NULL)
+	{
+		g_object_unref (priv->input);
+	}
+
+	priv->input = input;
+
+	/* Acquire a reference to the new input */
+	if (priv->input != NULL)
+	{
+		g_object_ref (priv->input);
+	}
 }
 
 /**
@@ -446,13 +501,23 @@ cattle_program_set_input (CattleProgram *self,
  *
  * Returns: (transfer full): input for @program, or %NULL
  */
-gchar*
+CattleBuffer*
 cattle_program_get_input (CattleProgram *self)
 {
-	g_return_val_if_fail (CATTLE_IS_PROGRAM (self), NULL);
-	g_return_val_if_fail (!self->priv->disposed, NULL);
+	CattleProgramPrivate *priv;
 
-	return g_strdup (self->priv->input);
+	g_return_val_if_fail (CATTLE_IS_PROGRAM (self), NULL);
+
+	priv = self->priv;
+	g_return_val_if_fail (!priv->disposed, NULL);
+
+	/* Increase the reference count */
+	if (priv->input != NULL)
+	{
+		g_object_ref (priv->input);
+	}
+
+	return priv->input;
 }
 
 static void
@@ -461,24 +526,24 @@ cattle_program_set_property (GObject      *object,
                              const GValue *value,
                              GParamSpec   *pspec)
 {
-	CattleProgram *self = CATTLE_PROGRAM (object);
-	CattleInstruction *t_inst;
-	gchar *t_str;
+	CattleProgram     *self;
+	CattleInstruction *v_instructions;
+	CattleBuffer      *v_input;
 
-	g_return_if_fail (!self->priv->disposed);
+	self = CATTLE_PROGRAM (object);
 
-	switch (property_id) {
-
+	switch (property_id)
+	{
 		case PROP_INSTRUCTIONS:
-			t_inst = g_value_get_object (value);
+			v_instructions = g_value_get_object (value);
 			cattle_program_set_instructions (self,
-			                                 t_inst);
+			                                 v_instructions);
 			break;
 
 		case PROP_INPUT:
-			t_str = (gchar *) g_value_get_string (value);
+			v_input = g_value_get_object (value);
 			cattle_program_set_input (self,
-			                          t_str);
+			                          v_input);
 			break;
 
 		default:
@@ -495,22 +560,24 @@ cattle_program_get_property (GObject    *object,
                              GValue     *value,
                              GParamSpec *pspec)
 {
-	CattleProgram *self = CATTLE_PROGRAM (object);
-	CattleInstruction *t_inst;
-	gchar *t_str;
+	CattleProgram     *self;
+	CattleInstruction *v_instructions;
+	CattleBuffer      *v_input;
 
-	g_return_if_fail (!self->priv->disposed);
+	self = CATTLE_PROGRAM (object);
 
-	switch (property_id) {
-
+	switch (property_id)
+	{
 		case PROP_INSTRUCTIONS:
-			t_inst = cattle_program_get_instructions (self);
-			g_value_set_object (value, t_inst);
+			v_instructions = cattle_program_get_instructions (self);
+			g_value_set_object (value,
+			                    v_instructions);
 			break;
 
 		case PROP_INPUT:
-			t_str = cattle_program_get_input (self);
-			g_value_set_string (value, t_str);
+			v_input = cattle_program_get_input (self);
+			g_value_set_object (value,
+			                    v_input);
 			break;
 
 		default:
@@ -524,8 +591,10 @@ cattle_program_get_property (GObject    *object,
 static void
 cattle_program_class_init (CattleProgramClass *self)
 {
-	GObjectClass *object_class = G_OBJECT_CLASS (self);
-	GParamSpec *pspec;
+	GObjectClass *object_class;
+	GParamSpec   *pspec;
+
+	object_class = G_OBJECT_CLASS (self);
 
 	object_class->set_property = cattle_program_set_property;
 	object_class->get_property = cattle_program_get_property;
@@ -541,7 +610,7 @@ cattle_program_class_init (CattleProgramClass *self)
 	 */
 	pspec = g_param_spec_object ("instructions",
 	                             "Instructions to be executed",
-	                             "Get/set instruction",
+	                             "Get/set instructions",
 	                             CATTLE_TYPE_INSTRUCTION,
 	                             G_PARAM_READWRITE);
 	g_object_class_install_property (object_class,
@@ -556,15 +625,15 @@ cattle_program_class_init (CattleProgramClass *self)
 	 *
 	 * Changes to this property are not notified.
 	 */
-	pspec = g_param_spec_string ("input",
+	pspec = g_param_spec_object ("input",
 	                             "Input for the program",
 	                             "Get/set program's input",
-	                             NULL,
+	                             CATTLE_TYPE_BUFFER,
 	                             G_PARAM_READWRITE);
 	g_object_class_install_property (object_class,
 	                                 PROP_INPUT,
 	                                 pspec);
 
 	g_type_class_add_private (object_class,
-                              sizeof (CattleProgramPrivate));
+	                          sizeof (CattleProgramPrivate));
 }

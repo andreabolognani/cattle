@@ -27,6 +27,7 @@
 
 #include <glib.h>
 #include <glib-object.h>
+#include <cattle/cattle-buffer.h>
 #include <cattle/cattle-instruction.h>
 
 G_BEGIN_DECLS
@@ -55,14 +56,14 @@ struct _CattleProgramClass
 
 CattleProgram*     cattle_program_new              (void);
 gboolean           cattle_program_load             (CattleProgram      *program,
-                                                    const gchar        *string,
+                                                    CattleBuffer       *buffer,
                                                     GError            **error);
 void               cattle_program_set_instructions (CattleProgram      *program,
                                                     CattleInstruction  *instructions);
 CattleInstruction* cattle_program_get_instructions (CattleProgram      *program);
 void               cattle_program_set_input        (CattleProgram      *program,
-                                                    const gchar        *input);
-gchar*             cattle_program_get_input        (CattleProgram      *program);
+                                                    CattleBuffer       *input);
+CattleBuffer*      cattle_program_get_input        (CattleProgram      *program);
 
 GType              cattle_program_get_type         (void) G_GNUC_CONST;
 

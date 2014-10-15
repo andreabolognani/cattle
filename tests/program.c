@@ -32,16 +32,20 @@
 static void
 test_program_load_unbalanced_brackets (void)
 {
-	CattleProgram *program;
-	CattleInstruction *instruction;
-	CattleInstructionValue value;
-	GError *error;
-	gboolean success;
+	CattleProgram          *program;
+	CattleBuffer           *buffer;
+	CattleInstruction      *instruction;
+	CattleInstructionValue  value;
+	GError                 *error;
+	gboolean                success;
 
 	program = cattle_program_new ();
 
+	buffer = cattle_buffer_new (2);
+	cattle_buffer_set_contents (buffer, "[");
+
 	error = NULL;
-	success = cattle_program_load (program, "[", &error);
+	success = cattle_program_load (program, buffer, &error);
 
 	g_assert (!success);
 	g_assert (error != NULL);
@@ -59,6 +63,7 @@ test_program_load_unbalanced_brackets (void)
 	g_assert (value == CATTLE_INSTRUCTION_NONE);
 
 	g_object_unref (instruction);
+	g_object_unref (buffer);
 	g_object_unref (program);
 }
 
@@ -72,16 +77,19 @@ test_program_load_unbalanced_brackets (void)
 static void
 test_program_load_empty (void)
 {
-	CattleProgram *program;
-	CattleInstruction *instruction;
-	CattleInstructionValue value;
-	GError *error;
-	gboolean success;
+	CattleProgram          *program;
+	CattleBuffer           *buffer;
+	CattleInstruction      *instruction;
+	CattleInstructionValue  value;
+	GError                 *error;
+	gboolean                success;
 
 	program = cattle_program_new ();
 
+	buffer = cattle_buffer_new (1);
+
 	error = NULL;
-	success = cattle_program_load (program, "", &error);
+	success = cattle_program_load (program, buffer, &error);
 
 	g_assert (success);
 	g_assert (error == NULL);
@@ -97,6 +105,7 @@ test_program_load_empty (void)
 	g_assert (value == CATTLE_INSTRUCTION_NONE);
 
 	g_object_unref (instruction);
+	g_object_unref (buffer);
 	g_object_unref (program);
 }
 
@@ -108,20 +117,22 @@ test_program_load_empty (void)
 static void
 test_program_load_without_input (void)
 {
-	CattleProgram *program;
-	CattleInstruction *instructions;
-	CattleInstructionValue value;
-	GError *error;
-	gchar *input;
-	gint quantity;
-	gboolean success;
+	CattleProgram          *program;
+	CattleBuffer           *buffer;
+	CattleInstruction      *instructions;
+	CattleBuffer           *input;
+	CattleInstructionValue  value;
+	GError                 *error;
+	gulong                  quantity;
+	gboolean                success;
 
 	program = cattle_program_new ();
 
+	buffer = cattle_buffer_new (9);
+	cattle_buffer_set_contents (buffer, "+++>-<[-]");
+
 	error = NULL;
-	success = cattle_program_load (program,
-	                               "+++>-<[-]",
-	                               &error);
+	success = cattle_program_load (program, buffer, &error);
 
 	g_assert (success);
 	g_assert (error == NULL);
@@ -139,6 +150,7 @@ test_program_load_without_input (void)
 	g_assert (quantity == 3);
 
 	g_object_unref (instructions);
+	g_object_unref (buffer);
 	g_object_unref (program);
 }
 
@@ -150,19 +162,22 @@ test_program_load_without_input (void)
 static void
 test_program_load_with_input (void)
 {
-	CattleProgram *program;
-	CattleInstruction *instructions;
-	CattleInstructionValue value;
-	GError *error;
-	gchar *input;
-	gboolean success;
+	CattleProgram          *program;
+	CattleBuffer           *buffer;
+	CattleInstruction      *instructions;
+	CattleBuffer           *input;
+	CattleInstructionValue  value;
+	gulong                  i;
+	GError                 *error;
+	gboolean                success;
 
 	program = cattle_program_new ();
 
+	buffer = cattle_buffer_new (17);
+	cattle_buffer_set_contents (buffer, ",[+.,]!some input");
+
 	error = NULL;
-	success = cattle_program_load (program,
-	                               ",[+.,]!some input",
-	                               &error);
+	success = cattle_program_load (program, buffer, &error);
 
 	g_assert (success);
 	g_assert (error == NULL);
@@ -172,14 +187,26 @@ test_program_load_with_input (void)
 
 	g_assert (instructions != NULL);
 	g_assert (input != NULL);
-	g_assert (g_utf8_collate (input, "some input") == 0);
+
+	/* Create a new buffer containing just the input,
+	 * for comparison's purposes */
+	g_object_unref (buffer);
+	buffer = cattle_buffer_new (10);
+	cattle_buffer_set_contents (buffer, "some input");
+
+	/* Match the parsed input with the expected one */
+	for (i = 0; i < 10; i++)
+	{
+		value = cattle_buffer_get_value (input, i);
+		g_assert (value == cattle_buffer_get_value (buffer, i));
+	}
 
 	value = cattle_instruction_get_value (instructions);
-
 	g_assert (value == CATTLE_INSTRUCTION_READ);
 
-	g_free (input);
+	g_object_unref (input);
 	g_object_unref (instructions);
+	g_object_unref (buffer);
 	g_object_unref (program);
 }
 
@@ -191,20 +218,24 @@ test_program_load_with_input (void)
 static void
 test_program_load_double_loop (void)
 {
-	CattleProgram *program;
-	CattleInstruction *current;
-	CattleInstruction *outer_loop;
-	CattleInstruction *inner_loop;
-	CattleInstruction *next;
-	CattleInstructionValue value;
-	GError *error;
-	gint quantity;
-	gboolean success;
+	CattleProgram          *program;
+	CattleBuffer           *buffer;
+	CattleInstruction      *current;
+	CattleInstruction      *outer_loop;
+	CattleInstruction      *inner_loop;
+	CattleInstruction      *next;
+	CattleInstructionValue  value;
+	GError                 *error;
+	gint                    quantity;
+	gboolean                success;
 
 	program = cattle_program_new ();
 
+	buffer = cattle_buffer_new (4);
+	cattle_buffer_set_contents (buffer, "[[]]");
+
 	error = NULL;
-	success = cattle_program_load (program, "[[]]", &error);
+	success = cattle_program_load (program, buffer, &error);
 
 	g_assert (success);
 	g_assert (error == NULL);
@@ -278,6 +309,7 @@ test_program_load_double_loop (void)
 
 	g_assert (current == NULL);
 
+	g_object_unref (buffer);
 	g_object_unref (program);
 }
 

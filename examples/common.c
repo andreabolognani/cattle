@@ -22,15 +22,17 @@
 #include <gio/gio.h>
 #include "common.h"
 
-gchar*
+CattleBuffer*
 read_file_contents (const gchar  *path,
                     GError      **error)
 {
-	GFile *file;
-	GError *inner_error;
-	gchar *contents;
-	gchar *temp;
-	gboolean success;
+	CattleBuffer *buffer;
+	GFile        *file;
+	GError       *inner_error;
+	gchar        *contents;
+	gint8        *start;
+	gsize         length;
+	gboolean      success;
 
 	g_return_val_if_fail (path != NULL, NULL);
 	g_return_val_if_fail (error == NULL || *error == NULL, NULL);
@@ -41,12 +43,12 @@ read_file_contents (const gchar  *path,
 	success = g_file_load_contents (file,
 	                                NULL,
 	                                &contents,
+	                                &length,
 	                                NULL,
-	                                NULL, /* No etag */
 	                                &inner_error);
 
-	if (!success) {
-
+	if (!success)
+	{
 		g_propagate_error (error,
 		                   inner_error);
 
@@ -55,20 +57,22 @@ read_file_contents (const gchar  *path,
 		return NULL;
 	}
 
-	/* Detect magic bytes and strip the first line if present */
-	if (g_str_has_prefix (contents, "#!")) {
+	start = (gint8 *) contents;
 
-		temp = contents;
-
-		while (g_utf8_get_char (temp) != '\n') {
-			*temp = ' ';
-			temp = g_utf8_next_char (temp);
+	if (length >= 2 && contents[0] == '#' && contents[1] == '!')
+	{
+		while (length > 0 && start[0] != '\n')
+		{
+			start++;
+			length--;
 		}
-
-		contents = g_strchug (contents);
 	}
 
+	buffer = cattle_buffer_new (length);
+	cattle_buffer_set_contents (buffer, start);
+
+	g_free (contents);
 	g_object_unref (file);
 
-	return contents;
+	return buffer;
 }
