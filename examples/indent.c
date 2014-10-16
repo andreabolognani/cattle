@@ -31,9 +31,11 @@ indent (CattleProgram *program)
 	CattleInstruction      *current;
 	CattleInstruction      *next;
 	CattleInstructionValue  value;
+	CattleBuffer           *input;
 	GSList                 *stack;
 	gulong                  level;
 	gulong                  quantity;
+	gulong                  size;
 	gulong                  i;
 
 	/* Initialize instruction stack, start at indentation level 0 */
@@ -115,6 +117,23 @@ indent (CattleProgram *program)
 	}
 
 	g_object_unref (first);
+
+	input = cattle_program_get_input (program);
+
+	/* Print input if available */
+	if (input != NULL)
+	{
+		size = cattle_buffer_get_size (input);
+
+		g_print ("!");
+
+		for (i = 0; i < size; i++)
+		{
+			value = cattle_buffer_get_value (input, i);
+
+			g_print ("%c", value);
+		}
+	}
 }
 
 gint

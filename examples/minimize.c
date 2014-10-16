@@ -32,10 +32,12 @@ minimize (CattleProgram *program)
 	CattleInstruction *first;
 	CattleInstruction *current;
 	CattleInstruction *next;
+	CattleBuffer      *input;
 	GSList            *stack;
 	gchar              value;
 	gulong             quantity;
 	gulong             position;
+	gulong             size;
 	gulong             i;
 
 	stack = NULL;
@@ -104,6 +106,23 @@ minimize (CattleProgram *program)
 	}
 
 	g_object_unref (first);
+
+	input = cattle_program_get_input (program);
+
+	/* Print input if available */
+	if (input != NULL)
+	{
+		size = cattle_buffer_get_size (input);
+
+		g_print ("!");
+
+		for (i = 0; i < size; i++)
+		{
+			value = cattle_buffer_get_value (input, i);
+
+			g_print ("%c", value);
+		}
+	}
 }
 
 gint
