@@ -141,7 +141,7 @@ main (gint    argc,
 	error = NULL;
 	buffer = read_file_contents (argv[1], &error);
 
-	if (!buffer)
+	if (error != NULL)
 	{
 		g_warning ("%s: %s", argv[1], error->message);
 
@@ -160,8 +160,11 @@ main (gint    argc,
 		g_warning ("Load error: %s", error->message);
 
 		g_error_free (error);
+		if (buffer != NULL)
+		{
+			g_object_unref (buffer);
+		}
 		g_object_unref (program);
-		g_object_unref (buffer);
 
 		return 1;
 	}
@@ -169,7 +172,10 @@ main (gint    argc,
 	/* Indent the program */
 	indent (program);
 
-	g_object_unref (buffer);
+	if (buffer != NULL)
+	{
+		g_object_unref (buffer);
+	}
 	g_object_unref (program); 
 
 	return 0;

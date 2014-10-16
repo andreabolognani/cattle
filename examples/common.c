@@ -59,6 +59,7 @@ read_file_contents (const gchar  *path,
 
 	start = (gint8 *) contents;
 
+	/* Skip the sha-bang line if present */
 	if (length >= 2 && contents[0] == '#' && contents[1] == '!')
 	{
 		while (length > 0 && start[0] != '\n')
@@ -68,8 +69,16 @@ read_file_contents (const gchar  *path,
 		}
 	}
 
-	buffer = cattle_buffer_new (length);
-	cattle_buffer_set_contents (buffer, start);
+	/* An empty buffer is represented by the NULL pointer */
+	if (length > 0)
+	{
+		buffer = cattle_buffer_new (length);
+		cattle_buffer_set_contents (buffer, start);
+	}
+	else
+	{
+		buffer = NULL;
+	}
 
 	g_free (contents);
 	g_object_unref (file);

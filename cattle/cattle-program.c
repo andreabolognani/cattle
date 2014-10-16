@@ -147,7 +147,16 @@ load (CattleBuffer       *buffer,
 	previous = NULL;
 
 	i = offset;
-	size = cattle_buffer_get_size (buffer);
+
+	/* Get the size of the input buffer */
+	if (buffer != NULL)
+	{
+		size = cattle_buffer_get_size (buffer);
+	}
+	else
+	{
+		size = 0;
+	}
 
 	while (i < size)
 	{
@@ -186,13 +195,12 @@ load (CattleBuffer       *buffer,
 				break;
 		}
 
-#if 0
 		/* Not an instruction, move on */
 		if (value == CATTLE_INSTRUCTION_NONE)
 		{
+			i++;
 			continue;
 		} 
-#endif
 
 		/* Read a sequence of identical symbols, counting them.
 		 * Loops can't be optimized this way */
@@ -264,6 +272,12 @@ load (CattleBuffer       *buffer,
 		}
 	}
 
+	if (first == NULL)
+	{
+		/* Empty branch. Create a no-op */
+		first = cattle_instruction_new ();
+	}
+
 	*instructions = first;
 
 	/* Collect any input */
@@ -312,7 +326,7 @@ cattle_program_new (void)
 /**
  * cattle_program_load:
  * @program: a #CattleProgram
- * @buffer: a #CattleBuffer containing the code
+ * @buffer: (allow-none): a #CattleBuffer containing the code
  * @error: (allow-none): return location for a #GError
  *
  * Load @program from @buffer.
@@ -341,13 +355,20 @@ cattle_program_load (CattleProgram  *self,
 	gulong                i;
 
 	g_return_val_if_fail (CATTLE_IS_PROGRAM (self), FALSE);
-	g_return_val_if_fail (CATTLE_IS_BUFFER (buffer), FALSE);
+	g_return_val_if_fail (CATTLE_IS_BUFFER (buffer) || buffer == NULL, FALSE);
 	g_return_val_if_fail (error == NULL || *error == NULL, FALSE);
 
 	priv = self->priv;
 	g_return_val_if_fail (!priv->disposed, FALSE);
 
-	size = cattle_buffer_get_size (buffer);
+	if (buffer != NULL)
+	{
+		size = cattle_buffer_get_size (buffer);
+	}
+	else
+	{
+		size = 0;
+	}
 
 	/* Check the number of brackets to ensure the loops are balanced */
 	brackets_count = 0;

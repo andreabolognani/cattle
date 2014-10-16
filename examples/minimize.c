@@ -131,7 +131,7 @@ main (gint    argc,
 	error = NULL;
 	buffer = read_file_contents (argv[1], &error);
 
-	if (buffer == NULL)
+	if (error != NULL)
 	{
 		g_warning ("%s: %s", argv[1], error->message);
 
@@ -149,7 +149,10 @@ main (gint    argc,
 		g_warning ("Load error: %s", error->message);
 
 		g_error_free (error);
-		g_object_unref (buffer);
+		if (buffer != NULL)
+		{
+			g_object_unref (buffer);
+		}
 		g_object_unref (program);
 
 		return 1;
@@ -158,7 +161,10 @@ main (gint    argc,
 	/* Run minimization */
 	minimize (program);
 
-	g_object_unref (buffer);
+	if (buffer != NULL)
+	{
+		g_object_unref (buffer);
+	}
 	g_object_unref (program);
 
 	return 0;
