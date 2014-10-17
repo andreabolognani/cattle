@@ -119,12 +119,11 @@ indent (CattleProgram *program)
 	g_object_unref (first);
 
 	input = cattle_program_get_input (program);
+	size = cattle_buffer_get_size (input);
 
 	/* Print input if available */
-	if (input != NULL)
+	if (size > 0)
 	{
-		size = cattle_buffer_get_size (input);
-
 		g_print ("!");
 
 		for (i = 0; i < size; i++)
@@ -179,10 +178,7 @@ main (gint    argc,
 		g_warning ("Load error: %s", error->message);
 
 		g_error_free (error);
-		if (buffer != NULL)
-		{
-			g_object_unref (buffer);
-		}
+		g_object_unref (buffer);
 		g_object_unref (program);
 
 		return 1;
@@ -191,10 +187,7 @@ main (gint    argc,
 	/* Indent the program */
 	indent (program);
 
-	if (buffer != NULL)
-	{
-		g_object_unref (buffer);
-	}
+	g_object_unref (buffer);
 	g_object_unref (program); 
 
 	return 0;

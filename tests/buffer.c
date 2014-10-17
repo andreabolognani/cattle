@@ -24,6 +24,22 @@
 #include <cattle/cattle.h>
 
 /**
+ * test_buffer_empty:
+ *
+ * Ensure an empty buffer can be created.
+ */
+static void
+test_buffer_empty (void)
+{
+	CattleBuffer *buffer;
+
+	buffer = cattle_buffer_new (0);
+	g_assert (cattle_buffer_get_size (buffer) == 0);
+
+	g_object_unref (buffer);
+}
+
+/**
  * test_buffer_create:
  *
  * Ensure the size of a newly-created buffer is reported correctly.
@@ -151,6 +167,8 @@ main (gint argc, gchar **argv)
 
 	g_test_init (&argc, &argv, NULL);
 
+	g_test_add_func ("/buffer/empty",
+	                 test_buffer_empty);
 	g_test_add_func ("/buffer/create",
 	                 test_buffer_create);
 	g_test_add_func ("/buffer/get-value",

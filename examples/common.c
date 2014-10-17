@@ -69,15 +69,11 @@ read_file_contents (const gchar  *path,
 		}
 	}
 
-	/* An empty buffer is represented by the NULL pointer */
+	buffer = cattle_buffer_new (length);
+
 	if (length > 0)
 	{
-		buffer = cattle_buffer_new (length);
 		cattle_buffer_set_contents (buffer, start);
-	}
-	else
-	{
-		buffer = NULL;
 	}
 
 	g_free (contents);

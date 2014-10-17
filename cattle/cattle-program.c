@@ -91,7 +91,7 @@ cattle_program_init (CattleProgram *self)
 	priv = CATTLE_PROGRAM_GET_PRIVATE (self);
 
 	priv->instructions = cattle_instruction_new ();
-	priv->input = NULL;
+	priv->input = cattle_buffer_new (0);
 
 	priv->disposed = FALSE;
 
@@ -110,10 +110,7 @@ cattle_program_dispose (GObject *object)
 	g_return_if_fail (!priv->disposed);
 
 	g_object_unref (priv->instructions);
-	if (priv->input != NULL)
-	{
-		g_object_unref (priv->input);
-	}
+	g_object_unref (priv->input);
 
 	priv->disposed = TRUE;
 
@@ -147,16 +144,7 @@ load (CattleBuffer       *buffer,
 	previous = NULL;
 
 	i = offset;
-
-	/* Get the size of the input buffer */
-	if (buffer != NULL)
-	{
-		size = cattle_buffer_get_size (buffer);
-	}
-	else
-	{
-		size = 0;
-	}
+	size = cattle_buffer_get_size (buffer);
 
 	while (i < size)
 	{
@@ -299,7 +287,7 @@ load (CattleBuffer       *buffer,
 		}
 		else
 		{
-			*input = NULL;
+			*input = cattle_buffer_new (0);
 		}
 	}
 
@@ -326,7 +314,7 @@ cattle_program_new (void)
 /**
  * cattle_program_load:
  * @program: a #CattleProgram
- * @buffer: (allow-none): a #CattleBuffer containing the code
+ * @buffer: a #CattleBuffer containing the code
  * @error: (allow-none): return location for a #GError
  *
  * Load @program from @buffer.
@@ -355,20 +343,13 @@ cattle_program_load (CattleProgram  *self,
 	gulong                i;
 
 	g_return_val_if_fail (CATTLE_IS_PROGRAM (self), FALSE);
-	g_return_val_if_fail (CATTLE_IS_BUFFER (buffer) || buffer == NULL, FALSE);
+	g_return_val_if_fail (CATTLE_IS_BUFFER (buffer), FALSE);
 	g_return_val_if_fail (error == NULL || *error == NULL, FALSE);
 
 	priv = self->priv;
 	g_return_val_if_fail (!priv->disposed, FALSE);
 
-	if (buffer != NULL)
-	{
-		size = cattle_buffer_get_size (buffer);
-	}
-	else
-	{
-		size = 0;
-	}
+	size = cattle_buffer_get_size (buffer);
 
 	/* Check the number of brackets to ensure the loops are balanced */
 	brackets_count = 0;
@@ -409,16 +390,12 @@ cattle_program_load (CattleProgram  *self,
 	      &instructions,
 	      &input);
 
-	/* Set instructions */
+	/* Set instructions and input */
 	cattle_program_set_instructions (self, instructions);
-	g_object_unref (instructions);
-
-	/* Set input */
 	cattle_program_set_input (self, input);
-	if (input != NULL)
-	{
-		g_object_unref (input);
-	}
+
+	g_object_unref (instructions);
+	g_object_unref (input);
 
 	return TRUE;
 }
@@ -480,11 +457,12 @@ cattle_program_get_instructions (CattleProgram *self)
 /**
  * cattle_program_set_input:
  * @program: a #CattleProgram
- * @input: (allow-none): input for @program, or %NULL
+ * @input: input for @program
  *
  * Set the input for @program.
  *
- * If @input is %NULL, the input will be retrieved at runtime.
+ * If the size of @input is zero, the program's input will be retrieved
+ * at runtime.
  */
 void
 cattle_program_set_input (CattleProgram *self,
@@ -493,24 +471,16 @@ cattle_program_set_input (CattleProgram *self,
 	CattleProgramPrivate *priv;
 
 	g_return_if_fail (CATTLE_IS_PROGRAM (self));
-	g_return_if_fail (CATTLE_IS_BUFFER (input) || input == NULL);
+	g_return_if_fail (CATTLE_IS_BUFFER (input));
 
 	priv = self->priv;
 	g_return_if_fail (!priv->disposed);
 
 	/* Release any existing input */
-	if (priv->input != NULL)
-	{
-		g_object_unref (priv->input);
-	}
+	g_object_unref (priv->input);
 
 	priv->input = input;
-
-	/* Acquire a reference to the new input */
-	if (priv->input != NULL)
-	{
-		g_object_ref (priv->input);
-	}
+	g_object_ref (priv->input);
 }
 
 /**
@@ -520,7 +490,7 @@ cattle_program_set_input (CattleProgram *self,
  * Get the input for @program.
  * See cattle_program_set_input().
  *
- * Returns: (transfer full): input for @program, or %NULL
+ * Returns: (transfer full): input for @program
  */
 CattleBuffer*
 cattle_program_get_input (CattleProgram *self)
@@ -533,10 +503,7 @@ cattle_program_get_input (CattleProgram *self)
 	g_return_val_if_fail (!priv->disposed, NULL);
 
 	/* Increase the reference count */
-	if (priv->input != NULL)
-	{
-		g_object_ref (priv->input);
-	}
+	g_object_ref (priv->input);
 
 	return priv->input;
 }

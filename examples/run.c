@@ -70,10 +70,7 @@ main (gint    argc,
 		g_warning ("Load error: %s", error->message);
 
 		g_error_free (error);
-		if (buffer != NULL)
-		{
-			g_object_unref (buffer);
-		}
+		g_object_unref (buffer);
 		g_object_unref (program);
 		g_object_unref (interpreter);
 
@@ -87,20 +84,14 @@ main (gint    argc,
 		g_warning ("Runtime error: %s", error->message);
 
 		g_error_free (error);
-		if (buffer != NULL)
-		{
-			g_object_unref (buffer);
-		}
+		g_object_unref (buffer);
 		g_object_unref (program);
 		g_object_unref (interpreter);
 
 		return 1;
 	}
 
-	if (buffer != NULL)
-	{
-		g_object_unref (buffer);
-	}
+	g_object_unref (buffer);
 	g_object_unref (program);
 	g_object_unref (interpreter);
 

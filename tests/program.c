@@ -86,7 +86,7 @@ test_program_load_empty (void)
 
 	program = cattle_program_new ();
 
-	buffer = cattle_buffer_new (1);
+	buffer = cattle_buffer_new (0);
 
 	error = NULL;
 	success = cattle_program_load (program, buffer, &error);
@@ -141,7 +141,7 @@ test_program_load_without_input (void)
 	input = cattle_program_get_input (program);
 
 	g_assert (instructions != NULL);
-	g_assert (input == NULL);
+	g_assert (input != NULL);
 
 	value = cattle_instruction_get_value (instructions);
 	quantity = cattle_instruction_get_quantity (instructions);
@@ -149,6 +149,9 @@ test_program_load_without_input (void)
 	g_assert (value == CATTLE_INSTRUCTION_INCREASE);
 	g_assert (quantity == 3);
 
+	g_assert (cattle_buffer_get_size (input) == 0);
+
+	g_object_unref (input);
 	g_object_unref (instructions);
 	g_object_unref (buffer);
 	g_object_unref (program);
