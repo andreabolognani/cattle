@@ -609,7 +609,7 @@ cattle_interpreter_run (CattleInterpreter  *self,
 /**
  * cattle_interpreter_feed:
  * @interpreter: a #CattleInterpreter
- * @input: (allow-none): more input to be used by @interpreter, or %NULL
+ * @input: more input to be used by @interpreter
  *
  * Feed @interpreter with more input.
  *
@@ -624,29 +624,14 @@ cattle_interpreter_feed (CattleInterpreter *self,
 	CattleInterpreterPrivate *priv;
 
 	g_return_if_fail (CATTLE_IS_INTERPRETER (self));
-	g_return_if_fail (CATTLE_IS_BUFFER (input) || input == NULL);
+	g_return_if_fail (CATTLE_IS_BUFFER (input));
 
 	priv = self->priv;
 
 	g_return_if_fail (!priv->disposed);
 
-	/* A return value of NULL from the signal
-	 * handler means the end of input was
-	 * reached. We set the appropriate flag */
-	if (input == NULL)
-	{
-		priv->input = NULL;
-		priv->input_offset = 0;
-		priv->end_of_input_reached = TRUE;
-
-		return;
-	}
-
 	/* Release the previous input buffer */
-	if (priv->input != NULL)
-	{
-		g_object_unref (priv->input);
-	}
+	g_object_unref (priv->input);
 
 	priv->input = input;
 	g_object_ref (priv->input);
