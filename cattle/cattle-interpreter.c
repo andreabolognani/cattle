@@ -153,15 +153,6 @@ cattle_interpreter_dispose (GObject *object)
 static void
 cattle_interpreter_finalize (GObject *object)
 {
-	CattleInterpreter *self;
-
-	self = CATTLE_INTERPRETER (object);
-
-	if (self->priv->input != NULL)
-	{
-		g_object_unref (self->priv->input);
-	}
-
 	G_OBJECT_CLASS (cattle_interpreter_parent_class)->finalize (object);
 }
 
@@ -598,10 +589,7 @@ cattle_interpreter_run (CattleInterpreter  *self,
 	}
 
 	/* Cleanup input */
-	if (priv->had_input == TRUE)
-	{
-		g_object_unref (priv->input);
-	}
+	g_object_unref (priv->input);
 
 	return success;
 }
