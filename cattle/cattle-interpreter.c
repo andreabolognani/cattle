@@ -22,7 +22,7 @@
 #include "cattle-error.h"
 #include "cattle-constants.h"
 #include "cattle-interpreter.h"
-#include <stdio.h>
+#include <unistd.h>
 #include <string.h>
 #include <errno.h>
 
@@ -295,38 +295,13 @@ run (CattleInterpreter  *self,
 
 				for (i = 0; i < quantity; i++)
 				{
-					/* The following code is quite complicated because
-					 * it needs to handle different situations.
-					 * The execution of a read instruction is divided
-					 * into three steps:
-					 *
-					 *   1) Fetch more input if needed: the
-					 *      "input-request" signal is emitted, and the
-					 *      signal handler is responsible for fetching
-					 *      more input from the source. This step is
-					 *      obviously skipped if some input was
-					 *      included in the program.
-					 *
-					 *   2) Get the char and normalize it: this step
-					 *      allows us to handle all the input
-					 *      consistently in the last step, regardless
-					 *      of its source.
-					 *
-					 *   3) Perform the actual operation: the easy
-					 *      part ;)
-					 *
-					 * TODO
-					 * This step can probably be semplified.
-					 */
-
-					/* STEP 1: Fetch more input if needed */
-
-					/* We don't even try to fetch more input if the
-					 * input was included in the program or if the end
-					 * of input has alredy been reached */
+					/* Read and normalize a value */
 
 					if (priv->end_of_input_reached)
 					{
+						/* End of input reached.
+						 * The value will be CATTLE_EOF both for embedded and
+						 * runtime input */
 						temp = CATTLE_EOF;
 					}
 					else
@@ -335,27 +310,35 @@ run (CattleInterpreter  *self,
 
 						if (priv->input_offset < size)
 						{
+							/* Current input buffer not consumed.
+							 * Get a value from the buffer and move forward */
 							temp = cattle_buffer_get_value (priv->input,
 											priv->input_offset);
 							priv->input_offset++;
 						}
 						else
 						{
+							/* Current input buffer consumed */
+
 							if (priv->had_input)
 							{
+								/* Embedded input consumed.
+								 * No more input can be retrieved */
 								temp = CATTLE_EOF;
 								priv->end_of_input_reached = TRUE;
 							}
 							else
 							{
+								/* Runtime input buffer consumed.
+								 * Call the input handler to obtain a new
+								 * input buffer */
 								inner_error = NULL;
 								success = (*input_handler) (self,
 											    priv->input_handler_data,
 											    &inner_error);
 								success &= (inner_error == NULL);
 
-								/* The operation failed: we abort
-								 * immediately */
+								/* Handle input errors */
 								if (G_UNLIKELY (success == FALSE))
 								{
 									/* If the signal handler has set the
@@ -380,16 +363,19 @@ run (CattleInterpreter  *self,
 									return FALSE;
 								}
 
+								/* Update size of the input buffer */
 								size = cattle_buffer_get_size (priv->input);
 
 								if (priv->input_offset < size)
 								{
+									/* Some input was retrieved */
 									temp = cattle_buffer_get_value (priv->input,
 													priv->input_offset);
 									priv->input_offset++;
 								}
 								else
 								{
+									/* No more available input */
 									temp = CATTLE_EOF;
 									priv->end_of_input_reached = TRUE;
 								}
@@ -398,19 +384,13 @@ run (CattleInterpreter  *self,
 					}
 				}
 
-				/* STEP 3: Perform the actual operation */
+				/* Save the value. Executed only once even when multiple subsequent
+				 * read instruction are present in the program */
 
-				/* XXX If there are multiple read instructions in a row,
-				 *     only the last one is actually performed, because
-				 *     it would overwrite the results of all the previous
-				 *     ones anyway.
-				 */
-
-				/* We are at the end of the input: we have to check
-				 * the configuration to know which action we should
-				 * perform */
 				if (temp == CATTLE_EOF)
 				{
+					/* End of input.
+					 * The new value depends on the configuration */
 					switch (cattle_configuration_get_on_eof_action (configuration))
 					{
 
@@ -431,11 +411,10 @@ run (CattleInterpreter  *self,
 							break;
 					}
 				}
-
-				/* We are not at the end of the input: just save the
-				 * input into the current cell of the tape */
 				else
 				{
+					/* Not end of input.
+					 * Save the new value */
 					cattle_tape_set_current_value (tape, temp);
 				}
 				break;
@@ -929,46 +908,24 @@ default_input_handler (CattleInterpreter  *self,
 
 	size = read (0, buffer, 256);
 
+	if (size < 0)
+	{
+		g_set_error_literal (error,
+				     CATTLE_ERROR,
+				     CATTLE_ERROR_IO,
+				     strerror (errno));
+
+		return FALSE;
+	}
+
+	/* Copy the contents to a buffer */
 	input = cattle_buffer_new (size);
 	cattle_buffer_set_contents (input, (gint8 *) buffer);
 
+	/* Feed the buffer to the interpreter */
 	cattle_interpreter_feed (self, input);
 
 	g_object_unref (input);
-
-#if 0
-	/* The buffer size is not really important: if the input cannot
-	 * fit a single buffer, the signal will be emitted again */
-	size = 256;
-
-	buffer = (gchar *) g_slice_alloc0 (size);
-
-	if (fgets (buffer, size, stdin) == NULL)
-	{
-		/* A NULL return value from fgets could either mean a read
-		 * error has occurred or the end of input has been reached.
-		 * In the latter case, we have to notify the interpreter */
-		if (G_LIKELY (feof (stdin)))
-		{
-			cattle_interpreter_feed (self, NULL);
-
-			g_slice_free1 (size, buffer);
-
-			return TRUE;
-		}
-		else
-		{
-			g_set_error_literal (error,
-			                     CATTLE_ERROR,
-			                     CATTLE_ERROR_IO,
-			                     strerror (errno));
-
-			g_slice_free1 (size, buffer);
-
-			return FALSE;
-		}
-	}
-#endif
 
 	return TRUE;
 }
@@ -983,18 +940,14 @@ default_output_handler (CattleInterpreter  *self,
 
 	buffer[0] = output;
 
-	write (1, buffer, 1);
-
-	/*
-	if (G_UNLIKELY (fputc ((char) output, stdout) == EOF)) {
-
+	if (G_UNLIKELY (write (1, buffer, 1) < 0))
+	{
 		g_set_error_literal (error,
 		                     CATTLE_ERROR,
 		                     CATTLE_ERROR_IO,
 		                     strerror (errno));
 		return FALSE;
 	}
-	*/
 
 	return TRUE;
 }
@@ -1005,8 +958,9 @@ default_debug_handler (CattleInterpreter  *self,
                        GError            **error)
 {
 	CattleTape *tape;
-	gint8 value;
-	gint steps;
+	gint8       buffer[1];
+	gint8       value;
+	glong       steps;
 
 	tape = cattle_interpreter_get_tape (self);
 
@@ -1017,9 +971,10 @@ default_debug_handler (CattleInterpreter  *self,
 	 * it takes to get there. This value will be used later to mark
 	 * the current position */
 	steps = 0;
-	while (TRUE) {
-
-		if (cattle_tape_is_at_beginning (tape)) {
+	while (TRUE)
+	{
+		if (cattle_tape_is_at_beginning (tape))
+		{
 			break;
 		}
 
@@ -1027,27 +982,36 @@ default_debug_handler (CattleInterpreter  *self,
 		steps++;
 	}
 
-	if (G_UNLIKELY (fputc ('[', stderr) == EOF)) {
+	buffer[0] = '[';
+	if (G_UNLIKELY (write (2, buffer, 1) < 0))
+	{
 		g_set_error_literal (error,
 		                     CATTLE_ERROR,
 		                     CATTLE_ERROR_IO,
 		                     strerror (errno));
+
 		cattle_tape_pop_bookmark (tape);
 		g_object_unref (tape);
+
 		return FALSE;
 	}
 
-	while (TRUE) {
-
+	while (TRUE)
+	{
 		/* Mark the current position */
-		if (steps == 0) {
-			if (G_UNLIKELY (fputc ('<', stderr) == EOF)) {
+		if (steps == 0)
+		{
+			buffer[0] = '<';
+			if (G_UNLIKELY (write (2, buffer, 1) < 0))
+			{
 				g_set_error_literal (error,
 				                     CATTLE_ERROR,
 				                     CATTLE_ERROR_IO,
 				                     strerror (errno));
+
 				cattle_tape_pop_bookmark (tape);
 				g_object_unref (tape);
+
 				return FALSE;
 			}
 		}
@@ -1056,16 +1020,24 @@ default_debug_handler (CattleInterpreter  *self,
 
 		/* Print the value of the current cell if it is a graphical char;
 		 * otherwise, print its hexadecimal value */
-		if (g_ascii_isgraph ((gchar) value)) {
-			if (G_UNLIKELY (fputc ((char) value, stderr) == EOF)) {
+#if 0
+		if (g_ascii_isgraph ((gchar) value))
+		{
+#endif
+			buffer[0] = value;
+			if (G_UNLIKELY (write (2, buffer, 1) < 0))
+			{
 				g_set_error_literal (error,
 				                     CATTLE_ERROR,
 				                     CATTLE_ERROR_IO,
 				                     strerror (errno));
+
 				cattle_tape_pop_bookmark (tape);
 				g_object_unref (tape);
+
 				return FALSE;
 			}
+#if 0
 		}
 		else {
 			if (G_UNLIKELY (fprintf (stderr, "0x%X", value) < 0)) {
@@ -1078,55 +1050,75 @@ default_debug_handler (CattleInterpreter  *self,
 				return FALSE;
 			}
 		}
+#endif
 
 		/* Mark the current position */
-		if (steps == 0) {
-			if (G_UNLIKELY (fputc ('>', stderr) == EOF)) {
+		if (steps == 0)
+		{
+			buffer[0] = '>';
+			if (G_UNLIKELY (write (2, buffer, 1) < 0))
+			{
 				g_set_error_literal (error,
 				                     CATTLE_ERROR,
 				                     CATTLE_ERROR_IO,
 				                     strerror (errno));
+
 				cattle_tape_pop_bookmark (tape);
 				g_object_unref (tape);
+
 				return FALSE;
 			}
 		}
 
 		/* Exit after printing the last value */
-		if (cattle_tape_is_at_end (tape)) {
+		if (cattle_tape_is_at_end (tape))
+		{
 			break;
 		}
 
 		/* Print a space and move forward */
-		if (G_UNLIKELY (fputc (' ', stderr) == EOF)) {
+		buffer[0] = ' ';
+		if (G_UNLIKELY (write (2, buffer, 1) < 0))
+		{
 			g_set_error_literal (error,
 			                     CATTLE_ERROR,
 			                     CATTLE_ERROR_IO,
 			                     strerror (errno));
+
 			cattle_tape_pop_bookmark (tape);
 			g_object_unref (tape);
+
 			return FALSE;
 		}
 		cattle_tape_move_right (tape);
 		steps--;
 	}
 
-	if (G_UNLIKELY (fputc (']', stderr) == EOF)) {
+	buffer[0] = ']';
+	if (G_UNLIKELY (write (2, buffer, 1) < 0))
+	{
 		g_set_error_literal (error,
 		                     CATTLE_ERROR,
 		                     CATTLE_ERROR_IO,
 		                     strerror (errno));
+
 		cattle_tape_pop_bookmark (tape);
 		g_object_unref (tape);
+
 		return FALSE;
 	}
-	if (G_UNLIKELY (fputc ('\n', stderr) == EOF)) {
+
+	buffer[0] = '\n';
+	if (G_UNLIKELY (write (2, buffer, 1) < 0))
+	{
 		g_set_error_literal (error,
 		                     CATTLE_ERROR,
 		                     CATTLE_ERROR_IO,
 		                     strerror (errno));
+
 		cattle_tape_pop_bookmark (tape);
 		g_object_unref (tape);
+
 		return FALSE;
 	}
 
@@ -1134,6 +1126,7 @@ default_debug_handler (CattleInterpreter  *self,
 	cattle_tape_pop_bookmark (tape);
 
 	g_object_unref (tape);
+
 	return TRUE;
 }
 
