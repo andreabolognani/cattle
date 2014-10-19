@@ -7,7 +7,7 @@ interpreter into any application.
 
 
 Features
-========
+--------
 
 Cattle is able to load and execute virtually any Brainfuck program; both
 the code loader and the interpreter have good error checking, and are
@@ -27,7 +27,7 @@ removing instructions.
 
 
 Development status
-==================
+------------------
 
 The library currently provides enough features to implement a working
 interpreter in about 70 lines of code (see examples/run.c); the API is
@@ -35,9 +35,9 @@ stable and considered good enough for production use.
 
 
 Limitations
-===========
+-----------
 
-The main limitation of Cattle lies in its performance: while it performs
+The main limitation of Cattle lies in its performances: while it performs
 better than many interpreters written in a high-level programming language
 and than most naive interpreters written in C, it is easily outperformed
 by any optimized interpreter written in C.
@@ -48,7 +48,16 @@ provides are worth the performance hit.
 
 
 Contact information
-===================
+-------------------
 
 You can contact me anytime at the mail address <eof@kiyuko.org> if you
 need any information about Cattle. Suggestion are greatly appreciated.
+
+
+License
+-------
+
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
