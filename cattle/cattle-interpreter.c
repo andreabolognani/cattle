@@ -23,6 +23,7 @@
 #include "cattle-constants.h"
 #include "cattle-interpreter.h"
 #include <unistd.h>
+#include <stdio.h>
 #include <string.h>
 #include <errno.h>
 
@@ -931,9 +932,10 @@ default_debug_handler (CattleInterpreter  *self,
                        GError            **error)
 {
 	CattleTape *tape;
-	gint8       buffer[1];
+	gint8       buffer[4];
 	gint8       value;
-	glong       steps;
+	gulong      size;
+	gulong      steps;
 
 	tape = cattle_interpreter_get_tape (self);
 
@@ -993,10 +995,8 @@ default_debug_handler (CattleInterpreter  *self,
 
 		/* Print the value of the current cell if it is a graphical char;
 		 * otherwise, print its hexadecimal value */
-#if 0
 		if (g_ascii_isgraph ((gchar) value))
 		{
-#endif
 			buffer[0] = value;
 			if (G_UNLIKELY (write (2, buffer, 1) < 0))
 			{
@@ -1010,20 +1010,22 @@ default_debug_handler (CattleInterpreter  *self,
 
 				return FALSE;
 			}
-#if 0
 		}
 		else {
-			if (G_UNLIKELY (fprintf (stderr, "0x%X", value) < 0)) {
+			size = snprintf ((gchar *) buffer, 4, "0x%X", value);
+
+			if (G_UNLIKELY (write (2, buffer, size) < 0)) {
 				g_set_error_literal (error,
 				                     CATTLE_ERROR,
 				                     CATTLE_ERROR_IO,
 				                     strerror (errno));
+
 				cattle_tape_pop_bookmark (tape);
 				g_object_unref (tape);
+
 				return FALSE;
 			}
 		}
-#endif
 
 		/* Mark the current position */
 		if (steps == 0)
