@@ -30,8 +30,12 @@ input_success (CattleInterpreter  *interpreter,
                gpointer            data,
                GError            **error)
 {
-	cattle_interpreter_feed (interpreter,
-	                         "whatever");
+	CattleBuffer *input;
+
+	input = cattle_buffer_new (9);
+	cattle_buffer_set_contents (input, "whatever");
+
+	cattle_interpreter_feed (interpreter, input);
 
 	return TRUE;
 }
@@ -51,8 +55,12 @@ input_utf8 (CattleInterpreter  *interpreter,
             gpointer            data,
             GError            **error)
 {
-	cattle_interpreter_feed (interpreter,
-	                         "\xe2\x84\xa2 (Trademark symbol)");
+	CattleBuffer *input;
+
+	input = cattle_buffer_new (22);
+	cattle_buffer_set_contents (input, "\xe2\x84\xa2 (Trademark symbol)");
+
+	cattle_interpreter_feed (interpreter, input);
 
 	return TRUE;
 }
@@ -63,9 +71,13 @@ input_invalid_utf8 (CattleInterpreter  *interpreter,
                     gpointer            data,
                     GError            **error)
 {
+	CattleBuffer *input;
+
+	input = cattle_buffer_new (3);
+	cattle_buffer_set_contents (input, "\xe2\x28\xa1");
+
 	/* Return some malformed UTF-8 */
-	cattle_interpreter_feed (interpreter,
-	                         "\xe2\x28\xa1");
+	cattle_interpreter_feed (interpreter, input);
 
 	return TRUE;
 }
@@ -242,41 +254,46 @@ debug_fail_only_error (CattleInterpreter  *interpreter,
 static void
 test_interpreter_handlers (void)
 {
-	CattleInterpreter *interpreter;
+	CattleInterpreter   *interpreter;
 	CattleConfiguration *configuration;
-	CattleProgram *program;
-	GError *error;
-	GString *buffer;
-	gboolean success;
+	CattleProgram       *program;
+	CattleBuffer        *buffer;
+	GError              *error;
+	GString             *output;
+	gboolean             success;
 
 	interpreter = cattle_interpreter_new ();
+
+	buffer = cattle_buffer_new (5);
+	cattle_buffer_set_contents (buffer, ",.,#.");
 
 	configuration = cattle_interpreter_get_configuration (interpreter);
 	cattle_configuration_set_debug_is_enabled (configuration, TRUE);
 	g_object_unref (configuration);
 
 	program = cattle_interpreter_get_program (interpreter);
-	cattle_program_load (program, ",.,#.", NULL);
+	cattle_program_load (program, buffer, NULL);
 	g_object_unref (program);
+	g_object_unref (buffer);
 
-	buffer = g_string_new ("");
+	output = g_string_new ("");
 
 	cattle_interpreter_set_input_handler (interpreter,
 	                                      input_success,
-	                                      buffer);
+	                                      output);
 	cattle_interpreter_set_output_handler (interpreter,
 	                                       output_success_buffer,
-	                                       buffer);
+	                                       output);
 	cattle_interpreter_set_debug_handler (interpreter,
 	                                      debug_success_buffer,
-	                                      buffer);
+	                                      output);
 
 	error = NULL;
 	success = cattle_interpreter_run (interpreter, &error);
 	g_assert (success);
-	g_assert (g_utf8_collate (buffer->str, "w0h") == 0);
+	g_assert (g_utf8_collate (output->str, "w0h") == 0);
 
-	g_string_free (buffer, TRUE);
+	g_string_free (output, TRUE);
 	g_object_unref (interpreter);
 }
 
@@ -291,15 +308,20 @@ static void
 test_interpreter_failed_input (void)
 {
 	CattleInterpreter *interpreter;
-	CattleProgram *program;
-	GError *error;
-	gboolean success;
+	CattleProgram     *program;
+	CattleBuffer      *buffer;
+	GError            *error;
+	gboolean           success;
 
 	interpreter = cattle_interpreter_new ();
 
+	buffer = cattle_buffer_new (1);
+	cattle_buffer_set_contents (buffer, ",");
+
 	program = cattle_interpreter_get_program (interpreter);
-	cattle_program_load (program, ",", NULL);
+	cattle_program_load (program, buffer, NULL);
 	g_object_unref (program);
+	g_object_unref (buffer);
 
 	cattle_interpreter_set_input_handler (interpreter,
 	                                      input_fail_set_error,
@@ -335,7 +357,6 @@ test_interpreter_failed_input (void)
 	g_assert (g_error_matches (error, CATTLE_ERROR, CATTLE_ERROR_BAD_UTF8));
 
 	g_error_free (error);
-
 	g_object_unref (interpreter);
 }
 
@@ -351,15 +372,18 @@ static void
 test_interpreter_failed_output (void)
 {
 	CattleInterpreter *interpreter;
-	CattleProgram *program;
-	GError *error;
-	gboolean success;
+	CattleProgram     *program;
+	CattleBuffer      *buffer;
+	GError            *error;
+	gboolean           success;
 
 	interpreter = cattle_interpreter_new ();
 
+	buffer = cattle_buffer_new (1);
+	cattle_buffer_set_contents (buffer, ".");
+
 	program = cattle_interpreter_get_program (interpreter);
-	cattle_program_load (program, ".", NULL);
-	g_object_unref (program);
+	cattle_program_load (program, buffer, NULL);
 
 	cattle_interpreter_set_output_handler (interpreter,
 	                                       output_fail_set_error,
@@ -396,6 +420,8 @@ test_interpreter_failed_output (void)
 
 	g_error_free (error);
 
+	g_object_unref (buffer);
+	g_object_unref (program);
 	g_object_unref (interpreter);
 }
 
@@ -409,21 +435,24 @@ test_interpreter_failed_output (void)
 static void
 test_interpreter_failed_debug (void)
 {
-	CattleInterpreter *interpreter;
+	CattleInterpreter   *interpreter;
 	CattleConfiguration *configuration;
-	CattleProgram *program;
-	GError *error;
-	gboolean success;
+	CattleProgram       *program;
+	CattleBuffer        *buffer;
+	GError              *error;
+	gboolean             success;
 
 	interpreter = cattle_interpreter_new ();
+
+	buffer = cattle_buffer_new (1);
+	cattle_buffer_set_contents (buffer, "#");
 
 	configuration = cattle_interpreter_get_configuration (interpreter);
 	cattle_configuration_set_debug_is_enabled (configuration, TRUE);
 	g_object_unref (configuration);
 
 	program = cattle_interpreter_get_program (interpreter);
-	cattle_program_load (program, "#", NULL);
-	g_object_unref (program);
+	cattle_program_load (program, buffer, NULL);
 
 	cattle_interpreter_set_debug_handler (interpreter,
 	                                      debug_fail_set_error,
@@ -460,6 +489,8 @@ test_interpreter_failed_debug (void)
 
 	g_error_free (error);
 
+	g_object_unref (buffer);
+	g_object_unref (program);
 	g_object_unref (interpreter);
 }
 
@@ -473,15 +504,18 @@ static void
 test_interpreter_input_no_feed (void)
 {
 	CattleInterpreter *interpreter;
-	CattleProgram *program;
-	GError *error;
-	gboolean success;
+	CattleProgram     *program;
+	CattleBuffer      *buffer;
+	GError            *error;
+	gboolean           success;
 
 	interpreter = cattle_interpreter_new ();
 
+	buffer = cattle_buffer_new (1);
+	cattle_buffer_set_contents (buffer, ",");
+
 	program = cattle_interpreter_get_program (interpreter);
-	cattle_program_load (program, ",", NULL);
-	g_object_unref (program);
+	cattle_program_load (program, buffer, NULL);
 
 	cattle_interpreter_set_input_handler (interpreter,
 	                                      input_no_feed,
@@ -493,6 +527,8 @@ test_interpreter_input_no_feed (void)
 	g_assert (success);
 	g_assert (error == NULL);
 
+	g_object_unref (buffer);
+	g_object_unref (program);
 	g_object_unref (interpreter);
 }
 
@@ -505,15 +541,18 @@ static void
 test_interpreter_unicode_input (void)
 {
 	CattleInterpreter *interpreter;
-	CattleProgram *program;
-	GError *error;
-	gboolean success;
+	CattleProgram     *program;
+	CattleBuffer      *buffer;
+	GError            *error;
+	gboolean           success;
 
 	interpreter = cattle_interpreter_new ();
 
+	buffer = cattle_buffer_new (1);
+	cattle_buffer_set_contents (buffer, ",");
+
 	program = cattle_interpreter_get_program (interpreter);
-	cattle_program_load (program, ",", NULL);
-	g_object_unref (program);
+	cattle_program_load (program, buffer, NULL);
 
 	cattle_interpreter_set_input_handler (interpreter,
 	                                      input_utf8,
@@ -525,6 +564,8 @@ test_interpreter_unicode_input (void)
 	g_assert (success);
 	g_assert (error == NULL);
 
+	g_object_unref (buffer);
+	g_object_unref (program);
 	g_object_unref (interpreter);
 }
 
@@ -537,15 +578,18 @@ static void
 test_interpreter_invalid_input (void)
 {
 	CattleInterpreter *interpreter;
-	CattleProgram *program;
-	GError *error;
-	gboolean success;
+	CattleProgram     *program;
+	CattleBuffer      *buffer;
+	GError            *error;
+	gboolean           success;
 
 	interpreter = cattle_interpreter_new ();
 
+	buffer = cattle_buffer_new (1);
+	cattle_buffer_set_contents (buffer, ",");
+
 	program = cattle_interpreter_get_program (interpreter);
-	cattle_program_load (program, ",", NULL);
-	g_object_unref (program);
+	cattle_program_load (program, buffer, NULL);
 
 	cattle_interpreter_set_input_handler (interpreter,
 	                                      input_invalid_utf8,
@@ -553,11 +597,11 @@ test_interpreter_invalid_input (void)
 
 	error = NULL;
 	success = cattle_interpreter_run (interpreter, &error);
-	g_assert (!success);
-	g_assert (g_error_matches (error, CATTLE_ERROR, CATTLE_ERROR_BAD_UTF8));
+	g_assert (success);
+	g_assert (error == NULL);
 
-	g_error_free (error);
-
+	g_object_unref (buffer);
+	g_object_unref (program);
 	g_object_unref (interpreter);
 }
 
@@ -573,12 +617,12 @@ static void
 test_interpreter_unbalanced_brackets (void)
 {
 	CattleInterpreter *interpreter;
-	CattleProgram *program;
+	CattleProgram     *program;
 	CattleInstruction *instructions;
 	CattleInstruction *next;
-	CattleTape *tape;
-	GError *error;
-	gboolean success;
+	CattleTape        *tape;
+	GError            *error;
+	gboolean           success;
 
 	interpreter = cattle_interpreter_new ();
 
@@ -628,7 +672,8 @@ test_interpreter_unbalanced_brackets (void)
 }
 
 gint
-main (gint argc, gchar **argv)
+main (gint    argc,
+      gchar **argv)
 {
 #if !GLIB_CHECK_VERSION(2, 36, 0)
 	g_type_init ();
