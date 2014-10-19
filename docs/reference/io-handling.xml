@@ -36,8 +36,8 @@
 		</para>
 
 		<para>
-			Default I/O handlers are provided, so usually there is no
-			need to define a custom handler.
+			Default I/O handlers are built into Cattle, so usually there
+			is no need to define a custom handler.
 		</para>
 
 	</refsect2>
@@ -74,7 +74,7 @@
 
 		<para>
 			Implementing an output handler is pretty straightforward: the
-			handler is passed a single <link linkend="gchar">gchar</link>
+			handler is passed a single <link linkend="gint8">gint8</link>
 			and has to display it to the user in some way.
 		</para>
 
@@ -87,14 +87,14 @@
 		<informalexample><programlisting>
 			gboolean
 			output_handler (CattleInterpreter  *interpreter,
-			                gchar               output,
+			                gint8               output,
 			                gpointer            data,
 			                GError            **error)
 			{
-				GtkTextView *view;
+				GtkTextView   *view;
 				GtkTextBuffer *buffer;
-				GtkTextIter iter;
-				gchar text[2];
+				GtkTextIter    iter;
+				gchar          text[2];
 
 				view = GTK_TEXT_VIEW (data);
 
@@ -106,8 +106,8 @@
 				gtk_text_buffer_get_end_iter (buffer, &amp;iter);
 
 				/* Create a string */
-				text[0] = output;
-				text[1] = (gchar) 0;
+				text[0] = (gchat) output;
+				text[1] = '\0';
 
 				/* Insert the char at the end of the buffer */
 				gtk_text_buffer_insert (buffer, &amp;iter, text, 1);
@@ -126,7 +126,7 @@
 
 		<informalexample><programlisting>
 				CattleInterpreter *interpreter;
-				GtkWidget *view;
+				GtkWidget         *view;
 
 				interpreter = cattle_interpreter_new ();
 				view = gtk_text_view_new ();
@@ -159,58 +159,71 @@
 			               gpointer            data,
 			               GError            **error)
 			{
-				char *input;
-				char *temp;
+				CattleBuffer *buffer;
+				gchar        *input;
+				gulong        size;
 
 				/* Read an input line using readline (no prompt) */
 				input = readline (NULL);
 
-				if (input != NULL) {
+				if (input != NULL)
+				{
+					/* A line of input has been read successfully, but it
+					 * needs to be copied into a CattleBuffer before
+					 * feeding it to the interpreter. */
 
-					/* A line of input has been read: since readline
-					 * strips the trailing newline but the interpreter
-					 * needs it, a new string with a trailing newline is
-					 * created and fed the interpreter */
-					temp = g_strdup_printf ("%s\n", input);
+					/* Calculate the size of the CattleBuffer. readline
+					 * returns a null-terminated string with the trailing
+					 * newline stripped; a CattleBuffer doesn't need to be
+					 * null-terminated, but stripping the newline would mean
+					 * losing part of the input. We can just create a
+					 * CattleBuffer as big as the string, and replace the
+					 * trailing null byte with a newline. */
+					size = strlen (input) + 1;
 
-					cattle_interpreter_feed (interpreter,
-					                         temp);
+					buffer = cattle_buffer_new (size);
+					cattle_buffer_set_contents (buffer, input);
+					cattle_buffer_set_value (buffer, size - 1, '\n');
 
-					/* The interpreter keeps a copy of the input around,
-					 * so any allocated buffer can be freed */
-					g_free (temp);
+					/* The CattleBuffer now contains a copy of the input, so
+					 * the string returned by readline can be safely freed */
 					free (input);
-				}
-				else {
 
+					cattle_interpreter_feed (interpreter, buffer);
+				}
+				else
+				{
 					/* readline returns NULL when the end of input has
 					 * been reached; to let the interpreter know no more
-					 * input is available, feed it a NULL */
-					cattle_interpreter_feed (interpreter,
-					                         NULL);
+					 * input is available, feed it an empty buffer */
+
+					buffer = cattle_buffer_new (0);
+
+					cattle_interpreter_feed (interpreter, buffer);
 				}
+
+				g_object_unref (buffer);
 
 				return TRUE;
 			}
 		</programlisting></informalexample>
 
 		<para>
-			Input works on a per-line basis: the handler must
-			retrieve a full, null-terminated line of input, including the
-			trailing newline character, and feed it to the interpreter.
+			Input works on a per-line basis: the handler must retrieve
+			a full line of input, including the trailing newline character,
+			and feed it to the interpreter.
 		</para>
 
 		<para>
 			If it is not possible to retrieve the whole line in a single
-			step, a part of it can be passed to the interpreter. The
-			string still needs to be null-terminated.
+			step, a part of it can be passed to the interpreter.
 		</para>
 
 		<para>
-			When the whole input has been consumed (EOF condition), the
-			handler must feed the interpreter a
-			<link linkend="NULL:CAPS">NULL</link> pointer to let it know
-			no more input is available.
+			When the whole input has been consumed, the handler must feed
+			the interpreter an empty
+			<link linkend="CattleBuffer">CattleBuffer</link> to let it
+			know no more input is available.
 		</para>
 
 	</refsect2>
@@ -244,8 +257,8 @@
 			               GError            **error)
 			{
 				CattleTape *tape;
-				gchar value;
-				FILE* fp;
+				gint8       value;
+				FILE*       fp;
 
 				tape = cattle_interpreter_get_tape (interpreter);
 

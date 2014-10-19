@@ -10,9 +10,12 @@
 	<bookinfo>
 		<title>Cattle Reference Manual</title>
 		<releaseinfo>
-			for Cattle &version;
-			Latest version available at
-			<ulink role="online-location" url="http://kiyuko.org/software/cattle/reference/index.html">http://kiyuko.org/software/cattle/reference/index.html</ulink>
+			<para>
+				For Cattle &version;
+			</para>
+			<para>
+				Latest version available at <ulink role="online-location" url="http://kiyuko.org/software/cattle/reference/index.html">http://kiyuko.org/software/cattle/reference/index.html</ulink>
+			</para>
 		</releaseinfo>
 	</bookinfo>
 
@@ -21,18 +24,18 @@
 	<chapter>
 		<title>Core Features</title>
 		<xi:include href="xml/cattle-version.xml" />
-		<xi:include href="xml/cattle-error.xml" />
 		<xi:include href="xml/cattle-constants.xml" />
+		<xi:include href="xml/cattle-error.xml" />
 	</chapter>
 
 	<chapter>
 		<title>Objects</title>
-		<xi:include href="xml/cattle-interpreter.xml" />
-		<xi:include href="xml/cattle-program.xml" />
-		<xi:include href="xml/cattle-tape.xml" />
-		<xi:include href="xml/cattle-configuration.xml" />
 		<xi:include href="xml/cattle-buffer.xml" />
+		<xi:include href="xml/cattle-tape.xml" />
 		<xi:include href="xml/cattle-instruction.xml" />
+		<xi:include href="xml/cattle-program.xml" />
+		<xi:include href="xml/cattle-configuration.xml" />
+		<xi:include href="xml/cattle-interpreter.xml" />
 	</chapter>
 
 	<chapter>

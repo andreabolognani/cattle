@@ -28,7 +28,7 @@
  * A #CattleTape represents an infinte-length memory tape, which is used
  * by a #CattleInterpreter to store its data. The tape contains a
  * virtually infinte number of memory cells, each one able to store a
- * single ASCII character.
+ * single byte.
  *
  * A tape supports three kinds of operations: reading the value of the
  * current cell, updating the value of the current cell (either by
@@ -181,7 +181,7 @@ cattle_tape_new (void)
  *
  * Set the value of the current cell.
  *
- * Accepted values range from #G_MINGINT8 to #G_MAXGINT8.
+ * Accepted values range from %G_MININT8 to %G_MAXINT8.
  */
 void
 cattle_tape_set_current_value (CattleTape *self,
