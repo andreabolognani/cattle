@@ -74,7 +74,6 @@ cattle_buffer_constructed (GObject *object)
 	CattleBufferPrivate *priv;
 
 	self = CATTLE_BUFFER (object);
-
 	priv = self->priv;
 
 	G_OBJECT_CLASS (cattle_buffer_parent_class)->constructed (object);
@@ -92,8 +91,8 @@ cattle_buffer_dispose (GObject *object)
 	CattleBufferPrivate *priv;
 
 	self = CATTLE_BUFFER (object);
-
 	priv = self->priv;
+
 	g_return_if_fail (!priv->disposed);
 
 	priv->disposed = TRUE;
@@ -108,7 +107,6 @@ cattle_buffer_finalize (GObject *object)
 	CattleBufferPrivate *priv;
 
 	self = CATTLE_BUFFER (object);
-
 	priv = self->priv;
 
 	/* Free allocated data */
@@ -195,7 +193,6 @@ cattle_buffer_set_value (CattleBuffer *self,
 
 	priv = self->priv;
 	g_return_if_fail (!priv->disposed);
-
 	g_return_if_fail (position < priv->size);
 
 	priv->data[position] = value;
@@ -223,7 +220,6 @@ cattle_buffer_get_value (CattleBuffer *self,
 
 	priv = self->priv;
 	g_return_if_fail (!priv->disposed);
-
 	g_return_if_fail (position < priv->size);
 
 	return priv->data[position];
@@ -258,22 +254,28 @@ cattle_buffer_set_property (GObject      *object,
 {
 	CattleBuffer        *self;
 	CattleBufferPrivate *priv;
+	gulong               v_ulong;
 
 	self = CATTLE_BUFFER (object);
-
 	priv = self->priv;
+
 	g_return_if_fail (!priv->disposed);
 
 	switch (property_id)
 	{
 		case PROP_SIZE:
-			priv->size = g_value_get_ulong (value);
+
+			v_ulong = g_value_get_ulong (value);
+			priv->size = v_ulong;
+
 			break;
 
 		default:
+
 			G_OBJECT_WARN_INVALID_PROPERTY_ID (object,
 			                                   property_id,
 			                                   pspec);
+
 			break;
 	}
 }
@@ -284,26 +286,26 @@ cattle_buffer_get_property (GObject    *object,
                             GValue     *value,
                             GParamSpec *pspec)
 {
-	CattleBuffer        *self;
-	CattleBufferPrivate *priv;
-	gulong               v_size;
+	CattleBuffer *self;
+	gulong        v_ulong;
 
 	self = CATTLE_BUFFER (object);
-
-	priv = self->priv;
-	g_return_if_fail (!priv->disposed);
 
 	switch (property_id)
 	{
 		case PROP_SIZE:
-			v_size = cattle_buffer_get_size (self);
-			g_value_set_ulong (value, v_size);
+
+			v_ulong = cattle_buffer_get_size (self);
+			g_value_set_ulong (value, v_ulong);
+
 			break;
 
 		default:
+
 			G_OBJECT_WARN_INVALID_PROPERTY_ID (object,
 			                                   property_id,
 			                                   pspec);
+
 			break;
 	}
 }

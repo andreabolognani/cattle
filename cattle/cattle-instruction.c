@@ -92,7 +92,7 @@ struct _CattleInstructionPrivate
 	gboolean                disposed;
 
 	CattleInstructionValue  value;
-	gint                    quantity;
+	gulong                  quantity;
 
 	CattleInstruction      *next;
 	CattleInstruction      *loop;
@@ -111,38 +111,45 @@ enum
 static void
 cattle_instruction_init (CattleInstruction *self)
 {
-	self->priv = CATTLE_INSTRUCTION_GET_PRIVATE (self);
+	CattleInstructionPrivate *priv;
 
-	self->priv->value = CATTLE_INSTRUCTION_NONE;
-	self->priv->quantity = 1;
-	self->priv->next = NULL;
-	self->priv->loop = NULL;
+	priv = CATTLE_INSTRUCTION_GET_PRIVATE (self);
 
-	self->priv->disposed = FALSE;
+	priv->value = CATTLE_INSTRUCTION_NONE;
+	priv->quantity = 1;
+	priv->next = NULL;
+	priv->loop = NULL;
+
+	priv->disposed = FALSE;
+
+	self->priv = priv;
 }
 
 static void
 cattle_instruction_dispose (GObject *object)
 {
-	CattleInstruction *self = CATTLE_INSTRUCTION (object);
+	CattleInstruction        *self;
+	CattleInstructionPrivate *priv;
 
-	g_return_if_fail (!self->priv->disposed);
+	self = CATTLE_INSTRUCTION (object);
+	priv = self->priv;
 
-	if (self->priv->next != NULL) {
-		g_object_unref (self->priv->next);
-		self->priv->next = NULL;
+	g_return_if_fail (!priv->disposed);
+
+	if (priv->next != NULL)
+	{
+		g_object_unref (priv->next);
 	}
 
-	if (self->priv->loop != NULL) {
-
+	if (priv->loop != NULL)
+	{
 		/* Releasing the first instruction in the loop causes
 		 * all the instructions in the loop to be released as
 		 * well, so we can safely release just the first one */
-		g_object_unref (self->priv->loop);
-		self->priv->loop = NULL;
+		g_object_unref (priv->loop);
 	}
 
-	self->priv->disposed = TRUE;
+	priv->disposed = TRUE;
 
 	G_OBJECT_CLASS (cattle_instruction_parent_class)->dispose (object);
 }
@@ -181,11 +188,14 @@ void
 cattle_instruction_set_value (CattleInstruction      *self,
                               CattleInstructionValue  value)
 {
-	gpointer enum_class;
-	GEnumValue *enum_value;
+	CattleInstructionPrivate *priv;
+	gpointer                  enum_class;
+	GEnumValue               *enum_value;
 
 	g_return_if_fail (CATTLE_IS_INSTRUCTION (self));
-	g_return_if_fail (!self->priv->disposed);
+
+	priv = self->priv;
+	g_return_if_fail (!priv->disposed);
 
 	/* Get the enum class for instruction values, and lookup the value.
 	 * If it is not present, the value is not valid */
@@ -194,7 +204,7 @@ cattle_instruction_set_value (CattleInstruction      *self,
 	g_type_class_unref (enum_class);
 	g_return_if_fail (enum_value != NULL);
 
-	self->priv->value = value;
+	priv->value = value;
 }
 
 /**
@@ -208,12 +218,14 @@ cattle_instruction_set_value (CattleInstruction      *self,
 CattleInstructionValue
 cattle_instruction_get_value (CattleInstruction *self)
 {
-	g_return_val_if_fail (CATTLE_IS_INSTRUCTION (self),
-	                      CATTLE_INSTRUCTION_NONE);
-	g_return_val_if_fail (!self->priv->disposed,
-	                      CATTLE_INSTRUCTION_NONE);
+	CattleInstructionPrivate *priv;
 
-	return self->priv->value;
+	g_return_val_if_fail (CATTLE_IS_INSTRUCTION (self), CATTLE_INSTRUCTION_NONE);
+
+	priv = self->priv;
+	g_return_val_if_fail (!priv->disposed, CATTLE_INSTRUCTION_NONE);
+
+	return priv->value;
 }
 
 /**
@@ -228,13 +240,16 @@ cattle_instruction_get_value (CattleInstruction *self)
  */
 void
 cattle_instruction_set_quantity (CattleInstruction *self,
-                                 gint               quantity)
+                                 gulong             quantity)
 {
-	g_return_if_fail (CATTLE_IS_INSTRUCTION (self));
-	g_return_if_fail ((quantity > 0) && (quantity < G_MAXINT));
-	g_return_if_fail (!self->priv->disposed);
+	CattleInstructionPrivate *priv;
 
-	self->priv->quantity = quantity;
+	g_return_if_fail (CATTLE_IS_INSTRUCTION (self));
+
+	priv = self->priv;
+	g_return_if_fail (!priv->disposed);
+
+	priv->quantity = quantity;
 }
 
 /**
@@ -246,13 +261,17 @@ cattle_instruction_set_quantity (CattleInstruction *self,
  *
  * Returns: the quantity of @instruction
  */
-gint
+gulong
 cattle_instruction_get_quantity (CattleInstruction *self)
 {
-	g_return_val_if_fail (CATTLE_IS_INSTRUCTION (self), -1);
-	g_return_val_if_fail (!self->priv->disposed, -1);
+	CattleInstructionPrivate *priv;
 
-	return self->priv->quantity;
+	g_return_val_if_fail (CATTLE_IS_INSTRUCTION (self), 0);
+
+	priv = self->priv;
+	g_return_val_if_fail (!priv->disposed, 0);
+
+	return priv->quantity;
 }
 
 /**
@@ -269,19 +288,25 @@ void
 cattle_instruction_set_next (CattleInstruction *self,
                              CattleInstruction *next)
 {
+	CattleInstructionPrivate *priv;
+
 	g_return_if_fail (CATTLE_IS_INSTRUCTION (self));
-	g_return_if_fail (next == NULL || CATTLE_IS_INSTRUCTION (next));
-	g_return_if_fail (!self->priv->disposed);
+	g_return_if_fail (CATTLE_IS_INSTRUCTION (next) || next == NULL);
+
+	priv = self->priv;
+	g_return_if_fail (!priv->disposed);
 
 	/* Release the reference held on the previous value */
-	if (self->priv->next != NULL) {
-		g_object_unref (self->priv->next);
+	if (priv->next != NULL)
+	{
+		g_object_unref (priv->next);
 	}
 
 	/* Set the new instruction and acquire a reference to it */
-	self->priv->next = next;
-	if (self->priv->next != NULL) {
-		g_object_ref (self->priv->next);
+	priv->next = next;
+	if (priv->next != NULL)
+	{
+		g_object_ref (priv->next);
 	}
 }
 
@@ -302,14 +327,19 @@ cattle_instruction_set_next (CattleInstruction *self,
 CattleInstruction*
 cattle_instruction_get_next (CattleInstruction *self)
 {
-	g_return_val_if_fail (CATTLE_IS_INSTRUCTION (self), NULL);
-	g_return_val_if_fail (!self->priv->disposed, NULL);
+	CattleInstructionPrivate *priv;
 
-	if (self->priv->next != NULL) {
-		g_object_ref (self->priv->next);
+	g_return_val_if_fail (CATTLE_IS_INSTRUCTION (self), NULL);
+
+	priv = self->priv;
+	g_return_val_if_fail (!priv->disposed, NULL);
+
+	if (priv->next != NULL)
+	{
+		g_object_ref (priv->next);
 	}
 
-	return self->priv->next;
+	return priv->next;
 }
 
 /**
@@ -326,22 +356,27 @@ void
 cattle_instruction_set_loop (CattleInstruction *self,
                              CattleInstruction *loop)
 {
+	CattleInstructionPrivate *priv;
+
 	g_return_if_fail (CATTLE_IS_INSTRUCTION (self));
-	g_return_if_fail (loop == NULL || CATTLE_IS_INSTRUCTION (loop));
-	g_return_if_fail (!self->priv->disposed);
+	g_return_if_fail (CATTLE_IS_INSTRUCTION (loop) || loop == NULL);
+
+	priv = self->priv;
+	g_return_if_fail (!priv->disposed);
 
 	/* Release the reference held on the previous loop */
-	if (self->priv->loop != NULL) {
-
+	if (priv->loop != NULL)
+	{
 		/* Releasing the first instruction in the loop causes
 		 * all the instructions to be disposed */
-		g_object_unref (self->priv->loop);
+		g_object_unref (priv->loop);
 	}
 
 	/* Get a reference to the new instructions */
-	self->priv->loop = loop;
-	if (self->priv->loop != NULL) {
-		g_object_ref (self->priv->loop);
+	priv->loop = loop;
+	if (priv->loop != NULL)
+	{
+		g_object_ref (priv->loop);
 	}
 }
 
@@ -359,14 +394,19 @@ cattle_instruction_set_loop (CattleInstruction *self,
 CattleInstruction*
 cattle_instruction_get_loop (CattleInstruction *self)
 {
-	g_return_val_if_fail (CATTLE_IS_INSTRUCTION (self), NULL);
-	g_return_val_if_fail (!self->priv->disposed, NULL);
+	CattleInstructionPrivate *priv;
 
-	if (self->priv->loop != NULL) {
-		g_object_ref (self->priv->loop);
+	g_return_val_if_fail (CATTLE_IS_INSTRUCTION (self), NULL);
+
+	priv = self->priv;
+	g_return_val_if_fail (!priv->disposed, NULL);
+
+	if (priv->loop != NULL)
+	{
+		g_object_ref (priv->loop);
 	}
 
-	return self->priv->loop;
+	return priv->loop;
 }
 
 static void
@@ -375,42 +415,54 @@ cattle_instruction_set_property (GObject      *object,
                                  const GValue *value,
                                  GParamSpec   *pspec)
 {
-	CattleInstruction *self = CATTLE_INSTRUCTION (object);
-	CattleInstruction *t_obj;
-	gint t_int;
+	CattleInstruction *self;
+	CattleInstruction *v_instruction;
+	gint               v_int;
+	gulong             v_ulong;
 
-	g_return_if_fail (!self->priv->disposed);
+	self = CATTLE_INSTRUCTION (object);
 
-	switch (property_id) {
-
+	switch (property_id)
+	{
 		case PROP_VALUE:
-			t_int = g_value_get_enum (value);
+
+			v_int = g_value_get_enum (value);
 			cattle_instruction_set_value (self,
-			                              t_int);
+			                              v_int);
+
 			break;
 
 		case PROP_QUANTITY:
-			t_int = g_value_get_int (value);
+
+			v_ulong = g_value_get_ulong (value);
 			cattle_instruction_set_quantity (self,
-			                                 t_int);
+			                                 v_ulong);
+
 			break;
 
 		case PROP_NEXT:
-			t_obj = g_value_get_object (value);
+
+			v_instruction = g_value_get_object (value);
 			cattle_instruction_set_next (self,
-			                             t_obj);
+			                             v_instruction);
+
 			break;
 
 		case PROP_LOOP:
-			t_obj = g_value_get_object (value);
+
+			v_instruction = g_value_get_object (value);
 			cattle_instruction_set_loop (self,
-			                             t_obj);
+			                             v_instruction);
+
 			break;
 
 		default:
+
 			G_OBJECT_WARN_INVALID_PROPERTY_ID (object,
 			                                   property_id,
 			                                   pspec);
+
+			break;
 	}
 }
 
@@ -420,47 +472,60 @@ cattle_instruction_get_property (GObject    *object,
                                  GValue     *value,
                                  GParamSpec *pspec)
 {
-	CattleInstruction *self = CATTLE_INSTRUCTION (object);
-	CattleInstruction *t_obj;
-	gint t_int;
+	CattleInstruction *self;
+	CattleInstruction *v_instruction;
+	gulong             v_ulong;
+	gint               v_int;
 
-	if (G_LIKELY (!self->priv->disposed)) {
+	self = CATTLE_INSTRUCTION (object);
 
-		switch (property_id) {
+	switch (property_id)
+	{
+		case PROP_VALUE:
 
-			case PROP_VALUE:
-				t_int = cattle_instruction_get_value (self);
-				g_value_set_enum (value, t_int);
-				break;
+			v_int = cattle_instruction_get_value (self);
+			g_value_set_enum (value, v_int);
 
-			case PROP_QUANTITY:
-				t_int = cattle_instruction_get_quantity (self);
-				g_value_set_int (value, t_int);
-				break;
+			break;
 
-			case PROP_NEXT:
-				t_obj = cattle_instruction_get_next (self);
-				g_value_set_object (value, t_obj);
-				break;
+		case PROP_QUANTITY:
 
-			case PROP_LOOP:
-				t_obj = cattle_instruction_get_loop (self);
-				g_value_set_object (value, t_obj);
-				break;
+			v_ulong = cattle_instruction_get_quantity (self);
+			g_value_set_ulong (value, v_ulong);
 
-			default:
-				G_OBJECT_WARN_INVALID_PROPERTY_ID (object,
-				                                   property_id,
-				                                   pspec);
-		}
+			break;
+
+		case PROP_NEXT:
+
+			v_instruction = cattle_instruction_get_next (self);
+			g_value_set_object (value, v_instruction);
+
+			break;
+
+		case PROP_LOOP:
+
+			v_instruction = cattle_instruction_get_loop (self);
+			g_value_set_object (value, v_instruction);
+
+			break;
+
+		default:
+
+			G_OBJECT_WARN_INVALID_PROPERTY_ID (object,
+							   property_id,
+							   pspec);
+
+			break;
 	}
 }
 
 static void
 cattle_instruction_class_init (CattleInstructionClass *self)
 {
-	GObjectClass *object_class = G_OBJECT_CLASS (self);
-	GParamSpec *pspec;
+	GObjectClass *object_class;
+	GParamSpec   *pspec;
+
+	object_class = G_OBJECT_CLASS (self);
 
 	object_class->set_property = cattle_instruction_set_property;
 	object_class->get_property = cattle_instruction_get_property;
@@ -492,13 +557,13 @@ cattle_instruction_class_init (CattleInstructionClass *self)
 	 *
 	 * Changes to this property are not notified.
 	 */
-	pspec = g_param_spec_int ("quantity",
-	                          "Number of times the instruction is repeated",
-	                          "Get/set instruction's quantity",
-	                          0,
-	                          G_MAXINT,
-	                          1,
-	                          G_PARAM_READWRITE);
+	pspec = g_param_spec_ulong ("quantity",
+	                            "Number of times the instruction is repeated",
+	                            "Get/set instruction's quantity",
+	                            0,
+	                            G_MAXULONG,
+	                            1,
+	                            G_PARAM_READWRITE);
 	g_object_class_install_property (object_class,
 	                                 PROP_QUANTITY,
 	                                 pspec);

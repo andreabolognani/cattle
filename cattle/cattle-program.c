@@ -515,29 +515,35 @@ cattle_program_set_property (GObject      *object,
                              GParamSpec   *pspec)
 {
 	CattleProgram     *self;
-	CattleInstruction *v_instructions;
-	CattleBuffer      *v_input;
+	CattleInstruction *v_instruction;
+	CattleBuffer      *v_buffer;
 
 	self = CATTLE_PROGRAM (object);
 
 	switch (property_id)
 	{
 		case PROP_INSTRUCTIONS:
-			v_instructions = g_value_get_object (value);
+
+			v_instruction = g_value_get_object (value);
 			cattle_program_set_instructions (self,
-			                                 v_instructions);
+			                                 v_instruction);
+
 			break;
 
 		case PROP_INPUT:
-			v_input = g_value_get_object (value);
+
+			v_buffer = g_value_get_object (value);
 			cattle_program_set_input (self,
-			                          v_input);
+			                          v_buffer);
+
 			break;
 
 		default:
+
 			G_OBJECT_WARN_INVALID_PROPERTY_ID (object,
 			                                   property_id,
 			                                   pspec);
+
 			break;
 	}
 }
@@ -549,29 +555,35 @@ cattle_program_get_property (GObject    *object,
                              GParamSpec *pspec)
 {
 	CattleProgram     *self;
-	CattleInstruction *v_instructions;
-	CattleBuffer      *v_input;
+	CattleInstruction *v_instruction;
+	CattleBuffer      *v_buffer;
 
 	self = CATTLE_PROGRAM (object);
 
 	switch (property_id)
 	{
 		case PROP_INSTRUCTIONS:
-			v_instructions = cattle_program_get_instructions (self);
+
+			v_instruction = cattle_program_get_instructions (self);
 			g_value_set_object (value,
-			                    v_instructions);
+			                    v_instruction);
+
 			break;
 
 		case PROP_INPUT:
-			v_input = cattle_program_get_input (self);
+
+			v_buffer = cattle_program_get_input (self);
 			g_value_set_object (value,
-			                    v_input);
+			                    v_buffer);
+
 			break;
 
 		default:
+
 			G_OBJECT_WARN_INVALID_PROPERTY_ID (object,
 			                                   property_id,
 			                                   pspec);
+
 			break;
 	}
 }

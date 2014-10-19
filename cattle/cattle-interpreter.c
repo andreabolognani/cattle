@@ -91,18 +91,18 @@ enum
 };
 
 /* Internal functions */
-static gboolean run                        (CattleInterpreter      *interpreter,
-                                            GError                **error);
-static gboolean default_input_handler      (CattleInterpreter      *interpreter,
-                                            gpointer                data,
-                                            GError                **error);
-static gboolean default_output_handler     (CattleInterpreter      *interpreter,
-                                            gint8                   output,
-                                            gpointer                data,
-                                            GError                **error);
-static gboolean default_debug_handler      (CattleInterpreter      *interpreter,
-                                            gpointer                data,
-                                            GError                **error);
+static gboolean run                    (CattleInterpreter  *interpreter,
+                                        GError            **error);
+static gboolean default_input_handler  (CattleInterpreter  *interpreter,
+                                        gpointer            data,
+                                        GError            **error);
+static gboolean default_output_handler (CattleInterpreter  *interpreter,
+                                        gint8               output,
+                                        gpointer            data,
+                                        GError            **error);
+static gboolean default_debug_handler  (CattleInterpreter  *interpreter,
+                                        gpointer            data,
+                                        GError            **error);
 
 static void
 cattle_interpreter_init (CattleInterpreter *self)
@@ -231,6 +231,7 @@ run (CattleInterpreter  *self,
 
 					continue;
 				}
+
 				break;
 
 			case CATTLE_INSTRUCTION_LOOP_END:
@@ -261,24 +262,28 @@ run (CattleInterpreter  *self,
 
 				quantity = cattle_instruction_get_quantity (current);
 				cattle_tape_move_left_by (tape, quantity);
+
 				break;
 
 			case CATTLE_INSTRUCTION_MOVE_RIGHT:
 
 				quantity = cattle_instruction_get_quantity (current);
 				cattle_tape_move_right_by (tape, quantity);
+
 				break;
 
 			case CATTLE_INSTRUCTION_INCREASE:
 
 				quantity = cattle_instruction_get_quantity (current);
 				cattle_tape_increase_current_value_by (tape, quantity);
+
 				break;
 
 			case CATTLE_INSTRUCTION_DECREASE:
 
 				quantity = cattle_instruction_get_quantity (current);
 				cattle_tape_decrease_current_value_by (tape, quantity);
+
 				break;
 
 			case CATTLE_INSTRUCTION_READ:
@@ -409,6 +414,7 @@ run (CattleInterpreter  *self,
 					 * Save the new value */
 					cattle_tape_set_current_value (tape, temp);
 				}
+
 				break;
 
 			case CATTLE_INSTRUCTION_PRINT:
@@ -452,6 +458,7 @@ run (CattleInterpreter  *self,
 						return FALSE;
 					}
 				}
+
 				break;
 
 			case CATTLE_INSTRUCTION_DEBUG:
@@ -493,11 +500,13 @@ run (CattleInterpreter  *self,
 						}
 					}
 				}
+
 				break;
 
 			case CATTLE_INSTRUCTION_NONE:
 
 				/* Do nothing */
+
 				break;
 		}
 
@@ -644,16 +653,21 @@ void
 cattle_interpreter_set_configuration (CattleInterpreter   *self,
                                       CattleConfiguration *configuration)
 {
+	CattleInterpreterPrivate *priv;
+
 	g_return_if_fail (CATTLE_IS_INTERPRETER (self));
 	g_return_if_fail (CATTLE_IS_CONFIGURATION (configuration));
-	g_return_if_fail (!self->priv->disposed);
+
+	priv = self->priv;
+
+	g_return_if_fail (!priv->disposed);
 
 	/* Release the reference held on the previous
 	 * configuration */
-	g_object_unref (self->priv->configuration);
+	g_object_unref (priv->configuration);
 
-	self->priv->configuration = configuration;
-	g_object_ref (self->priv->configuration);
+	priv->configuration = configuration;
+	g_object_ref (priv->configuration);
 }
 
 /**
@@ -668,12 +682,17 @@ cattle_interpreter_set_configuration (CattleInterpreter   *self,
 CattleConfiguration*
 cattle_interpreter_get_configuration (CattleInterpreter *self)
 {
+	CattleInterpreterPrivate *priv;
+
 	g_return_val_if_fail (CATTLE_IS_INTERPRETER (self), NULL);
-	g_return_val_if_fail (!self->priv->disposed, NULL);
 
-	g_object_ref (self->priv->configuration);
+	priv = self->priv;
 
-	return self->priv->configuration;
+	g_return_val_if_fail (!priv->disposed, NULL);
+
+	g_object_ref (priv->configuration);
+
+	return priv->configuration;
 }
 
 /**
@@ -691,16 +710,20 @@ void
 cattle_interpreter_set_program (CattleInterpreter *self,
                                 CattleProgram     *program)
 {
+	CattleInterpreterPrivate *priv;
+
 	g_return_if_fail (CATTLE_IS_INTERPRETER (self));
 	g_return_if_fail (CATTLE_IS_PROGRAM (program));
-	g_return_if_fail (!self->priv->disposed);
 
-	/* Release the reference held to the previous
-	 * program, if any */
-	g_object_unref (self->priv->program);
+	priv = self->priv;
 
-	self->priv->program = program;
-	g_object_ref (self->priv->program);
+	g_return_if_fail (!priv->disposed);
+
+	/* Release the reference held to the previous program */
+	g_object_unref (priv->program);
+
+	priv->program = program;
+	g_object_ref (priv->program);
 }
 
 /**
@@ -715,12 +738,17 @@ cattle_interpreter_set_program (CattleInterpreter *self,
 CattleProgram*
 cattle_interpreter_get_program (CattleInterpreter *self)
 {
+	CattleInterpreterPrivate *priv;
+
 	g_return_val_if_fail (CATTLE_IS_INTERPRETER (self), NULL);
-	g_return_val_if_fail (!self->priv->disposed, NULL);
 
-	g_object_ref (self->priv->program);
+	priv = self->priv;
 
-	return self->priv->program;
+	g_return_val_if_fail (!priv->disposed, NULL);
+
+	g_object_ref (priv->program);
+
+	return priv->program;
 }
 
 /**
@@ -734,15 +762,20 @@ void
 cattle_interpreter_set_tape (CattleInterpreter *self,
                              CattleTape        *tape)
 {
+	CattleInterpreterPrivate *priv;
+
 	g_return_if_fail (CATTLE_IS_INTERPRETER (self));
 	g_return_if_fail (CATTLE_IS_TAPE (tape));
-	g_return_if_fail (!self->priv->disposed);
+
+	priv = self->priv;
+
+	g_return_if_fail (!priv->disposed);
 
 	/* Release the reference held to the previous tape */
-	g_object_unref (self->priv->tape);
+	g_object_unref (priv->tape);
 
-	self->priv->tape = tape;
-	g_object_ref (self->priv->tape);
+	priv->tape = tape;
+	g_object_ref (priv->tape);
 }
 
 /**
@@ -757,12 +790,17 @@ cattle_interpreter_set_tape (CattleInterpreter *self,
 CattleTape*
 cattle_interpreter_get_tape (CattleInterpreter *self)
 {
+	CattleInterpreterPrivate *priv;
+
 	g_return_val_if_fail (CATTLE_IS_INTERPRETER (self), NULL);
-	g_return_val_if_fail (!self->priv->disposed, NULL);
 
-	g_object_ref (self->priv->tape);
+	priv = self->priv;
 
-	return self->priv->tape;
+	g_return_val_if_fail (!priv->disposed, NULL);
+
+	g_object_ref (priv->tape);
+
+	return priv->tape;
 }
 
 /**
@@ -793,11 +831,16 @@ cattle_interpreter_set_input_handler (CattleInterpreter  *self,
                                       CattleInputHandler  handler,
                                       gpointer            user_data)
 {
-	g_return_if_fail (CATTLE_IS_INTERPRETER (self));
-	g_return_if_fail (!self->priv->disposed);
+	CattleInterpreterPrivate *priv;
 
-	self->priv->input_handler = handler;
-	self->priv->input_handler_data = user_data;
+	g_return_if_fail (CATTLE_IS_INTERPRETER (self));
+
+	priv = self->priv;
+
+	g_return_if_fail (!priv->disposed);
+
+	priv->input_handler = handler;
+	priv->input_handler_data = user_data;
 }
 
 /**
@@ -829,11 +872,16 @@ cattle_interpreter_set_output_handler (CattleInterpreter   *self,
                                        CattleOutputHandler  handler,
                                        gpointer             user_data)
 {
-	g_return_if_fail (CATTLE_IS_INTERPRETER (self));
-	g_return_if_fail (!self->priv->disposed);
+	CattleInterpreterPrivate *priv;
 
-	self->priv->output_handler = handler;
-	self->priv->output_handler_data = user_data;
+	g_return_if_fail (CATTLE_IS_INTERPRETER (self));
+
+	priv = self->priv;
+
+	g_return_if_fail (!priv->disposed);
+
+	priv->output_handler = handler;
+	priv->output_handler_data = user_data;
 }
 
 /**
@@ -864,11 +912,16 @@ cattle_interpreter_set_debug_handler (CattleInterpreter  *self,
                                       CattleDebugHandler  handler,
                                       gpointer            user_data)
 {
-	g_return_if_fail (CATTLE_IS_INTERPRETER (self));
-	g_return_if_fail (!self->priv->disposed);
+	CattleInterpreterPrivate *priv;
 
-	self->priv->debug_handler = handler;
-	self->priv->debug_handler_data = user_data;
+	g_return_if_fail (CATTLE_IS_INTERPRETER (self));
+
+	priv = self->priv;
+
+	g_return_if_fail (!priv->disposed);
+
+	priv->debug_handler = handler;
+	priv->debug_handler_data = user_data;
 }
 
 static gboolean
@@ -1111,39 +1164,50 @@ cattle_interpreter_set_property (GObject      *object,
                                  const GValue *value,
                                  GParamSpec   *pspec)
 {
-	CattleInterpreter *self = CATTLE_INTERPRETER (object);
-	CattleConfiguration *t_conf;
-	CattleProgram *t_prog;
-	CattleTape *t_tape;
+	CattleInterpreter        *self;
+	CattleInterpreterPrivate *priv;
+	CattleConfiguration      *v_conf;
+	CattleProgram            *v_prog;
+	CattleTape               *v_tape;
 
-	if (G_LIKELY (!self->priv->disposed)) {
+	self = CATTLE_INTERPRETER (object);
+	priv = self->priv;
 
-		switch (property_id) {
+	g_return_if_fail (!priv->disposed);
 
-			case PROP_CONFIGURATION:
-				t_conf = g_value_get_object (value);
-				cattle_interpreter_set_configuration (self,
-				                                      t_conf);
-				break;
+	switch (property_id)
+	{
+		case PROP_CONFIGURATION:
 
-			case PROP_PROGRAM:
-				t_prog = g_value_get_object (value);
-				cattle_interpreter_set_program (self,
-				                                t_prog);
-				break;
+			v_conf = g_value_get_object (value);
+			cattle_interpreter_set_configuration (self,
+							      v_conf);
 
-			case PROP_TAPE:
-				t_tape = g_value_get_object (value);
-				cattle_interpreter_set_tape (self,
-				                             t_tape);
-				break;
+			break;
 
-			default:
-				G_OBJECT_WARN_INVALID_PROPERTY_ID (object,
-				                                   property_id,
-				                                   pspec);
-				break;
-		}
+		case PROP_PROGRAM:
+
+			v_prog = g_value_get_object (value);
+			cattle_interpreter_set_program (self,
+							v_prog);
+
+			break;
+
+		case PROP_TAPE:
+
+			v_tape = g_value_get_object (value);
+			cattle_interpreter_set_tape (self,
+						     v_tape);
+
+			break;
+
+		default:
+
+			G_OBJECT_WARN_INVALID_PROPERTY_ID (object,
+							   property_id,
+							   pspec);
+
+			break;
 	}
 }
 
@@ -1153,42 +1217,55 @@ cattle_interpreter_get_property (GObject    *object,
                                  GValue     *value,
                                  GParamSpec *pspec)
 {
-	CattleInterpreter *self = CATTLE_INTERPRETER (object);
-	CattleConfiguration *t_conf;
-	CattleProgram *t_prog;
-	CattleTape *t_tape;
+	CattleInterpreter        *self;
+	CattleInterpreterPrivate *priv;
+	CattleConfiguration      *v_conf;
+	CattleProgram            *v_prog;
+	CattleTape               *v_tape;
 
-	if (G_LIKELY (!self->priv->disposed)) {
+	self = CATTLE_INTERPRETER (object);
+	priv = self->priv;
 
-		switch (property_id) {
+	g_return_if_fail (!priv->disposed);
 
-			case PROP_CONFIGURATION:
-				t_conf = cattle_interpreter_get_configuration (self);
-				g_value_set_object (value, t_conf);
-				break;
+	switch (property_id)
+	{
+		case PROP_CONFIGURATION:
 
-			case PROP_PROGRAM:
-				t_prog = cattle_interpreter_get_program (self);
-				g_value_set_object (value, t_prog);
-				break;
+			v_conf = cattle_interpreter_get_configuration (self);
+			g_value_set_object (value, v_conf);
 
-			case PROP_TAPE:
-				t_tape = cattle_interpreter_get_tape (self);
-				g_value_set_object (value, t_tape);
-				break;
+			break;
 
-			default:
-				G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
-				break;
-		}
+		case PROP_PROGRAM:
+
+			v_prog = cattle_interpreter_get_program (self);
+			g_value_set_object (value, v_prog);
+
+			break;
+
+		case PROP_TAPE:
+
+			v_tape = cattle_interpreter_get_tape (self);
+			g_value_set_object (value, v_tape);
+
+			break;
+
+		default:
+
+			G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
+
+			break;
 	}
 }
 
 static void
 cattle_interpreter_class_init (CattleInterpreterClass *self)
 {
-	GObjectClass *object_class = G_OBJECT_CLASS (self);
-	GParamSpec *pspec;
+	GObjectClass *object_class;
+	GParamSpec   *pspec;
+
+	object_class = G_OBJECT_CLASS (self);
 
 	object_class->set_property = cattle_interpreter_set_property;
 	object_class->get_property = cattle_interpreter_get_property;

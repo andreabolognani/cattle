@@ -70,22 +70,30 @@ enum
 static void
 cattle_configuration_init (CattleConfiguration *self)
 {
-	self->priv = CATTLE_CONFIGURATION_GET_PRIVATE (self);
+	CattleConfigurationPrivate *priv;
 
-	self->priv->on_eof_action = CATTLE_ON_EOF_STORE_ZERO;
-	self->priv->debug_is_enabled = FALSE;
+	priv = CATTLE_CONFIGURATION_GET_PRIVATE (self);
 
-	self->priv->disposed = FALSE;
+	priv->on_eof_action = CATTLE_ON_EOF_STORE_ZERO;
+	priv->debug_is_enabled = FALSE;
+
+	priv->disposed = FALSE;
+
+	self->priv = priv;
 }
 
 static void
 cattle_configuration_dispose (GObject *object)
 {
-	CattleConfiguration *self = CATTLE_CONFIGURATION (object);
+	CattleConfiguration        *self;
+	CattleConfigurationPrivate *priv;
 
-	g_return_if_fail (!self->priv->disposed);
+	self = CATTLE_CONFIGURATION (object);
+	priv = self->priv;
 
-	self->priv->disposed = TRUE;
+	g_return_if_fail (!priv->disposed);
+
+	priv->disposed = TRUE;
 
 	G_OBJECT_CLASS (cattle_configuration_parent_class)->dispose (object);
 }
@@ -126,11 +134,14 @@ void
 cattle_configuration_set_on_eof_action (CattleConfiguration *self,
                                         CattleOnEOFAction    action)
 {
-	gpointer enum_class;
-	GEnumValue *enum_value;
+	CattleConfigurationPrivate *priv;
+	gpointer                    enum_class;
+	GEnumValue                 *enum_value;
 
 	g_return_if_fail (CATTLE_IS_CONFIGURATION (self));
-	g_return_if_fail (!self->priv->disposed);
+
+	priv = self->priv;
+	g_return_if_fail (!priv->disposed);
 
 	/* Get the enum class for actions, and lookup the value.
 	 * If it is not present, the action is not valid */
@@ -139,7 +150,7 @@ cattle_configuration_set_on_eof_action (CattleConfiguration *self,
 	g_type_class_unref (enum_class);
 	g_return_if_fail (enum_value != NULL);
 
-	self->priv->on_eof_action = action;
+	priv->on_eof_action = action;
 }
 
 /**
@@ -154,12 +165,14 @@ cattle_configuration_set_on_eof_action (CattleConfiguration *self,
 CattleOnEOFAction
 cattle_configuration_get_on_eof_action (CattleConfiguration *self)
 {
-	g_return_val_if_fail (CATTLE_IS_CONFIGURATION (self),
-	                      CATTLE_ON_EOF_STORE_ZERO);
-	g_return_val_if_fail (!self->priv->disposed,
-	                      CATTLE_ON_EOF_STORE_ZERO);
+	CattleConfigurationPrivate *priv;
 
-	return self->priv->on_eof_action;
+	g_return_val_if_fail (CATTLE_IS_CONFIGURATION (self), CATTLE_ON_EOF_STORE_ZERO);
+
+	priv = self->priv;
+	g_return_val_if_fail (!priv->disposed, CATTLE_ON_EOF_STORE_ZERO);
+
+	return priv->on_eof_action;
 }
 
 /**
@@ -176,10 +189,14 @@ void
 cattle_configuration_set_debug_is_enabled (CattleConfiguration *self,
                                            gboolean             enabled)
 {
-	g_return_if_fail (CATTLE_IS_CONFIGURATION (self));
-	g_return_if_fail (!self->priv->disposed);
+	CattleConfigurationPrivate *priv;
 
-	self->priv->debug_is_enabled = enabled;
+	g_return_if_fail (CATTLE_IS_CONFIGURATION (self));
+
+	priv = self->priv;
+	g_return_if_fail (!priv->disposed);
+
+	priv->debug_is_enabled = enabled;
 }
 
 /**
@@ -194,10 +211,14 @@ cattle_configuration_set_debug_is_enabled (CattleConfiguration *self,
 gboolean
 cattle_configuration_get_debug_is_enabled (CattleConfiguration *self)
 {
-	g_return_val_if_fail (CATTLE_IS_CONFIGURATION (self), FALSE);
-	g_return_val_if_fail (!self->priv->disposed, FALSE);
+	CattleConfigurationPrivate *priv;
 
-	return self->priv->debug_is_enabled;
+	g_return_val_if_fail (CATTLE_IS_CONFIGURATION (self), FALSE);
+
+	priv = self->priv;
+	g_return_val_if_fail (!priv->disposed, FALSE);
+
+	return priv->debug_is_enabled;
 }
 
 static void
@@ -206,30 +227,36 @@ cattle_configuration_set_property (GObject      *object,
                                    const GValue *value,
                                    GParamSpec   *pspec)
 {
-	CattleConfiguration *self = CATTLE_CONFIGURATION (object);
-	gint t_enum;
-	gboolean t_bool;
+	CattleConfiguration *self;
+	gint                 v_enum;
+	gboolean             v_bool;
 
-	g_return_if_fail (!self->priv->disposed);
+	self = CATTLE_CONFIGURATION (object);
 
-	switch (property_id) {
-
+	switch (property_id)
+	{
 		case PROP_ON_EOF_ACTION:
-			t_enum = g_value_get_enum (value);
+
+			v_enum = g_value_get_enum (value);
 			cattle_configuration_set_on_eof_action (self,
-			                                        t_enum);
+			                                        v_enum);
+
 			break;
 
 		case PROP_DEBUG_IS_ENABLED:
-			t_bool = g_value_get_boolean (value);
+
+			v_bool = g_value_get_boolean (value);
 			cattle_configuration_set_debug_is_enabled (self,
-			                                           t_bool);
+			                                           v_bool);
+
 			break;
 
 		default:
+
 			G_OBJECT_WARN_INVALID_PROPERTY_ID (object,
 			                                   property_id,
 			                                   pspec);
+
 			break;
 	}
 }
@@ -240,28 +267,34 @@ cattle_configuration_get_property (GObject    *object,
                                    GValue     *value,
                                    GParamSpec *pspec)
 {
-	CattleConfiguration *self = CATTLE_CONFIGURATION (object);
-	gint t_enum;
-	gboolean t_bool;
+	CattleConfiguration *self;
+	gint                 v_enum;
+	gboolean             v_bool;
 
-	g_return_if_fail (!self->priv->disposed);
+	self = CATTLE_CONFIGURATION (object);
 
-	switch (property_id) {
-
+	switch (property_id)
+	{
 		case PROP_ON_EOF_ACTION:
-			t_enum = cattle_configuration_get_on_eof_action (self);
-			g_value_set_enum (value, t_enum);
+
+			v_enum = cattle_configuration_get_on_eof_action (self);
+			g_value_set_enum (value, v_enum);
+
 			break;
 
 		case PROP_DEBUG_IS_ENABLED:
-			t_bool = cattle_configuration_get_debug_is_enabled (self);
-			g_value_set_boolean (value, t_bool);
+
+			v_bool = cattle_configuration_get_debug_is_enabled (self);
+			g_value_set_boolean (value, v_bool);
+
 			break;
 
 		default:
+
 			G_OBJECT_WARN_INVALID_PROPERTY_ID (object,
 			                                   property_id,
 			                                   pspec);
+
 			break;
 	}
 }
@@ -269,8 +302,10 @@ cattle_configuration_get_property (GObject    *object,
 static void
 cattle_configuration_class_init (CattleConfigurationClass *self)
 {
-	GObjectClass *object_class = G_OBJECT_CLASS (self);
-	GParamSpec *pspec;
+	GObjectClass *object_class;
+	GParamSpec   *pspec;
+
+	object_class = G_OBJECT_CLASS (self);
 
 	object_class->set_property = cattle_configuration_set_property;
 	object_class->get_property = cattle_configuration_get_property;

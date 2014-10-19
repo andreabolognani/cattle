@@ -71,8 +71,8 @@ void                    cattle_instruction_set_value   (CattleInstruction      *
                                                         CattleInstructionValue  value);
 CattleInstructionValue cattle_instruction_get_value    (CattleInstruction      *instruction);
 void                   cattle_instruction_set_quantity (CattleInstruction      *instruction,
-                                                        gint                    quantity);
-gint                   cattle_instruction_get_quantity (CattleInstruction      *instruction);
+                                                        gulong                  quantity);
+gulong                 cattle_instruction_get_quantity (CattleInstruction      *instruction);
 void                   cattle_instruction_set_next     (CattleInstruction      *instruction,
                                                         CattleInstruction      *next);
 CattleInstruction*     cattle_instruction_get_next     (CattleInstruction      *instruction);

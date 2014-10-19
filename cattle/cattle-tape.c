@@ -191,9 +191,9 @@ cattle_tape_set_current_value (CattleTape *self,
 	CattleBuffer      *chunk;
 
 	g_return_if_fail (CATTLE_IS_TAPE (self));
-	g_return_if_fail (!self->priv->disposed);
 
 	priv = self->priv;
+	g_return_if_fail (!priv->disposed);
 
 	chunk = CATTLE_BUFFER (priv->current->data);
 
@@ -216,9 +216,9 @@ cattle_tape_get_current_value (CattleTape *self)
 	CattleBuffer      *chunk;
 
 	g_return_val_if_fail (CATTLE_IS_TAPE (self), 0);
-	g_return_val_if_fail (!self->priv->disposed, 0);
 
 	priv = self->priv;
+	g_return_val_if_fail (!priv->disposed, 0);
 
 	chunk = CATTLE_BUFFER (priv->current->data);
 
@@ -256,9 +256,9 @@ cattle_tape_increase_current_value_by (CattleTape *self,
 	gint8              current;
 
 	g_return_if_fail (CATTLE_IS_TAPE (self));
-	g_return_if_fail (!self->priv->disposed);
 
 	priv = self->priv;
+	g_return_if_fail (!priv->disposed);
 
 	/* Return right away if no increment is needed */
 	if (value == 0)
@@ -303,9 +303,9 @@ cattle_tape_decrease_current_value_by (CattleTape *self,
 	gint8              current;
 
 	g_return_if_fail (CATTLE_IS_TAPE (self));
-	g_return_if_fail (!self->priv->disposed);
 
 	priv = self->priv;
+	g_return_if_fail (!priv->disposed);
 
 	/* Return right away if no decrement is needed */
 	if (value == 0)
@@ -352,9 +352,9 @@ cattle_tape_move_left_by (CattleTape *self,
 	CattleBuffer      *chunk;
 
 	g_return_if_fail (CATTLE_IS_TAPE (self));
-	g_return_if_fail (!self->priv->disposed);
 
 	priv = self->priv;
+	g_return_if_fail (!priv->disposed);
 
 	/* Move backwards until the correct chunk is found */
 	while (steps > priv->offset)
@@ -419,9 +419,9 @@ cattle_tape_move_right_by (CattleTape *self,
 	CattleBuffer      *chunk;
 
 	g_return_if_fail (CATTLE_IS_TAPE (self));
-	g_return_if_fail (!self->priv->disposed);
 
 	priv = self->priv;
+	g_return_if_fail (!priv->disposed);
 
 	/* Move forward until the correct chunk is found */
 	while (priv->offset + steps >= CHUNK_SIZE )
@@ -471,9 +471,9 @@ cattle_tape_is_at_beginning (CattleTape *self)
 	gboolean           check;
 
 	g_return_val_if_fail (CATTLE_IS_TAPE (self), FALSE);
-	g_return_val_if_fail (!self->priv->disposed, FALSE);
 
 	priv = self->priv;
+	g_return_val_if_fail (!priv->disposed, FALSE);
 
 	/* If the current chunk is the first one and the current offset
 	 * is equal to the lower limit, we are at the beginning of the
@@ -508,9 +508,9 @@ cattle_tape_is_at_end (CattleTape *self)
 	gboolean           check;
 
 	g_return_val_if_fail (CATTLE_IS_TAPE (self), FALSE);
-	g_return_val_if_fail (!self->priv->disposed, FALSE);
 
 	priv = self->priv;
+	g_return_val_if_fail (!priv->disposed, FALSE);
 
 	/* If we are in the last chunk and the current offset is equal
 	 * to the upper limit, we are in the last valid position */
@@ -540,9 +540,9 @@ cattle_tape_push_bookmark (CattleTape *self)
 	CattleTapeBookmark *bookmark;
 
 	g_return_if_fail (CATTLE_IS_TAPE (self));
-	g_return_if_fail (!self->priv->disposed);
 
 	priv = self->priv;
+	g_return_if_fail (!priv->disposed);
 
 	/* Create a new bookmark and store the current position */
 	bookmark = g_new0 (CattleTapeBookmark, 1);
@@ -569,9 +569,9 @@ cattle_tape_pop_bookmark (CattleTape *self)
 	gboolean            check;
 
 	g_return_val_if_fail (CATTLE_IS_TAPE (self), FALSE);
-	g_return_val_if_fail (!self->priv->disposed, FALSE);
 
 	priv = self->priv;
+	g_return_val_if_fail (!priv->disposed, FALSE);
 
 	if (priv->bookmarks != NULL) {
 
@@ -602,22 +602,26 @@ cattle_tape_set_property (GObject      *object,
                           const GValue *value,
                           GParamSpec   *pspec)
 {
-	CattleTape *self = CATTLE_TAPE (object);
-	gint8 v_char;
+	CattleTape *self;
+	gint8       v_int8;
 
-	g_return_if_fail (!self->priv->disposed);
+	self = CATTLE_TAPE (object);
 
 	switch (property_id)
 	{
 		case PROP_CURRENT_VALUE:
-			v_char = g_value_get_schar (value);
-			cattle_tape_set_current_value (self, v_char);
+
+			v_int8 = g_value_get_schar (value);
+			cattle_tape_set_current_value (self, v_int8);
+
 			break;
 
 		default:
+
 			G_OBJECT_WARN_INVALID_PROPERTY_ID (object,
 			                                   property_id,
 			                                   pspec);
+
 			break;
 	}
 }
@@ -628,22 +632,26 @@ cattle_tape_get_property (GObject    *object,
                           GValue     *value,
                           GParamSpec *pspec)
 {
-	CattleTape *self = CATTLE_TAPE (object);
-	gint8 v_char;
+	CattleTape *self;
+	gint8       v_int8;
 
-	g_return_if_fail (!self->priv->disposed);
+	self = CATTLE_TAPE (object);
 
 	switch (property_id)
 	{
 		case PROP_CURRENT_VALUE:
-			v_char = cattle_tape_get_current_value (self);
-			g_value_set_schar (value, v_char);
+
+			v_int8 = cattle_tape_get_current_value (self);
+			g_value_set_schar (value, v_int8);
+
 			break;
 
 		default:
+
 			G_OBJECT_WARN_INVALID_PROPERTY_ID (object,
 			                                   property_id,
 			                                   pspec);
+
 			break;
 	}
 }
@@ -651,8 +659,10 @@ cattle_tape_get_property (GObject    *object,
 static void
 cattle_tape_class_init (CattleTapeClass *self)
 {
-	GObjectClass *object_class = G_OBJECT_CLASS (self);
-	GParamSpec *pspec;
+	GObjectClass *object_class;
+	GParamSpec   *pspec;
+
+	object_class = G_OBJECT_CLASS (self);
 
 	object_class->set_property = cattle_tape_set_property;
 	object_class->get_property = cattle_tape_get_property;
