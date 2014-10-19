@@ -21,6 +21,7 @@ AM_LDFLAGS = \
 cattle_headers = \
 	cattle-error.h \
 	cattle-constants.h \
+	cattle-buffer.h \
 	cattle-instruction.h \
 	cattle-program.h \
 	cattle-tape.h \
@@ -43,6 +44,7 @@ cattle_sources = \
 	cattle-version.c \
 	cattle-error.c \
 	cattle-constants.c \
+	cattle-buffer.c \
 	cattle-instruction.c \
 	cattle-program.c \
 	cattle-tape.c \

@@ -29,6 +29,7 @@
 #include <cattle/cattle-configuration.h>
 #include <cattle/cattle-program.h>
 #include <cattle/cattle-tape.h>
+#include <cattle/cattle-buffer.h>
 
 G_BEGIN_DECLS
 
@@ -69,7 +70,7 @@ CattleInterpreter*   cattle_interpreter_new                (void);
 gboolean             cattle_interpreter_run                (CattleInterpreter    *interpreter,
                                                             GError              **error);
 void                 cattle_interpreter_feed               (CattleInterpreter    *interpreter,
-                                                            const gint8          *input);
+                                                            CattleBuffer         *input);
 void                 cattle_interpreter_set_configuration  (CattleInterpreter    *interpreter,
                                                             CattleConfiguration  *configuration);
 CattleConfiguration* cattle_interpreter_get_configuration  (CattleInterpreter    *interpreter);

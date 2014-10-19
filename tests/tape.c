@@ -22,23 +22,8 @@
 #include <glib.h>
 #include <glib-object.h>
 #include <cattle/cattle.h>
-#include <stdio.h>
 
 #define STEPS 1024
-
-static gint
-mod (gint what,
-     gint range)
-{
-	gint ret;
-
-	ret = what % range;
-	if (ret < 0) {
-		ret = range + ret;
-	}
-
-	return ret;
-}
 
 /**
  * test_tape_initial_position:

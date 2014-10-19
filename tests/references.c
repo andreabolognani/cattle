@@ -32,11 +32,16 @@
 static void
 test_references_program_owns_instructions (void)
 {
-	CattleProgram *program;
+	CattleProgram     *program;
 	CattleInstruction *instructions;
+	CattleBuffer      *buffer;
 
 	program = cattle_program_new ();
-	cattle_program_load (program, "++[-]", NULL);
+
+	buffer = cattle_buffer_new (5);
+	cattle_buffer_set_contents (buffer, "++[-]");
+
+	cattle_program_load (program, buffer, NULL);
 
 	instructions = cattle_program_get_instructions (program);
 
@@ -49,6 +54,8 @@ test_references_program_owns_instructions (void)
 	g_object_unref (instructions);
 
 	g_assert (!G_IS_OBJECT (instructions));
+
+	g_object_unref (buffer);
 }
 
 static void
@@ -56,13 +63,13 @@ check_refcount (CattleInstruction *instruction)
 {
 	CattleInstruction *next;
 
-	while (CATTLE_IS_INSTRUCTION (instruction)) {
-
+	while (CATTLE_IS_INSTRUCTION (instruction))
+	{
 		g_assert (!(G_OBJECT (instruction)->ref_count < 2));
 		g_assert (!(G_OBJECT (instruction)->ref_count > 2));
 
-		if (cattle_instruction_get_value (instruction) == CATTLE_INSTRUCTION_LOOP_BEGIN) {
-
+		if (cattle_instruction_get_value (instruction) == CATTLE_INSTRUCTION_LOOP_BEGIN)
+		{
 			next = cattle_instruction_get_loop (instruction);
 			check_refcount (next);
 			g_object_unref (next);
@@ -84,23 +91,28 @@ check_refcount (CattleInstruction *instruction)
 static void
 test_references_single_reference (void)
 {
-	CattleProgram *program;
+	CattleProgram     *program;
 	CattleInstruction *instruction;
+	CattleBuffer      *buffer;
 
 	program = cattle_program_new ();
 
-	if (!cattle_program_load (program, "+", NULL)) {
-		g_object_unref (program);
-		g_assert_not_reached ();
-	}
+	buffer = cattle_buffer_new (1);
+	cattle_buffer_set_contents (buffer, "+");
+
+	cattle_program_load (program, buffer, NULL);
 
 	instruction = cattle_program_get_instructions (program);
 	check_refcount (instruction);
+
+	g_object_unref (buffer);
+	g_object_unref (program);
 }
 
 
 gint
-main (gint argc, gchar **argv)
+main (gint    argc,
+      gchar **argv)
 {
 #if !GLIB_CHECK_VERSION(2, 36, 0)
 	g_type_init ();

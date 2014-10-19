@@ -18,10 +18,15 @@ LDADD = \
 	$(NULL)
 
 noinst_PROGRAMS = \
+	buffer \
 	tape \
 	program \
 	interpreter \
 	references \
+	$(NULL)
+
+buffer_SOURCES = \
+	buffer.c \
 	$(NULL)
 
 tape_SOURCES = \

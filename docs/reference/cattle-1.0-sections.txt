@@ -109,6 +109,27 @@ CattleInterpreterPrivate
 </SECTION>
 
 <SECTION>
+<FILE>cattle-buffer</FILE>
+<TITLE>CattleBuffer</TITLE>
+CattleBuffer
+cattle_buffer_new
+cattle_buffer_set_contents
+cattle_buffer_set_value
+cattle_buffer_get_value
+cattle_buffer_get_size
+<SUBSECTION Standard>
+CATTLE_BUFFER
+CATTLE_IS_BUFFER
+CATTLE_TYPE_BUFFER
+cattle_buffer_get_type
+CATTLE_BUFFER_CLASS
+CATTLE_IS_BUFFER_CLASS
+CATTLE_BUFFER_GET_CLASS
+<SUBSECTION Private>
+CattleBufferPrivate
+</SECTION>
+
+<SECTION>
 <FILE>cattle-instruction</FILE>
 <TITLE>CattleInstruction</TITLE>
 CattleInstructionValue
