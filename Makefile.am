@@ -16,7 +16,7 @@ doc_DATA = \
 	AUTHORS.md \
 	ChangeLog.pre-0.9.2 \
 	ChangeLog \
-	COPYING.md \
+	COPYING \
 	NEWS.md \
 	README.md \
 	TODO.md \

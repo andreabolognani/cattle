@@ -30,7 +30,7 @@ dnl Increment on source change. Reset when CURRENT changes.
 CATTLE_REVISION=2
 
 dnl Increment on interface addition. Reset on removal.
-CATTLE_AGE=1
+CATTLE_AGE=0
 
 AC_SUBST(CATTLE_CURRENT)
 AC_SUBST(CATTLE_REVISION)
