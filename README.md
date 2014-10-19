@@ -1,5 +1,5 @@
-Cattle -- Brainfuck language toolkit
-====================================
+Cattle - Brainfuck language toolkit
+===================================
 
 Cattle is a GObject-based library that allows one to inspect Brainfuck
 programs in various ways, and to easily embed a full-featured Brainfuck

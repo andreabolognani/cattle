@@ -1,4 +1,4 @@
-/* Cattle -- Brainfuck language toolkit
+/* Cattle - Brainfuck language toolkit
  * Copyright (C) 2008-2014  Andrea Bolognani <eof@kiyuko.org>
  *
  * This program is free software; you can redistribute it and/or modify
