@@ -13,13 +13,13 @@ pkgconfig_DATA = \
 	$(NULL)
 
 doc_DATA = \
-	AUTHORS \
+	AUTHORS.md \
 	ChangeLog.pre-0.9.2 \
 	ChangeLog \
-	COPYING \
-	NEWS \
-	README \
-	TODO \
+	COPYING.md \
+	NEWS.md \
+	README.md \
+	TODO.md \
 	$(NULL)
 
 EXTRA_DIST = \
