@@ -79,9 +79,8 @@ static gulong load (CattleBuffer       *buffer,
                     CattleBuffer      **input);
 
 /* Symbols used by the code loader */
-#define SHARP_SYMBOL   ((gint8) '#')
-#define BANG_SYMBOL    ((gint8) '!')
-#define NEWLINE_SYMBOL ((gint8) '\n')
+#define BANG_SYMBOL    0x21 /*  !  */
+#define NEWLINE_SYMBOL 0x0A /* \n  */
 
 static void
 cattle_program_init (CattleProgram *self)
