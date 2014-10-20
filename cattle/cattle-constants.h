@@ -29,7 +29,7 @@
 
 G_BEGIN_DECLS
 
-extern const gint8 CATTLE_EOF;
+extern const gint8 CATTLE_EOF; /* -1 */
 
 G_END_DECLS
 
