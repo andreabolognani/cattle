@@ -90,7 +90,7 @@ input_fail_set_error (CattleInterpreter  *interpreter,
 {
 	g_set_error_literal (error,
 	                     CATTLE_ERROR,
-	                     CATTLE_ERROR_BAD_UTF8,
+	                     CATTLE_ERROR_IO,
 	                     "Spurious error");
 
 	return FALSE;
@@ -113,7 +113,7 @@ input_fail_only_error (CattleInterpreter  *interpreter,
 {
 	g_set_error_literal (error,
 	                     CATTLE_ERROR,
-	                     CATTLE_ERROR_BAD_UTF8,
+	                     CATTLE_ERROR_IO,
 	                     "Spurious error");
 
 	return TRUE;
@@ -155,7 +155,7 @@ output_fail_set_error (CattleInterpreter  *interpreter,
 {
 	g_set_error_literal (error,
 	                     CATTLE_ERROR,
-	                     CATTLE_ERROR_BAD_UTF8,
+	                     CATTLE_ERROR_IO,
 	                     "Spurious error");
 
 	return FALSE;
@@ -180,7 +180,7 @@ output_fail_only_error (CattleInterpreter  *interpreter,
 {
 	g_set_error_literal (error,
 	                     CATTLE_ERROR,
-	                     CATTLE_ERROR_BAD_UTF8,
+	                     CATTLE_ERROR_IO,
 	                     "Spurious error");
 
 	return TRUE;
@@ -219,7 +219,7 @@ debug_fail_set_error (CattleInterpreter  *interpreter,
 {
 	g_set_error_literal (error,
 	                     CATTLE_ERROR,
-	                     CATTLE_ERROR_BAD_UTF8,
+	                     CATTLE_ERROR_IO,
 	                     "Spurious error");
 
 	return FALSE;
@@ -242,7 +242,7 @@ debug_fail_only_error (CattleInterpreter  *interpreter,
 {
 	g_set_error_literal (error,
 	                     CATTLE_ERROR,
-	                     CATTLE_ERROR_BAD_UTF8,
+	                     CATTLE_ERROR_IO,
 	                     "Spurious error");
 
 	return TRUE;
@@ -330,7 +330,7 @@ test_interpreter_failed_input (void)
 	error = NULL;
 	success = cattle_interpreter_run (interpreter, &error);
 	g_assert (!success);
-	g_assert (g_error_matches (error, CATTLE_ERROR, CATTLE_ERROR_BAD_UTF8));
+	g_assert (g_error_matches (error, CATTLE_ERROR, CATTLE_ERROR_IO));
 
 	g_error_free (error);
 
@@ -354,7 +354,7 @@ test_interpreter_failed_input (void)
 	error = NULL;
 	success = cattle_interpreter_run (interpreter, &error);
 	g_assert (!success);
-	g_assert (g_error_matches (error, CATTLE_ERROR, CATTLE_ERROR_BAD_UTF8));
+	g_assert (g_error_matches (error, CATTLE_ERROR, CATTLE_ERROR_IO));
 
 	g_error_free (error);
 	g_object_unref (interpreter);
@@ -392,7 +392,7 @@ test_interpreter_failed_output (void)
 	error = NULL;
 	success = cattle_interpreter_run (interpreter, &error);
 	g_assert (!success);
-	g_assert (g_error_matches (error, CATTLE_ERROR, CATTLE_ERROR_BAD_UTF8));
+	g_assert (g_error_matches (error, CATTLE_ERROR, CATTLE_ERROR_IO));
 
 	g_error_free (error);
 
@@ -416,7 +416,7 @@ test_interpreter_failed_output (void)
 	error = NULL;
 	success = cattle_interpreter_run (interpreter, &error);
 	g_assert (!success);
-	g_assert (g_error_matches (error, CATTLE_ERROR, CATTLE_ERROR_BAD_UTF8));
+	g_assert (g_error_matches (error, CATTLE_ERROR, CATTLE_ERROR_IO));
 
 	g_error_free (error);
 
@@ -461,7 +461,7 @@ test_interpreter_failed_debug (void)
 	error = NULL;
 	success = cattle_interpreter_run (interpreter, &error);
 	g_assert (!success);
-	g_assert (g_error_matches (error, CATTLE_ERROR, CATTLE_ERROR_BAD_UTF8));
+	g_assert (g_error_matches (error, CATTLE_ERROR, CATTLE_ERROR_IO));
 
 	g_error_free (error);
 
@@ -485,7 +485,7 @@ test_interpreter_failed_debug (void)
 	error = NULL;
 	success = cattle_interpreter_run (interpreter, &error);
 	g_assert (!success);
-	g_assert (g_error_matches (error, CATTLE_ERROR, CATTLE_ERROR_BAD_UTF8));
+	g_assert (g_error_matches (error, CATTLE_ERROR, CATTLE_ERROR_IO));
 
 	g_error_free (error);
 
