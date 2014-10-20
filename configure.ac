@@ -57,7 +57,7 @@ dnl ***************************************
 dnl *** Check for required GLib modules ***
 dnl ***************************************
 
-GLIB_REQUIRED_VERSION=2.16.0
+GLIB_REQUIRED_VERSION=2.32.0
 GLIB_REQUIRED_MODULES="gobject"
 
 AM_PATH_GLIB_2_0($GLIB_REQUIRED_VERSION,,
@@ -73,13 +73,13 @@ dnl ***************************************
 dnl *** Check for GObject Introspection ***
 dnl ***************************************
 
-GOBJECT_INTROSPECTION_CHECK([0.6.7])
+GOBJECT_INTROSPECTION_CHECK([1.32.0])
 
 dnl *************************
 dnl *** Check for GTK-Doc ***
 dnl *************************
 
-GTK_DOC_CHECK([1.15])
+GTK_DOC_CHECK([1.18])
 
 dnl *******************************
 dnl *** Create the output files ***
