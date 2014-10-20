@@ -277,7 +277,7 @@ cattle_instruction_get_quantity (CattleInstruction *self)
 /**
  * cattle_instruction_set_next:
  * @instruction: a #CattleInstruction
- * @next: (allow-none): next #CattleInstruction to execute, or %NULL
+ * @next: (allow-none) (transfer full): next #CattleInstruction to execute, or %NULL
  *
  * Set the next instruction to be executed.
  *
@@ -322,7 +322,7 @@ cattle_instruction_set_next (CattleInstruction *self,
  * the returned instruction will be executed only after the loop has
  * ended.
  *
- * Returns: (transfer full): the next instruction, or %NULL
+ * Returns: (allow-none) (transfer full): the next instruction, or %NULL
  */
 CattleInstruction*
 cattle_instruction_get_next (CattleInstruction *self)
@@ -345,7 +345,7 @@ cattle_instruction_get_next (CattleInstruction *self)
 /**
  * cattle_instruction_set_loop:
  * @instruction: a #CattleInstruction
- * @loop: (allow-none): first #CattleInstruction in the loop, or %NULL
+ * @loop: (allow-none) (transfer full): first #CattleInstruction in the loop, or %NULL
  *
  * Set the instructions to be executed in the loop.
  *
@@ -389,7 +389,7 @@ cattle_instruction_set_loop (CattleInstruction *self,
  * This method should only be called on instructions whose value is
  * %CATTLE_INSTRUCTION_LOOP_BEGIN.
  *
- * Returns: (transfer full): a #CattleInstruction, or %NULL
+ * Returns: (allow-none) (transfer full): a #CattleInstruction, or %NULL
  */
 CattleInstruction*
 cattle_instruction_get_loop (CattleInstruction *self)

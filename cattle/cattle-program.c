@@ -313,7 +313,7 @@ cattle_program_new (void)
 /**
  * cattle_program_load:
  * @program: a #CattleProgram
- * @buffer: a #CattleBuffer containing the code
+ * @buffer: (transfer full): a #CattleBuffer containing the code
  * @error: (allow-none): return location for a #GError
  *
  * Load @program from @buffer.
@@ -402,7 +402,7 @@ cattle_program_load (CattleProgram  *self,
 /**
  * cattle_program_set_instructions:
  * @program: a #CattleProgram
- * @instructions: instructions for @program
+ * @instructions: (transfer full): instructions for @program
  *
  * Set the instructions for @program.
  *
@@ -456,7 +456,7 @@ cattle_program_get_instructions (CattleProgram *self)
 /**
  * cattle_program_set_input:
  * @program: a #CattleProgram
- * @input: input for @program
+ * @input: (transfer full): input for @program
  *
  * Set the input for @program.
  *

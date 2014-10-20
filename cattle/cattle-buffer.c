@@ -138,7 +138,7 @@ cattle_buffer_new (gulong size)
 /**
  * cattle_buffer_set_contents: (skip)
  * @buffer: a #CattleBuffer
- * @contents: data to copy inside the memory buffer
+ * @contents: (transfer none): data to copy inside the memory buffer
  *
  * Set the contents of a memory buffer.
  *
@@ -162,7 +162,7 @@ cattle_buffer_set_contents (CattleBuffer *self,
 /**
  * cattle_buffer_set_contents_full:
  * @buffer: a #CattleBuffer
- * @contents: (array length=size): data to copy inside the memory buffer
+ * @contents: (transfer none) (array length=size): data to copy inside the memory buffer
  * @size: size of @contents
  *
  * Set the contents of the memory buffer.

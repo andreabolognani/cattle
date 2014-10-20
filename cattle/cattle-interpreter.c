@@ -606,7 +606,7 @@ cattle_interpreter_run (CattleInterpreter  *self,
 /**
  * cattle_interpreter_feed:
  * @interpreter: a #CattleInterpreter
- * @input: more input to be used by @interpreter
+ * @input: (transfer full): more input to be used by @interpreter
  *
  * Feed @interpreter with more input.
  *
@@ -640,7 +640,7 @@ cattle_interpreter_feed (CattleInterpreter *self,
 /**
  * cattle_interpreter_set_configuration:
  * @interpreter: a #CattleInterpreter
- * @configuration: configuration for @interpreter
+ * @configuration: (transfer full): configuration for @interpreter
  *
  * Set the configuration for @interpreter.
  *
@@ -697,7 +697,7 @@ cattle_interpreter_get_configuration (CattleInterpreter *self)
 /**
  * cattle_interpreter_set_program:
  * @interpreter: a #CattleInterpreter
- * @program: a #CattleProgram
+ * @program: (transfer full): a #CattleProgram
  *
  * Set the program to be executed by @interpreter.
  *
@@ -753,7 +753,7 @@ cattle_interpreter_get_program (CattleInterpreter *self)
 /**
  * cattle_interpreter_set_tape:
  * @interpreter: a #CattleInterpreter
- * @tape: a #CattleTape
+ * @tape: (transfer full): a #CattleTape
  *
  * Set the memory tape used by @interpreter.
  */
