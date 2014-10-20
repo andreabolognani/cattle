@@ -32,11 +32,11 @@
 G_DEFINE_TYPE (CattleConfiguration, cattle_configuration, G_TYPE_OBJECT)
 
 /**
- * CattleOnEOFAction:
- * @CATTLE_ON_EOF_STORE_ZERO: Store a zero in the current cell. This is
+ * CattleEndOfInputAction:
+ * @CATTLE_END_OF_INPUT_ACTION_STORE_ZERO: Store a zero in the current cell. This is
  * the default behaviour
- * @CATTLE_ON_EOF_STORE_EOF: Store %CATTLE_EOF in the current cell
- * @CATTLE_ON_EOF_DO_NOTHING: Do nothing.
+ * @CATTLE_END_OF_INPUT_ACTION_STORE_EOF: Store %CATTLE_EOF in the current cell
+ * @CATTLE_END_OF_INPUT_ACTION_DO_NOTHING: Do nothing.
  *
  * Possible actions to be performed by a #CattleInterpreter when the end
  * of input is reached.
@@ -53,17 +53,17 @@ G_DEFINE_TYPE (CattleConfiguration, cattle_configuration, G_TYPE_OBJECT)
 
 struct _CattleConfigurationPrivate
 {
-	gboolean          disposed;
+	gboolean               disposed;
 
-	CattleOnEOFAction on_eof_action;
-	gboolean          debug_is_enabled;
+	CattleEndOfInputAction end_of_input_action;
+	gboolean               debug_is_enabled;
 };
 
 /* Properties */
 enum
 {
 	PROP_0,
-	PROP_ON_EOF_ACTION,
+	PROP_END_OF_INPUT_ACTION,
 	PROP_DEBUG_IS_ENABLED
 };
 
@@ -74,7 +74,7 @@ cattle_configuration_init (CattleConfiguration *self)
 
 	priv = CATTLE_CONFIGURATION_GET_PRIVATE (self);
 
-	priv->on_eof_action = CATTLE_ON_EOF_STORE_ZERO;
+	priv->end_of_input_action = CATTLE_END_OF_INPUT_ACTION_STORE_ZERO;
 	priv->debug_is_enabled = FALSE;
 
 	priv->disposed = FALSE;
@@ -122,17 +122,17 @@ cattle_configuration_new (void)
 }
 
 /**
- * cattle_configuration_set_on_eof_action:
+ * cattle_configuration_set_end_of_input_action:
  * @configuration: a #CattleConfiguration
  * @action: the action to be performed
  *
  * Set the action to be performed when the end of input is reached.
  *
- * Accepted values are from the #CattleOnEOFAction enumeration.
+ * Accepted values are from the #CattleEndOfInputAction enumeration.
  */
 void
-cattle_configuration_set_on_eof_action (CattleConfiguration *self,
-                                        CattleOnEOFAction    action)
+cattle_configuration_set_end_of_input_action (CattleConfiguration    *self,
+                                              CattleEndOfInputAction  action)
 {
 	CattleConfigurationPrivate *priv;
 	gpointer                    enum_class;
@@ -145,34 +145,34 @@ cattle_configuration_set_on_eof_action (CattleConfiguration *self,
 
 	/* Get the enum class for actions, and lookup the value.
 	 * If it is not present, the action is not valid */
-	enum_class = g_type_class_ref (CATTLE_TYPE_ON_EOF_ACTION);
+	enum_class = g_type_class_ref (CATTLE_TYPE_END_OF_INPUT_ACTION);
 	enum_value = g_enum_get_value (enum_class, action);
 	g_type_class_unref (enum_class);
 	g_return_if_fail (enum_value != NULL);
 
-	priv->on_eof_action = action;
+	priv->end_of_input_action = action;
 }
 
 /**
- * cattle_configuration_get_on_eof_action:
+ * cattle_configuration_get_end_of_input_action:
  * @configuration: a #CattleConfiguration
  *
  * Get the action to be performed when the end of input is reached.
- * See cattle_configuration_set_on_eof_action().
+ * See cattle_configuration_set_end_of_input_action().
  *
  * Returns: the current action
  */
-CattleOnEOFAction
-cattle_configuration_get_on_eof_action (CattleConfiguration *self)
+CattleEndOfInputAction
+cattle_configuration_get_end_of_input_action (CattleConfiguration *self)
 {
 	CattleConfigurationPrivate *priv;
 
-	g_return_val_if_fail (CATTLE_IS_CONFIGURATION (self), CATTLE_ON_EOF_STORE_ZERO);
+	g_return_val_if_fail (CATTLE_IS_CONFIGURATION (self), CATTLE_END_OF_INPUT_ACTION_STORE_ZERO);
 
 	priv = self->priv;
-	g_return_val_if_fail (!priv->disposed, CATTLE_ON_EOF_STORE_ZERO);
+	g_return_val_if_fail (!priv->disposed, CATTLE_END_OF_INPUT_ACTION_STORE_ZERO);
 
-	return priv->on_eof_action;
+	return priv->end_of_input_action;
 }
 
 /**
@@ -235,11 +235,11 @@ cattle_configuration_set_property (GObject      *object,
 
 	switch (property_id)
 	{
-		case PROP_ON_EOF_ACTION:
+		case PROP_END_OF_INPUT_ACTION:
 
 			v_enum = g_value_get_enum (value);
-			cattle_configuration_set_on_eof_action (self,
-			                                        v_enum);
+			cattle_configuration_set_end_of_input_action (self,
+			                                              v_enum);
 
 			break;
 
@@ -275,9 +275,9 @@ cattle_configuration_get_property (GObject    *object,
 
 	switch (property_id)
 	{
-		case PROP_ON_EOF_ACTION:
+		case PROP_END_OF_INPUT_ACTION:
 
-			v_enum = cattle_configuration_get_on_eof_action (self);
+			v_enum = cattle_configuration_get_end_of_input_action (self);
 			g_value_set_enum (value, v_enum);
 
 			break;
@@ -313,20 +313,20 @@ cattle_configuration_class_init (CattleConfigurationClass *self)
 	object_class->finalize = cattle_configuration_finalize;
 
 	/**
-	 * CattleConfiguration:on-eof-action:
+	 * CattleConfiguration:end-of-input-action:
 	 *
 	 * Action to be performed when the end of input is reached.
 	 *
 	 * Changes to this property are not notified.
 	 */
-	pspec = g_param_spec_enum ("on-eof-action",
+	pspec = g_param_spec_enum ("end-of-input-action",
 	                           "Action to be performed on end of input",
-	                           "Get/set on EOF action",
-	                           CATTLE_TYPE_ON_EOF_ACTION,
-	                           CATTLE_ON_EOF_STORE_ZERO,
+	                           "Get/set end of input action",
+	                           CATTLE_TYPE_END_OF_INPUT_ACTION,
+	                           CATTLE_END_OF_INPUT_ACTION_STORE_ZERO,
 	                           G_PARAM_READWRITE);
 	g_object_class_install_property (object_class,
-	                                 PROP_ON_EOF_ACTION,
+	                                 PROP_END_OF_INPUT_ACTION,
 	                                 pspec);
 
 	/**

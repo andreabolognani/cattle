@@ -34,11 +34,11 @@ CATTLE_EOF
 <SECTION>
 <FILE>cattle-configuration</FILE>
 <TITLE>CattleConfiguration</TITLE>
-CattleOnEOFAction
+CattleEndOfInputAction
 CattleConfiguration
 cattle_configuration_new
-cattle_configuration_set_on_eof_action
-cattle_configuration_get_on_eof_action
+cattle_configuration_set_end_of_input_action
+cattle_configuration_get_end_of_input_action
 cattle_configuration_set_debug_is_enabled
 cattle_configuration_get_debug_is_enabled
 <SUBSECTION Standard>
@@ -49,8 +49,8 @@ cattle_configuration_get_type
 CATTLE_CONFIGURATION_CLASS
 CATTLE_IS_CONFIGURATION_CLASS
 CATTLE_CONFIGURATION_GET_CLASS
-CATTLE_TYPE_ON_EOF_ACTION
-cattle_on_eof_action_get_type
+CATTLE_TYPE_END_OF_INPUT_ACTION
+cattle_end_of_input_action_get_type
 <SUBSECTION Private>
 CattleConfigurationPrivate
 </SECTION>

@@ -388,23 +388,22 @@ run (CattleInterpreter  *self,
 				{
 					/* End of input.
 					 * The new value depends on the configuration */
-					switch (cattle_configuration_get_on_eof_action (configuration))
+					switch (cattle_configuration_get_end_of_input_action (configuration))
 					{
-
-						case CATTLE_ON_EOF_STORE_ZERO:
-
-							cattle_tape_set_current_value (tape, 0);
-							break;
-
-						case CATTLE_ON_EOF_STORE_EOF:
+						case CATTLE_END_OF_INPUT_ACTION_STORE_EOF:
 
 							cattle_tape_set_current_value (tape, temp);
 							break;
 
-						case CATTLE_ON_EOF_DO_NOTHING:
-						default:
+						case CATTLE_END_OF_INPUT_ACTION_DO_NOTHING:
 
 							/* Do nothing */
+							break;
+
+						case CATTLE_END_OF_INPUT_ACTION_STORE_ZERO:
+						default:
+
+							cattle_tape_set_current_value (tape, 0);
 							break;
 					}
 				}

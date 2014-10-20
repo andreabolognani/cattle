@@ -39,10 +39,10 @@ G_BEGIN_DECLS
 
 typedef enum
 {
-	CATTLE_ON_EOF_STORE_ZERO,
-	CATTLE_ON_EOF_STORE_EOF,
-	CATTLE_ON_EOF_DO_NOTHING
-} CattleOnEOFAction;
+	CATTLE_END_OF_INPUT_ACTION_STORE_ZERO,
+	CATTLE_END_OF_INPUT_ACTION_STORE_EOF,
+	CATTLE_END_OF_INPUT_ACTION_DO_NOTHING
+} CattleEndOfInputAction;
 
 typedef struct _CattleConfiguration        CattleConfiguration;
 typedef struct _CattleConfigurationClass   CattleConfigurationClass;
@@ -59,15 +59,15 @@ struct _CattleConfigurationClass
 	GObjectClass parent;
 };
 
-CattleConfiguration* cattle_configuration_new                  (void);
-void                 cattle_configuration_set_on_eof_action    (CattleConfiguration *configuration,
-                                                                CattleOnEOFAction    action);
-CattleOnEOFAction    cattle_configuration_get_on_eof_action    (CattleConfiguration *configuration);
-void                 cattle_configuration_set_debug_is_enabled (CattleConfiguration *configuration,
-                                                                gboolean             enabled);
-gboolean             cattle_configuration_get_debug_is_enabled (CattleConfiguration *configuration);
+CattleConfiguration*    cattle_configuration_new                     (void);
+void                    cattle_configuration_set_end_of_input_action (CattleConfiguration    *configuration,
+                                                                      CattleEndOfInputAction  action);
+CattleEndOfInputAction  cattle_configuration_get_end_of_input_action (CattleConfiguration    *configuration);
+void                    cattle_configuration_set_debug_is_enabled    (CattleConfiguration    *configuration,
+                                                                      gboolean                enabled);
+gboolean                cattle_configuration_get_debug_is_enabled    (CattleConfiguration    *configuration);
 
-GType                cattle_configuration_get_type             (void) G_GNUC_CONST;
+GType                   cattle_configuration_get_type                (void) G_GNUC_CONST;
 
 G_END_DECLS
 
