@@ -160,7 +160,7 @@ cattle_buffer_set_contents (CattleBuffer *self,
 }
 
 /**
- * cattle_buffer_set_contents_full:
+ * cattle_buffer_set_contents_full: (rename-to cattle_buffer_set_contents)
  * @buffer: a #CattleBuffer
  * @contents: (transfer none) (array length=size): data to copy inside the memory buffer
  * @size: size of @contents
