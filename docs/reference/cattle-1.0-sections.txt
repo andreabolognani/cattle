@@ -114,6 +114,7 @@ CattleInterpreterPrivate
 CattleBuffer
 cattle_buffer_new
 cattle_buffer_set_contents
+cattle_buffer_set_contents_full
 cattle_buffer_set_value
 cattle_buffer_get_value
 cattle_buffer_get_size

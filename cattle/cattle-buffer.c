@@ -136,16 +136,13 @@ cattle_buffer_new (gulong size)
 }
 
 /**
- * cattle_buffer_set_contents:
+ * cattle_buffer_set_contents: (skip)
  * @buffer: a #CattleBuffer
  * @contents: data to copy inside the memory buffer
  *
  * Set the contents of a memory buffer.
  *
- * The size of @contents must be the same as the size of @buffer, as
- * returned by cattle_buffer_get_size(): if it's bigger, the input will
- * be truncated; if it's smaller, the memory buffer will end up
- * containing garbage.
+ * The size of @contents is assumed to be the same as the size of @buffer.
  */
 void
 cattle_buffer_set_contents (CattleBuffer *self,
@@ -159,15 +156,40 @@ cattle_buffer_set_contents (CattleBuffer *self,
 	priv = self->priv;
 	g_return_if_fail (!priv->disposed);
 
-	/* Free the previously allocated memory */
-	if (priv->data != NULL)
-	{
-		g_slice_free1 (priv->size, priv->data);
-	}
+	cattle_buffer_set_contents_full (self, contents, priv->size);
+}
 
-	if (priv->size > 0)
+/**
+ * cattle_buffer_set_contents_full:
+ * @buffer: a #CattleBuffer
+ * @contents: (array length=size): data to copy inside the memory buffer
+ * @size: size of @contents
+ *
+ * Set the contents of the memory buffer.
+ *
+ * This method exists mainly for bindings; cattle_buffer_set_contents() is
+ * more convenient when writing C code.
+ */
+void
+cattle_buffer_set_contents_full (CattleBuffer *self,
+                                 gint8        *contents,
+                                 gulong        size)
+{
+	CattleBufferPrivate *priv;
+	gulong               i;
+
+	g_return_if_fail (CATTLE_IS_BUFFER (self));
+	g_return_if_fail (contents != NULL);
+
+	priv = self->priv;
+	g_return_if_fail (!priv->disposed);
+
+	g_return_if_fail (size <= priv->size);
+
+	/* Copy the data one byte at a time */
+	for (i = 0; i < size; i++)
 	{
-		priv->data = (gint8 *) g_slice_copy (priv->size, contents);
+		priv->data[i] = contents[i];
 	}
 }
 
