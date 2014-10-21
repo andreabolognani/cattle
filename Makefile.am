@@ -32,7 +32,7 @@ CLEANFILES = \
 	$(NULL)
 
 DISTCHECK_CONFIGURE_FLAGS = \
-	--enable-instrospection \
+	--enable-introspection=yes \
 	--enable-gtk-doc \
 	$(NULL)
 
