@@ -119,7 +119,7 @@ test_buffer_set_contents_string (void)
 	buffer = cattle_buffer_new (3);
 	g_assert (cattle_buffer_get_size (buffer) == 3);
 
-	cattle_buffer_set_contents (buffer, "abcd");
+	cattle_buffer_set_contents (buffer, (gint8 *) "abcd");
 
 	g_assert (cattle_buffer_get_value (buffer, 0) == 'a');
 	g_assert (cattle_buffer_get_value (buffer, 1) == 'b');

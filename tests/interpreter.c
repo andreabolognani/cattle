@@ -33,7 +33,7 @@ input_success (CattleInterpreter  *interpreter,
 	CattleBuffer *input;
 
 	input = cattle_buffer_new (9);
-	cattle_buffer_set_contents (input, "whatever");
+	cattle_buffer_set_contents (input, (gint8 *) "whatever");
 
 	cattle_interpreter_feed (interpreter, input);
 
@@ -58,7 +58,7 @@ input_utf8 (CattleInterpreter  *interpreter,
 	CattleBuffer *input;
 
 	input = cattle_buffer_new (22);
-	cattle_buffer_set_contents (input, "\xe2\x84\xa2 (Trademark symbol)");
+	cattle_buffer_set_contents (input, (gint8 *) "\xe2\x84\xa2 (Trademark symbol)");
 
 	cattle_interpreter_feed (interpreter, input);
 
@@ -74,7 +74,7 @@ input_invalid_utf8 (CattleInterpreter  *interpreter,
 	CattleBuffer *input;
 
 	input = cattle_buffer_new (3);
-	cattle_buffer_set_contents (input, "\xe2\x28\xa1");
+	cattle_buffer_set_contents (input, (gint8 *) "\xe2\x28\xa1");
 
 	/* Return some malformed UTF-8 */
 	cattle_interpreter_feed (interpreter, input);
@@ -265,7 +265,7 @@ test_interpreter_handlers (void)
 	interpreter = cattle_interpreter_new ();
 
 	buffer = cattle_buffer_new (5);
-	cattle_buffer_set_contents (buffer, ",.,#.");
+	cattle_buffer_set_contents (buffer, (gint8 *) ",.,#.");
 
 	configuration = cattle_interpreter_get_configuration (interpreter);
 	cattle_configuration_set_debug_is_enabled (configuration, TRUE);
@@ -316,7 +316,7 @@ test_interpreter_failed_input (void)
 	interpreter = cattle_interpreter_new ();
 
 	buffer = cattle_buffer_new (1);
-	cattle_buffer_set_contents (buffer, ",");
+	cattle_buffer_set_contents (buffer, (gint8 *) ",");
 
 	program = cattle_interpreter_get_program (interpreter);
 	cattle_program_load (program, buffer, NULL);
@@ -380,7 +380,7 @@ test_interpreter_failed_output (void)
 	interpreter = cattle_interpreter_new ();
 
 	buffer = cattle_buffer_new (1);
-	cattle_buffer_set_contents (buffer, ".");
+	cattle_buffer_set_contents (buffer, (gint8 *) ".");
 
 	program = cattle_interpreter_get_program (interpreter);
 	cattle_program_load (program, buffer, NULL);
@@ -445,7 +445,7 @@ test_interpreter_failed_debug (void)
 	interpreter = cattle_interpreter_new ();
 
 	buffer = cattle_buffer_new (1);
-	cattle_buffer_set_contents (buffer, "#");
+	cattle_buffer_set_contents (buffer, (gint8 *) "#");
 
 	configuration = cattle_interpreter_get_configuration (interpreter);
 	cattle_configuration_set_debug_is_enabled (configuration, TRUE);
@@ -512,7 +512,7 @@ test_interpreter_input_no_feed (void)
 	interpreter = cattle_interpreter_new ();
 
 	buffer = cattle_buffer_new (1);
-	cattle_buffer_set_contents (buffer, ",");
+	cattle_buffer_set_contents (buffer, (gint8 *) ",");
 
 	program = cattle_interpreter_get_program (interpreter);
 	cattle_program_load (program, buffer, NULL);
@@ -549,7 +549,7 @@ test_interpreter_unicode_input (void)
 	interpreter = cattle_interpreter_new ();
 
 	buffer = cattle_buffer_new (1);
-	cattle_buffer_set_contents (buffer, ",");
+	cattle_buffer_set_contents (buffer, (gint8 *) ",");
 
 	program = cattle_interpreter_get_program (interpreter);
 	cattle_program_load (program, buffer, NULL);
@@ -586,7 +586,7 @@ test_interpreter_invalid_input (void)
 	interpreter = cattle_interpreter_new ();
 
 	buffer = cattle_buffer_new (1);
-	cattle_buffer_set_contents (buffer, ",");
+	cattle_buffer_set_contents (buffer, (gint8 *) ",");
 
 	program = cattle_interpreter_get_program (interpreter);
 	cattle_program_load (program, buffer, NULL);

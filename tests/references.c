@@ -39,7 +39,7 @@ test_references_program_owns_instructions (void)
 	program = cattle_program_new ();
 
 	buffer = cattle_buffer_new (5);
-	cattle_buffer_set_contents (buffer, "++[-]");
+	cattle_buffer_set_contents (buffer, (gint8 *) "++[-]");
 
 	cattle_program_load (program, buffer, NULL);
 
@@ -98,7 +98,7 @@ test_references_single_reference (void)
 	program = cattle_program_new ();
 
 	buffer = cattle_buffer_new (1);
-	cattle_buffer_set_contents (buffer, "+");
+	cattle_buffer_set_contents (buffer, (gint8 *) "+");
 
 	cattle_program_load (program, buffer, NULL);
 

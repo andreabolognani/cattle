@@ -930,7 +930,7 @@ default_input_handler (CattleInterpreter  *self,
 {
 	CattleBuffer *input;
 	gint8         buffer[256];
-	gulong        size;
+	gssize        size;
 
 	size = read (0, buffer, 256);
 
@@ -945,7 +945,7 @@ default_input_handler (CattleInterpreter  *self,
 	}
 
 	/* Copy the contents to a buffer */
-	input = cattle_buffer_new (size);
+	input = cattle_buffer_new ((gulong) size);
 	cattle_buffer_set_contents (input, (gint8 *) buffer);
 
 	/* Feed the buffer to the interpreter */
