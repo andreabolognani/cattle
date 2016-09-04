@@ -2,9 +2,9 @@ NULL =
 
 SUBDIRS = \
 	cattle \
+	docs \
 	examples \
 	tests \
-	docs \
 	$(NULL)
 
 pkgconfigdir = $(libdir)/pkgconfig
@@ -14,8 +14,8 @@ pkgconfig_DATA = \
 
 doc_DATA = \
 	AUTHORS.md \
-	ChangeLog.pre-0.9.2 \
 	ChangeLog \
+	ChangeLog.pre-0.9.2 \
 	COPYING \
 	NEWS.md \
 	README.md \
@@ -23,8 +23,8 @@ doc_DATA = \
 	$(NULL)
 
 EXTRA_DIST = \
-	$(pkgconfig_DATA) \
 	$(doc_DATA) \
+	$(pkgconfig_DATA) \
 	$(NULL)
 
 CLEANFILES = \

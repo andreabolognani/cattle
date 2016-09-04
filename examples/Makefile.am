@@ -19,26 +19,34 @@ LDADD = \
 	$(top_builddir)/cattle/libcattle-1.0.la \
 	$(NULL)
 
-noinst_PROGRAMS = \
-	run \
-	indent \
-	minimize \
+common_headers = \
+	common.h \
 	$(NULL)
 
-run_SOURCES = \
-	common.h \
+common_sources = \
 	common.c \
-	run.c \
+	$(NULL)
+
+noinst_PROGRAMS = \
+	indent \
+	minimize \
+	run \
 	$(NULL)
 
 indent_SOURCES = \
-	common.h \
-	common.c \
+	$(common_headers) \
+	$(common_sources) \
 	indent.c \
 	$(NULL)
 
 minimize_SOURCES = \
-	common.h \
-	common.c \
+	$(common_headers) \
+	$(common_sources) \
 	minimize.c \
+	$(NULL)
+
+run_SOURCES = \
+	$(common_headers) \
+	$(common_sources) \
+	run.c \
 	$(NULL)

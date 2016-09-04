@@ -19,15 +19,15 @@ AM_LDFLAGS = \
 	$(NULL)
 
 cattle_headers = \
-	cattle-error.h \
-	cattle-constants.h \
-	cattle-buffer.h \
-	cattle-tape.h \
-	cattle-instruction.h \
-	cattle-program.h \
-	cattle-configuration.h \
-	cattle-interpreter.h \
 	cattle.h \
+	cattle-buffer.h \
+	cattle-configuration.h \
+	cattle-constants.h \
+	cattle-error.h \
+	cattle-instruction.h \
+	cattle-interpreter.h \
+	cattle-program.h \
+	cattle-tape.h \
 	$(NULL)
 
 cattleincludedir = $(includedir)/cattle-1.0/cattle
@@ -41,20 +41,20 @@ lib_LTLIBRARIES = \
 	$(NULL)
 
 cattle_sources = \
-	cattle-version.c \
+	cattle-buffer.c \
+	cattle-configuration.c \
 	cattle-constants.c \
 	cattle-error.c \
-	cattle-buffer.c \
-	cattle-tape.c \
 	cattle-instruction.c \
-	cattle-program.c \
-	cattle-configuration.c \
 	cattle-interpreter.c \
+	cattle-program.c \
+	cattle-tape.c \
+	cattle-version.c \
 	$(NULL)
 
 libcattle_1_0_la_SOURCES = \
-	$(cattle_sources) \
 	$(cattle_headers) \
+	$(cattle_sources) \
 	cattle-version.h \
 	$(BUILT_SOURCES) \
 	$(NULL)
@@ -63,8 +63,8 @@ GENMARSHAL_GENERATED = \
 	$(NULL)
 
 MKENUMS_GENERATED = \
-	cattle-enums.h \
 	cattle-enums.c \
+	cattle-enums.h \
 	$(NULL)
 
 BUILT_SOURCES = \
@@ -78,8 +78,8 @@ CLEANFILES = \
 	$(NULL)
 
 EXTRA_DIST = \
-	cattle-enums.h.tmpl \
 	cattle-enums.c.tmpl \
+	cattle-enums.h.tmpl \
 	$(NULL)
 
 -include $(INTROSPECTION_MAKEFILE)
@@ -96,8 +96,8 @@ INTROSPECTION_COMPILER_ARGS = \
 
 if HAVE_INTROSPECTION
 introspection_sources = \
-	$(cattle_sources) \
 	$(cattle_headers) \
+	$(cattle_sources) \
 	cattle-version.h \
 	$(NULL)
 

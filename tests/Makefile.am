@@ -19,18 +19,14 @@ LDADD = \
 
 noinst_PROGRAMS = \
 	buffer \
-	tape \
-	program \
 	interpreter \
+	program \
 	references \
+	tape \
 	$(NULL)
 
 buffer_SOURCES = \
 	buffer.c \
-	$(NULL)
-
-tape_SOURCES = \
-	tape.c \
 	$(NULL)
 
 interpreter_SOURCES = \
@@ -43,6 +39,10 @@ program_SOURCES = \
 
 references_SOURCES = \
 	references.c \
+	$(NULL)
+
+tape_SOURCES = \
+	tape.c \
 	$(NULL)
 
 GTESTER = gtester
