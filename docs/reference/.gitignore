@@ -13,6 +13,8 @@ html
 html.stamp
 html-build.stamp
 scan-build.stamp
+setup-build.stamp
 sgml-build.stamp
 sgml.stamp
+version.xml
 xml

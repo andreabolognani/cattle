@@ -3,3 +3,5 @@ cattle-enums.c
 cattle-marshal.h
 cattle-marshal.c
 cattle-version.h
+Cattle-1.0.gir
+Cattle-1.0.typelib
