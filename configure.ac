@@ -1,6 +1,5 @@
 AC_INIT([Cattle], [1.2.0], [eof@kiyuko.org], [cattle])
 AM_CONFIG_HEADER([config.h])
-AM_MAINTAINER_MODE
 AM_INIT_AUTOMAKE
 
 m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
