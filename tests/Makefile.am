@@ -48,8 +48,8 @@ references_SOURCES = \
 GTESTER = gtester
 
 test:
-	@${GTESTER} --version 2>/dev/null 1>&2 ; \
-	test "$$?" != 0 || ${GTESTER} --verbose ${noinst_PROGRAMS}
+	@$(GTESTER) --version >/dev/null 2>&1 && \
+	 $(GTESTER) --verbose $(noinst_PROGRAMS)
 
 .PHONY: test
 check-local: test
