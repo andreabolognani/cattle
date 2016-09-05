@@ -7,7 +7,10 @@ DOC_MODULE = cattle-1.0
 DOC_MAIN_SGML_FILE = $(DOC_MODULE)-docs.xml
 
 # The directory containing the source code. Relative to $(srcdir).
-DOC_SOURCE_DIR = $(top_srcdir)/cattle
+DOC_SOURCE_DIR = \
+	$(top_srcdir)/cattle \
+	$(top_builddir)/cattle \
+	$(NULL)
 
 # Extra options to pass to gtkdoc-scangobj. Not normally needed.
 SCANGOBJ_OPTIONS =
@@ -25,8 +28,14 @@ MKTMPL_OPTIONS =
 FIXXREF_OPTIONS =
 
 # Used for dependencies. The docs will be rebuilt if any of these change.
-HFILE_GLOB = $(top_srcdir)/cattle/*.h
-CFILE_GLOB = $(top_srcdir)/cattle/*.c
+HFILE_GLOB = \
+	$(top_srcdir)/cattle/*.h \
+	$(top_builddir)/cattle/*.h \
+	$(NULL)
+CFILE_GLOB = \
+	$(top_srcdir)/cattle/*.c \
+	$(top_builddir)/cattle/*.c \
+	$(NULL)
 
 # Header files to ignore when scanning.
 IGNORE_HFILES =
