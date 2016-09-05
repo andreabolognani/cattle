@@ -1,11 +1,8 @@
 NULL =
 
-INCLUDES = \
+AM_CPPFLAGS = \
 	-I$(top_srcdir) \
 	-I$(top_builddir) \
-	$(NULL)
-
-AM_CPPFLAGS = \
 	$(GLIB_CFLAGS) \
 	$(GIO_CFLAGS) \
 	$(NULL)

@@ -1,11 +1,8 @@
 NULL =
 
-INCLUDES = \
+AM_CPPFLAGS = \
 	-I$(top_srcdir) \
 	-I$(top_builddir) \
-	$(NULL)
-
-AM_CPPFLAGS = \
 	-DG_LOG_DOMAIN=\"Cattle\" \
 	-DCATTLE_COMPILATION \
 	-DG_DISABLE_DEPRECATED \
