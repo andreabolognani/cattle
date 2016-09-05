@@ -53,6 +53,9 @@ libcattle_1_0_la_SOURCES = \
 	$(cattle_headers) \
 	$(cattle_sources) \
 	cattle-version.h \
+	$(NULL)
+
+nodist_libcattle_1_0_la_SOURCES = \
 	$(BUILT_SOURCES) \
 	$(NULL)
 
