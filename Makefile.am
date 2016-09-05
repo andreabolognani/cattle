@@ -8,7 +8,7 @@ SUBDIRS = \
 	$(NULL)
 
 pkgconfigdir = $(libdir)/pkgconfig
-pkgconfig_DATA = \
+nodist_pkgconfig_DATA = \
 	cattle-1.0.pc \
 	$(NULL)
 
