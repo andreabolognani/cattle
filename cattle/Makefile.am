@@ -131,16 +131,18 @@ typelib_DATA = $(INTROSPECTION_GIRS:.gir=.typelib)
 CLEANFILES += $(gir_DATA) $(typelib_DATA)
 endif
 
-cattle-enums.h: $(cattle_headers)
-	$(AM_V_GEN)( cd $(srcdir) &&                     \
-	  $(GLIB_MKENUMS) --template cattle-enums.h.tmpl \
-	  $(cattle_headers) ) > cattle-enums.h.tmp       \
-	&& mv cattle-enums.h.tmp cattle-enums.h          \
-	|| rm -f cattle-enums.h.tmp
+cattle-enums.h: $(cattle_headers) cattle-version.h
+	$(AM_V_GEN) \
+	$(GLIB_MKENUMS) \
+	  --template $(srcdir)/cattle-enums.h.tmpl $^ \
+	>$@.tmp \
+	&& mv -f $@.tmp $@ \
+	|| ( $(RM) -f $@.tmp; false )
 
-cattle-enums.c: $(cattle_headers)
-	$(AM_V_GEN)( cd $(srcdir) &&                     \
-	  $(GLIB_MKENUMS) --template cattle-enums.c.tmpl \
-	  $(cattle_headers) ) > cattle-enums.c.tmp       \
-	&& mv cattle-enums.c.tmp cattle-enums.c          \
-	|| rm -f cattle-enums.c.tmp
+cattle-enums.c: $(cattle_headers) cattle-version.h
+	$(AM_V_GEN) \
+	$(GLIB_MKENUMS) \
+	  --template $(srcdir)/cattle-enums.c.tmpl $^ \
+	>$@.tmp \
+	&& mv -f $@.tmp $@ \
+	|| ( $(RM) -f $@.tmp; false )
