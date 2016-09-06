@@ -1,18 +1,18 @@
 NULL =
 
 AM_CPPFLAGS = \
+	$(GLIB_CFLAGS) \
 	-I$(top_srcdir) \
 	-I$(top_builddir) \
-	-DG_LOG_DOMAIN=\"Cattle\" \
 	-DCATTLE_COMPILATION \
 	-DG_DISABLE_DEPRECATED \
 	-DG_DISABLE_SINGLE_INCLUDES \
-	$(GLIB_CFLAGS) \
+	-DG_LOG_DOMAIN=\"Cattle\" \
 	$(NULL)
 
 AM_LDFLAGS = \
-	-version-info $(CATTLE_CURRENT):$(CATTLE_REVISION):$(CATTLE_AGE) \
 	$(GLIB_LIBS) \
+	-version-info $(CATTLE_CURRENT):$(CATTLE_REVISION):$(CATTLE_AGE) \
 	$(NULL)
 
 cattle_headers = \
@@ -27,19 +27,6 @@ cattle_headers = \
 	cattle-tape.h \
 	$(NULL)
 
-cattleincludedir = $(includedir)/cattle-1.0/cattle
-cattleinclude_HEADERS = \
-	$(cattle_headers) \
-	$(NULL)
-
-nodist_cattleinclude_HEADERS = \
-	$(cattle_generated_headers) \
-	$(NULL)
-
-lib_LTLIBRARIES = \
-	libcattle-1.0.la \
-	$(NULL)
-
 cattle_sources = \
 	cattle-buffer.c \
 	cattle-configuration.c \
@@ -50,16 +37,6 @@ cattle_sources = \
 	cattle-program.c \
 	cattle-tape.c \
 	cattle-version.c \
-	$(NULL)
-
-libcattle_1_0_la_SOURCES = \
-	$(cattle_headers) \
-	$(cattle_sources) \
-	$(NULL)
-
-nodist_libcattle_1_0_la_SOURCES = \
-	$(cattle_generated_headers) \
-	$(cattle_generated_sources) \
 	$(NULL)
 
 mkenums_generated_headers = \
@@ -79,6 +56,29 @@ cattle_generated_sources = \
 	$(mkenums_generated_sources) \
 	$(NULL)
 
+cattleincludedir = $(includedir)/cattle-1.0/cattle
+cattleinclude_HEADERS = \
+	$(cattle_headers) \
+	$(NULL)
+
+nodist_cattleinclude_HEADERS = \
+	$(cattle_generated_headers) \
+	$(NULL)
+
+lib_LTLIBRARIES = \
+	libcattle-1.0.la \
+	$(NULL)
+
+libcattle_1_0_la_SOURCES = \
+	$(cattle_headers) \
+	$(cattle_sources) \
+	$(NULL)
+
+nodist_libcattle_1_0_la_SOURCES = \
+	$(cattle_generated_headers) \
+	$(cattle_generated_sources) \
+	$(NULL)
+
 BUILT_SOURCES = \
 	$(cattle_generated_headers) \
 	$(cattle_generated_sources) \
@@ -93,6 +93,22 @@ EXTRA_DIST = \
 	cattle-enums.c.tmpl \
 	cattle-enums.h.tmpl \
 	$(NULL)
+
+cattle-enums.h: $(cattle_headers) cattle-version.h
+	$(AM_V_GEN) \
+	$(GLIB_MKENUMS) \
+	  --template $(srcdir)/cattle-enums.h.tmpl $^ \
+	>$@.tmp \
+	&& mv -f $@.tmp $@ \
+	|| ( $(RM) -f $@.tmp; false )
+
+cattle-enums.c: $(cattle_headers) cattle-version.h
+	$(AM_V_GEN) \
+	$(GLIB_MKENUMS) \
+	  --template $(srcdir)/cattle-enums.c.tmpl $^ \
+	>$@.tmp \
+	&& mv -f $@.tmp $@ \
+	|| ( $(RM) -f $@.tmp; false )
 
 -include $(INTROSPECTION_MAKEFILE)
 INTROSPECTION_GIRS =
@@ -130,19 +146,3 @@ typelib_DATA = $(INTROSPECTION_GIRS:.gir=.typelib)
 
 CLEANFILES += $(gir_DATA) $(typelib_DATA)
 endif
-
-cattle-enums.h: $(cattle_headers) cattle-version.h
-	$(AM_V_GEN) \
-	$(GLIB_MKENUMS) \
-	  --template $(srcdir)/cattle-enums.h.tmpl $^ \
-	>$@.tmp \
-	&& mv -f $@.tmp $@ \
-	|| ( $(RM) -f $@.tmp; false )
-
-cattle-enums.c: $(cattle_headers) cattle-version.h
-	$(AM_V_GEN) \
-	$(GLIB_MKENUMS) \
-	  --template $(srcdir)/cattle-enums.c.tmpl $^ \
-	>$@.tmp \
-	&& mv -f $@.tmp $@ \
-	|| ( $(RM) -f $@.tmp; false )

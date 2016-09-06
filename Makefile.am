@@ -26,11 +26,6 @@ CLEANFILES = \
 	ChangeLog \
 	$(NULL)
 
-DISTCHECK_CONFIGURE_FLAGS = \
-	--enable-introspection=yes \
-	--enable-gtk-doc \
-	$(NULL)
-
 ChangeLog:
 	$(AM_V_GEN) \
 	if test -d "$(top_srcdir)/.git"; \
@@ -44,3 +39,8 @@ ChangeLog:
 	fi
 
 .PHONY: ChangeLog
+
+DISTCHECK_CONFIGURE_FLAGS = \
+	--enable-introspection=yes \
+	--enable-gtk-doc \
+	$(NULL)

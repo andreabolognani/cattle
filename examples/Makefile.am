@@ -1,10 +1,10 @@
 NULL =
 
 AM_CPPFLAGS = \
-	-I$(top_srcdir) \
-	-I$(top_builddir) \
 	$(GLIB_CFLAGS) \
 	$(GIO_CFLAGS) \
+	-I$(top_srcdir) \
+	-I$(top_builddir) \
 	$(NULL)
 
 AM_LDFLAGS = \
