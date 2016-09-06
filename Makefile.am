@@ -12,7 +12,7 @@ nodist_pkgconfig_DATA = \
 	cattle-1.0.pc \
 	$(NULL)
 
-doc_DATA = \
+dist_doc_DATA = \
 	AUTHORS.markdown \
 	ChangeLog \
 	ChangeLog.pre-0.9.2 \
@@ -20,11 +20,6 @@ doc_DATA = \
 	NEWS.markdown \
 	README.markdown \
 	TODO.markdown \
-	$(NULL)
-
-EXTRA_DIST = \
-	$(doc_DATA) \
-	$(pkgconfig_DATA) \
 	$(NULL)
 
 CLEANFILES = \
