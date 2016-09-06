@@ -30,7 +30,10 @@ cattle_headers = \
 cattleincludedir = $(includedir)/cattle-1.0/cattle
 cattleinclude_HEADERS = \
 	$(cattle_headers) \
-	cattle-version.h \
+	$(NULL)
+
+nodist_cattleinclude_HEADERS = \
+	$(cattle_generated_headers) \
 	$(NULL)
 
 lib_LTLIBRARIES = \
@@ -52,29 +55,38 @@ cattle_sources = \
 libcattle_1_0_la_SOURCES = \
 	$(cattle_headers) \
 	$(cattle_sources) \
-	cattle-version.h \
 	$(NULL)
 
 nodist_libcattle_1_0_la_SOURCES = \
-	$(BUILT_SOURCES) \
+	$(cattle_generated_headers) \
+	$(cattle_generated_sources) \
 	$(NULL)
 
-GENMARSHAL_GENERATED = \
-	$(NULL)
-
-MKENUMS_GENERATED = \
-	cattle-enums.c \
+mkenums_generated_headers = \
 	cattle-enums.h \
 	$(NULL)
 
+mkenums_generated_sources = \
+	cattle-enums.c \
+	$(NULL)
+
+cattle_generated_headers = \
+	$(mkenums_generated_headers) \
+	cattle-version.h \
+	$(NULL)
+
+cattle_generated_sources = \
+	$(mkenums_generated_sources) \
+	$(NULL)
+
 BUILT_SOURCES = \
-	$(GENMARSHAL_GENERATED) \
-	$(MKENUMS_GENERATED) \
+	$(cattle_generated_headers) \
+	$(cattle_generated_sources) \
 	$(NULL)
 
 CLEANFILES = \
-	$(GENMARSHAL_GENERATED) \
-	$(MKENUMS_GENERATED) \
+	$(mkenums_generated_headers) \
+	$(mkenums_generated_sources) \
 	$(NULL)
 
 EXTRA_DIST = \
@@ -96,9 +108,10 @@ INTROSPECTION_COMPILER_ARGS = \
 
 if HAVE_INTROSPECTION
 introspection_sources = \
+	$(cattle_generated_headers) \
+	$(cattle_generated_sources) \
 	$(cattle_headers) \
 	$(cattle_sources) \
-	cattle-version.h \
 	$(NULL)
 
 Cattle-1.0.gir: libcattle-1.0.la
