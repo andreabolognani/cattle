@@ -44,9 +44,6 @@ tape_SOURCES = \
 
 GTESTER = gtester
 
-test:
+check-local:
 	@$(GTESTER) --version >/dev/null 2>&1 && \
 	 $(GTESTER) --verbose $(noinst_PROGRAMS)
-
-.PHONY: test
-check-local: test
