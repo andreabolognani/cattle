@@ -1,4 +1,4 @@
-/* indent -- Indent a Brainfuck program
+/* indent - Indent a Brainfuck program
  * Copyright (C) 2008-2014  Andrea Bolognani <eof@kiyuko.org>
  * This file is part of Cattle
  *

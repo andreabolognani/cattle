@@ -1,4 +1,4 @@
-/* program -- Tests related to program loading
+/* program - Tests related to program loading
  * Copyright (C) 2008-2014  Andrea Bolognani <eof@kiyuko.org>
  * This file is part of Cattle
  *

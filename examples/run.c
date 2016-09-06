@@ -1,4 +1,4 @@
-/* interpreter -- Simple Brainfuck interpreter
+/* interpreter - Simple Brainfuck interpreter
  * Copyright (C) 2008-2014  Andrea Bolognani <eof@kiyuko.org>
  * This file is part of Cattle
  *

@@ -1,4 +1,4 @@
-/* references -- Look for reference leaks
+/* references - Look for reference leaks
  * Copyright (C) 2008-2014  Andrea Bolognani <eof@kiyuko.org>
  * This file is part of Cattle
  *
