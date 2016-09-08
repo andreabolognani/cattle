@@ -23,41 +23,6 @@
 #include <glib-object.h>
 #include <cattle/cattle.h>
 
-/**
- * test_references_program_owns_instructions:
- *
- * The instructions belonging to a program must be unreferenced when the
- * program is finalized.
- */
-static void
-test_references_program_owns_instructions (void)
-{
-	CattleProgram     *program;
-	CattleInstruction *instructions;
-	CattleBuffer      *buffer;
-
-	program = cattle_program_new ();
-
-	buffer = cattle_buffer_new (5);
-	cattle_buffer_set_contents (buffer, (gint8 *) "++[-]");
-
-	cattle_program_load (program, buffer, NULL);
-
-	instructions = cattle_program_get_instructions (program);
-
-	g_assert (G_IS_OBJECT (instructions));
-
-	g_object_unref (program);
-
-	g_assert (G_IS_OBJECT (instructions));
-
-	g_object_unref (instructions);
-
-	g_assert (!G_IS_OBJECT (instructions));
-
-	g_object_unref (buffer);
-}
-
 static void
 check_refcount (CattleInstruction *instruction)
 {
@@ -120,8 +85,6 @@ main (gint    argc,
 
 	g_test_init (&argc, &argv, NULL);
 
-	g_test_add_func ("/references/program-owns-instructions",
-	                 test_references_program_owns_instructions);
 	g_test_add_func ("/references/single-reference",
 	                 test_references_single_reference);
 
