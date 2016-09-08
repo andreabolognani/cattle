@@ -32,6 +32,7 @@
 #include <cattle/cattle-program.h>
 #include <cattle/cattle-configuration.h>
 #include <cattle/cattle-interpreter.h>
+#include <cattle/cattle-enums.h>
 
 #undef __CATTLE_H_INSIDE__
 
