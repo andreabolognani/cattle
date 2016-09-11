@@ -1,3 +1,13 @@
+Changes from Cattle 1.2.0 to 1.2.1
+----------------------------------
+
+  * Fix compilation with Clang (Baptiste Fontaine)
+
+  * Install `cattle-enums.h`
+
+  * Build system cleanups and improvements
+
+
 Changes from Cattle 1.0.1 to 1.2.0
 ----------------------------------
 
