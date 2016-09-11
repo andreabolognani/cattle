@@ -12,6 +12,7 @@ nodist_pkgconfig_DATA = \
 	cattle-1.0.pc \
 	$(NULL)
 
+docdir = $(datarootdir)/doc/cattle-1.0
 dist_doc_DATA = \
 	AUTHORS.markdown \
 	ChangeLog \
