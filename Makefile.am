@@ -23,6 +23,10 @@ dist_doc_DATA = \
 	TODO.markdown \
 	$(NULL)
 
+EXTRA_DIST = \
+	INSTALL.markdown \
+	$(NULL)
+
 CLEANFILES = \
 	ChangeLog \
 	$(NULL)
