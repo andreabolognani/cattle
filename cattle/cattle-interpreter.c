@@ -311,7 +311,7 @@ run (CattleInterpreter  *self,
 							/* Current input buffer not consumed.
 							 * Get a value from the buffer and move forward */
 							temp = cattle_buffer_get_value (priv->input,
-											priv->input_offset);
+							                                priv->input_offset);
 							priv->input_offset++;
 						}
 						else
@@ -332,8 +332,8 @@ run (CattleInterpreter  *self,
 								 * input buffer */
 								inner_error = NULL;
 								success = (*input_handler) (self,
-											    priv->input_handler_data,
-											    &inner_error);
+								                            priv->input_handler_data,
+								                            &inner_error);
 								success &= (inner_error == NULL);
 
 								/* Handle input errors */
@@ -346,14 +346,14 @@ run (CattleInterpreter  *self,
 									if (inner_error == NULL)
 									{
 										g_set_error_literal (error,
-												     CATTLE_ERROR,
-												     CATTLE_ERROR_IO,
-												     "Unknown I/O error");
+										                     CATTLE_ERROR,
+										                     CATTLE_ERROR_IO,
+										                     "Unknown I/O error");
 									}
 									else
 									{
 										g_propagate_error (error,
-												   inner_error);
+										                   inner_error);
 									}
 
 									g_object_unref (current);
@@ -368,7 +368,7 @@ run (CattleInterpreter  *self,
 								{
 									/* Some input was retrieved */
 									temp = cattle_buffer_get_value (priv->input,
-													priv->input_offset);
+									                                priv->input_offset);
 									priv->input_offset++;
 								}
 								else
