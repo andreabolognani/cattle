@@ -169,7 +169,8 @@ test_program_load_with_input (void)
 	CattleBuffer           *buffer;
 	CattleInstruction      *instructions;
 	CattleBuffer           *input;
-	CattleInstructionValue  value;
+	CattleInstructionValue  instruction_value;
+	gint8                   buffer_value;
 	gulong                  i;
 	GError                 *error;
 	gboolean                success;
@@ -200,12 +201,12 @@ test_program_load_with_input (void)
 	/* Match the parsed input with the expected one */
 	for (i = 0; i < 10; i++)
 	{
-		value = cattle_buffer_get_value (input, i);
-		g_assert (value == cattle_buffer_get_value (buffer, i));
+		buffer_value = cattle_buffer_get_value (input, i);
+		g_assert (buffer_value == cattle_buffer_get_value (buffer, i));
 	}
 
-	value = cattle_instruction_get_value (instructions);
-	g_assert (value == CATTLE_INSTRUCTION_READ);
+	instruction_value = cattle_instruction_get_value (instructions);
+	g_assert (instruction_value == CATTLE_INSTRUCTION_READ);
 
 	g_object_unref (input);
 	g_object_unref (instructions);
