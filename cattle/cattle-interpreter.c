@@ -77,7 +77,7 @@ struct _CattleInterpreterPrivate
 
 	gboolean             had_input;
 	CattleBuffer        *input;
-	gint                 input_offset;
+	gulong               input_offset;
 	gboolean             end_of_input_reached;
 };
 
