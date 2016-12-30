@@ -27,8 +27,8 @@
 /* Succesful input handler */
 static gboolean
 input_success (CattleInterpreter  *interpreter,
-               gpointer            data,
-               GError            **error)
+               gpointer            data G_GNUC_UNUSED,
+               GError            **error G_GNUC_UNUSED)
 {
 	CattleBuffer *input;
 
@@ -42,9 +42,9 @@ input_success (CattleInterpreter  *interpreter,
 
 /* Succesful input handler that doesn't feed the interpreter */
 static gboolean
-input_no_feed (CattleInterpreter  *interpreter,
-               gpointer            data,
-               GError            **error)
+input_no_feed (CattleInterpreter  *interpreter G_GNUC_UNUSED,
+               gpointer            data G_GNUC_UNUSED,
+               GError            **error G_GNUC_UNUSED)
 {
 	return TRUE;
 }
@@ -52,8 +52,8 @@ input_no_feed (CattleInterpreter  *interpreter,
 /* Successful input handler that returns a valid UTF-8 string */
 static gboolean
 input_utf8 (CattleInterpreter  *interpreter,
-            gpointer            data,
-            GError            **error)
+            gpointer            data G_GNUC_UNUSED,
+            GError            **error G_GNUC_UNUSED)
 {
 	CattleBuffer *input;
 
@@ -68,8 +68,8 @@ input_utf8 (CattleInterpreter  *interpreter,
 /* Succesful input handler that returns an invalid UTF-8 string */
 static gboolean
 input_invalid_utf8 (CattleInterpreter  *interpreter,
-                    gpointer            data,
-                    GError            **error)
+                    gpointer            data G_GNUC_UNUSED,
+                    GError            **error G_GNUC_UNUSED)
 {
 	CattleBuffer *input;
 
@@ -84,8 +84,8 @@ input_invalid_utf8 (CattleInterpreter  *interpreter,
 
 /* Unsuccesful input handler that sets the error */
 static gboolean
-input_fail_set_error (CattleInterpreter  *interpreter,
-                      gpointer            data,
+input_fail_set_error (CattleInterpreter  *interpreter G_GNUC_UNUSED,
+                      gpointer            data G_GNUC_UNUSED,
                       GError            **error)
 {
 	g_set_error_literal (error,
@@ -98,17 +98,17 @@ input_fail_set_error (CattleInterpreter  *interpreter,
 
 /* Unsuccesful input handler that doesn't set the error */
 static gboolean
-input_fail_no_set_error (CattleInterpreter  *interpreter,
-                         gpointer            data,
-                         GError            **error)
+input_fail_no_set_error (CattleInterpreter  *interpreter G_GNUC_UNUSED,
+                         gpointer            data G_GNUC_UNUSED,
+                         GError            **error G_GNUC_UNUSED)
 {
 	return FALSE;
 }
 
 /* Unsuccesful input handler that sets the error but returns TRUE */
 static gboolean
-input_fail_only_error (CattleInterpreter  *interpreter,
-                       gpointer            data,
+input_fail_only_error (CattleInterpreter  *interpreter G_GNUC_UNUSED,
+                       gpointer            data G_GNUC_UNUSED,
                        GError            **error)
 {
 	g_set_error_literal (error,
@@ -119,22 +119,12 @@ input_fail_only_error (CattleInterpreter  *interpreter,
 	return TRUE;
 }
 
-/* Successful output handler */
-static gboolean
-output_success (CattleInterpreter  *interpreter,
-                gint8               output,
-                gpointer            data,
-                GError            **error)
-{
-	return TRUE;
-}
-
 /* Succesfull output handler working on a buffer */
 static gboolean
-output_success_buffer (CattleInterpreter  *interpreter,
+output_success_buffer (CattleInterpreter  *interpreter G_GNUC_UNUSED,
                        gint8               output,
                        gpointer            data,
-                       GError            **error)
+                       GError            **error G_GNUC_UNUSED)
 {
 	GString *buffer;
 
@@ -148,9 +138,9 @@ output_success_buffer (CattleInterpreter  *interpreter,
 
 /* Unsuccesful output handler that sets the error */
 static gboolean
-output_fail_set_error (CattleInterpreter  *interpreter,
-                       gint8               output,
-                       gpointer            data,
+output_fail_set_error (CattleInterpreter  *interpreter G_GNUC_UNUSED,
+                       gint8               output G_GNUC_UNUSED,
+                       gpointer            data G_GNUC_UNUSED,
                        GError            **error)
 {
 	g_set_error_literal (error,
@@ -163,19 +153,19 @@ output_fail_set_error (CattleInterpreter  *interpreter,
 
 /* Unsuccesful output handler that doesn't set the error */
 static gboolean
-output_fail_no_set_error (CattleInterpreter  *interpreter,
-                          gint8               output,
-                          gpointer            data,
-                          GError            **error)
+output_fail_no_set_error (CattleInterpreter  *interpreter G_GNUC_UNUSED,
+                          gint8               output G_GNUC_UNUSED,
+                          gpointer            data G_GNUC_UNUSED,
+                          GError            **error G_GNUC_UNUSED)
 {
 	return FALSE;
 }
 
 /* Unsuccesful output handler that sets the error but returns TRUE */
 static gboolean
-output_fail_only_error (CattleInterpreter  *interpreter,
-                        gint8               output,
-                        gpointer            data,
+output_fail_only_error (CattleInterpreter  *interpreter G_GNUC_UNUSED,
+                        gint8               output G_GNUC_UNUSED,
+                        gpointer            data G_GNUC_UNUSED,
                         GError            **error)
 {
 	g_set_error_literal (error,
@@ -186,20 +176,11 @@ output_fail_only_error (CattleInterpreter  *interpreter,
 	return TRUE;
 }
 
-/* Succesful debug handler */
-static gboolean
-debug_success (CattleInterpreter  *interpreter,
-               gpointer            data,
-               GError            **error)
-{
-	return TRUE;
-}
-
 /* Succesfut debug handler working on a buffer */
 static gboolean
-debug_success_buffer (CattleInterpreter  *interpreter,
+debug_success_buffer (CattleInterpreter  *interpreter G_GNUC_UNUSED,
                       gpointer            data,
-                      GError            **error)
+                      GError            **error G_GNUC_UNUSED)
 {
 	GString *buffer;
 
@@ -213,8 +194,8 @@ debug_success_buffer (CattleInterpreter  *interpreter,
 
 /* Unsuccesful debug handler that sets the error */
 static gboolean
-debug_fail_set_error (CattleInterpreter  *interpreter,
-                      gpointer            data,
+debug_fail_set_error (CattleInterpreter  *interpreter G_GNUC_UNUSED,
+                      gpointer            data G_GNUC_UNUSED,
                       GError            **error)
 {
 	g_set_error_literal (error,
@@ -227,17 +208,17 @@ debug_fail_set_error (CattleInterpreter  *interpreter,
 
 /* Unsuccesful debug handler that doesn't set the error */
 static gboolean
-debug_fail_no_set_error (CattleInterpreter  *interpreter,
-                         gpointer            data,
-                         GError            **error)
+debug_fail_no_set_error (CattleInterpreter  *interpreter G_GNUC_UNUSED,
+                         gpointer            data G_GNUC_UNUSED,
+                         GError            **error G_GNUC_UNUSED)
 {
 	return FALSE;
 }
 
 /* Unsuccesful debug handler which sets the error but returns TRUE */
 static gboolean
-debug_fail_only_error (CattleInterpreter  *interpreter,
-                       gpointer            data,
+debug_fail_only_error (CattleInterpreter  *interpreter G_GNUC_UNUSED,
+                       gpointer            data G_GNUC_UNUSED,
                        GError            **error)
 {
 	g_set_error_literal (error,

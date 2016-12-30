@@ -289,6 +289,7 @@ run (CattleInterpreter  *self,
 			case CATTLE_INSTRUCTION_READ:
 
 				quantity = cattle_instruction_get_quantity (current);
+				temp = 0;
 
 				for (i = 0; i < quantity; i++)
 				{
@@ -559,7 +560,6 @@ cattle_interpreter_run (CattleInterpreter  *self,
 {
 	CattleInterpreterPrivate *priv;
 	CattleProgram            *program;
-	CattleInstruction        *instruction;
 	gboolean                  success;
 
 	g_return_val_if_fail (CATTLE_IS_INTERPRETER (self), FALSE);
@@ -925,7 +925,7 @@ cattle_interpreter_set_debug_handler (CattleInterpreter  *self,
 
 static gboolean
 default_input_handler (CattleInterpreter  *self,
-                       gpointer            data,
+                       gpointer            data G_GNUC_UNUSED,
                        GError            **error)
 {
 	CattleBuffer *input;
@@ -957,9 +957,9 @@ default_input_handler (CattleInterpreter  *self,
 }
 
 static gboolean
-default_output_handler (CattleInterpreter  *self,
+default_output_handler (CattleInterpreter  *self G_GNUC_UNUSED,
                         gint8               output,
-                        gpointer            data,
+                        gpointer            data G_GNUC_UNUSED,
                         GError            **error)
 {
 	gint8 buffer[1];
@@ -980,7 +980,7 @@ default_output_handler (CattleInterpreter  *self,
 
 static gboolean
 default_debug_handler (CattleInterpreter  *self,
-                       gpointer            data,
+                       gpointer            data G_GNUC_UNUSED,
                        GError            **error)
 {
 	CattleTape *tape;

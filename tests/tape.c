@@ -341,7 +341,6 @@ test_tape_positive_wrap (void)
 {
 	CattleTape *tape;
 	gint range = G_MAXINT8 - G_MININT8 + 1;
-	gint i;
 
 	tape = cattle_tape_new ();
 
@@ -372,7 +371,6 @@ test_tape_negative_wrap (void)
 {
 	CattleTape *tape;
 	gint range = G_MAXINT8 - G_MININT8 + 1;
-	gint i;
 
 	tape = cattle_tape_new ();
 

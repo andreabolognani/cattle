@@ -114,7 +114,7 @@ cattle_tape_init (CattleTape *self)
 
 static void
 chunk_unref (gpointer chunk,
-             gpointer data)
+             gpointer data G_GNUC_UNUSED)
 {
 	g_object_unref (G_OBJECT (chunk));
 }
@@ -139,7 +139,7 @@ cattle_tape_dispose (GObject *object)
 
 static void
 bookmark_free (gpointer bookmark,
-               gpointer data)
+               gpointer data G_GNUC_UNUSED)
 {
 	g_free (bookmark);
 }
