@@ -7,6 +7,10 @@ AM_CPPFLAGS = \
 	-I$(top_builddir) \
 	$(NULL)
 
+AM_CFLAGS = \
+	$(WARN_CFLAGS) \
+	$(NULL)
+
 AM_LDFLAGS = \
 	$(GLIB_LIBS) \
 	$(GIO_LIBS) \

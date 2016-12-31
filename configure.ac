@@ -80,6 +80,14 @@ dnl *************************
 
 GTK_DOC_CHECK([1.18])
 
+dnl ***********************************
+dnl *** Enable compilation warnings ***
+dnl ***********************************
+
+WARN_CFLAGS="-Wall -Wextra"
+
+AC_SUBST(WARN_CFLAGS)
+
 dnl *******************************
 dnl *** Create the output files ***
 dnl *******************************

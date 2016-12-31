@@ -9,6 +9,10 @@ AM_CPPFLAGS = \
 	-DG_LOG_DOMAIN=\"Cattle\" \
 	$(NULL)
 
+AM_CFLAGS = \
+	$(WARN_CFLAGS) \
+	$(NULL)
+
 AM_LDFLAGS = \
 	$(GLIB_LIBS) \
 	-version-info $(CATTLE_CURRENT):$(CATTLE_REVISION):$(CATTLE_AGE) \
