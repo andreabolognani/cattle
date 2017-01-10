@@ -1,3 +1,11 @@
+Changes from Cattle 1.2.1 to 1.2.2
+----------------------------------
+
+  * Enable compiler warnings
+
+    - Fix code quality issues uncovered by doing so
+
+
 Changes from Cattle 1.2.0 to 1.2.1
 ----------------------------------
 
