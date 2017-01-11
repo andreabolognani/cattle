@@ -1,13 +1,13 @@
-Changes from Cattle 1.2.1 to 1.2.2
-----------------------------------
+Cattle 1.2.2 (2017-01-11)
+-------------------------
 
   * Enable compiler warnings
 
     - Fix code quality issues uncovered by doing so
 
 
-Changes from Cattle 1.2.0 to 1.2.1
-----------------------------------
+Cattle 1.2.1 (2016-09-11)
+-------------------------
 
   * Fix compilation with Clang (Baptiste Fontaine)
 
@@ -16,8 +16,8 @@ Changes from Cattle 1.2.0 to 1.2.1
   * Build system cleanups and improvements
 
 
-Changes from Cattle 1.0.1 to 1.2.0
-----------------------------------
+Cattle 1.2.0 (2014-10-21)
+-------------------------
 
   * `CattleBuffer`:
 
@@ -36,16 +36,16 @@ Changes from Cattle 1.0.1 to 1.2.0
   * Various bug fixes.
 
 
-Changes from Cattle 1.0.0 to 1.0.1
-----------------------------------
+Cattle 1.0.1 (2011-03-27)
+-------------------------
 
   * `CattleInterpreter`:
 
     - fix a double free for programs with embedded input.
 
 
-Changes from Cattle 0.9.4 to 1.0.0
-----------------------------------
+Cattle 1.0.0 (2011-02-28)
+-------------------------
 
   * `CattleInterpreter`:
 
@@ -74,8 +74,8 @@ Changes from Cattle 0.9.4 to 1.0.0
   * Various bug fixes.
 
 
-Changes from Cattle 0.9.3 to 0.9.4
-----------------------------------
+Cattle 0.9.4 (2010-12-04)
+-------------------------
 
   * `CattleInstruction`:
 
@@ -102,8 +102,8 @@ Changes from Cattle 0.9.3 to 0.9.4
     - add a simple Brainfuck source code minimizer.
 
 
-Changes from Cattle 0.9.2 to 0.9.3
-----------------------------------
+Cattle 0.9.3 (2009-05-05)
+-------------------------
 
   * `CattleInterpreter`:
 
@@ -129,8 +129,8 @@ Changes from Cattle 0.9.2 to 0.9.3
   * Various bug fixes.
 
 
-Changes from Cattle 0.9.1 to 0.9.2
-----------------------------------
+Cattle 0.9.2 (2008-10-02)
+-------------------------
 
   * `CattleTape`:
 
@@ -147,8 +147,8 @@ Changes from Cattle 0.9.1 to 0.9.2
   * Various bug fixes.
 
 
-Changes from Cattle 0.9.0 to 0.9.1
-----------------------------------
+Cattle 0.9.1 (2008-08-03)
+-------------------------
 
   * `CattleTape`:
 
@@ -164,7 +164,7 @@ Changes from Cattle 0.9.0 to 0.9.1
   * Some bug fixes.
 
 
-Changes in Cattle 0.9.0
------------------------
+Cattle 0.9.0 (2008-04-16)
+-------------------------
 
   * First release.
