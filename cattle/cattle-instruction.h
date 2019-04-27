@@ -38,16 +38,16 @@ G_BEGIN_DECLS
 
 typedef enum
 {
-	CATTLE_INSTRUCTION_NONE       = 0x78, /*  x  */
-	CATTLE_INSTRUCTION_MOVE_LEFT  = 0x3C, /*  <  */
-	CATTLE_INSTRUCTION_MOVE_RIGHT = 0x3E, /*  >  */
-	CATTLE_INSTRUCTION_INCREASE   = 0x2B, /*  +  */
-	CATTLE_INSTRUCTION_DECREASE   = 0x2D, /*  -  */
-	CATTLE_INSTRUCTION_LOOP_BEGIN = 0x5B, /*  [  */
-	CATTLE_INSTRUCTION_LOOP_END   = 0x5D, /*  ]  */
-	CATTLE_INSTRUCTION_READ       = 0x2C, /*  ,  */
-	CATTLE_INSTRUCTION_PRINT      = 0x2E, /*  .  */
-	CATTLE_INSTRUCTION_DEBUG      = 0x23  /*  #  */
+    CATTLE_INSTRUCTION_NONE       = 0x78, /*  x  */
+    CATTLE_INSTRUCTION_MOVE_LEFT  = 0x3C, /*  <  */
+    CATTLE_INSTRUCTION_MOVE_RIGHT = 0x3E, /*  >  */
+    CATTLE_INSTRUCTION_INCREASE   = 0x2B, /*  +  */
+    CATTLE_INSTRUCTION_DECREASE   = 0x2D, /*  -  */
+    CATTLE_INSTRUCTION_LOOP_BEGIN = 0x5B, /*  [  */
+    CATTLE_INSTRUCTION_LOOP_END   = 0x5D, /*  ]  */
+    CATTLE_INSTRUCTION_READ       = 0x2C, /*  ,  */
+    CATTLE_INSTRUCTION_PRINT      = 0x2E, /*  .  */
+    CATTLE_INSTRUCTION_DEBUG      = 0x23  /*  #  */
 } CattleInstructionValue;
 
 typedef struct _CattleInstruction        CattleInstruction;
@@ -56,13 +56,13 @@ typedef struct _CattleInstructionPrivate CattleInstructionPrivate;
 
 struct _CattleInstruction
 {
-	GObject parent;
-	CattleInstructionPrivate *priv;
+    GObject parent;
+    CattleInstructionPrivate *priv;
 };
 
 struct _CattleInstructionClass
 {
-	GObjectClass parent;
+    GObjectClass parent;
 };
 
 CattleInstruction*      cattle_instruction_new         (void);

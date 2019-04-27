@@ -42,13 +42,13 @@ typedef struct _CattleBufferPrivate CattleBufferPrivate;
 
 struct _CattleBuffer
 {
-	GObject parent;
-	CattleBufferPrivate *priv;
+    GObject parent;
+    CattleBufferPrivate *priv;
 };
 
 struct _CattleBufferClass
 {
-	GObjectClass parent;
+    GObjectClass parent;
 };
 
 CattleBuffer* cattle_buffer_new               (gulong        size);

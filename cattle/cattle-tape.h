@@ -42,13 +42,13 @@ typedef struct _CattleTapePrivate CattleTapePrivate;
 
 struct _CattleTape
 {
-	GObject parent;
-	CattleTapePrivate *priv;
+    GObject parent;
+    CattleTapePrivate *priv;
 };
 
 struct _CattleTapeClass
 {
-	GObjectClass parent;
+    GObjectClass parent;
 };
 
 CattleTape* cattle_tape_new                       (void);

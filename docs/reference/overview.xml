@@ -5,24 +5,24 @@
 ]>
 <chapter>
 
-	<title>Overview</title>
+    <title>Overview</title>
 
-	<para>
-		Cattle is a toolkit for the Brainfuck programming language.
-	</para>
+    <para>
+        Cattle is a toolkit for the Brainfuck programming language.
+    </para>
 
-	<para>
-		The library allows one to inspect a Brainfuck program in various
-		ways, and to easily embed a full-featured Brainfuck interpreter
-		into any application; to make the interaction between the hosting
-		application and the Brainfuck interpreter completely transparent,
-		Cattle can be configured to use a custom set of I/O routines
-		instead of the default ones.
-	</para>
+    <para>
+        The library allows one to inspect a Brainfuck program in various
+        ways, and to easily embed a full-featured Brainfuck interpreter
+        into any application; to make the interaction between the hosting
+        application and the Brainfuck interpreter completely transparent,
+        Cattle can be configured to use a custom set of I/O routines
+        instead of the default ones.
+    </para>
 
-	<para>
-		The behaviour of the interpreter itself is highly configurable,
-		as to fit most needs.
-	</para>
+    <para>
+        The behaviour of the interpreter itself is highly configurable,
+        as to fit most needs.
+    </para>
 
 </chapter>

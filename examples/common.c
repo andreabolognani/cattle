@@ -25,58 +25,58 @@ CattleBuffer*
 read_file_contents (const gchar  *path,
                     GError      **error)
 {
-	CattleBuffer *buffer;
-	GFile        *file;
-	GError       *inner_error;
-	gchar        *contents;
-	gint8        *start;
-	gsize         length;
-	gboolean      success;
+    CattleBuffer *buffer;
+    GFile        *file;
+    GError       *inner_error;
+    gchar        *contents;
+    gint8        *start;
+    gsize         length;
+    gboolean      success;
 
-	g_return_val_if_fail (path != NULL, NULL);
-	g_return_val_if_fail (error == NULL || *error == NULL, NULL);
+    g_return_val_if_fail (path != NULL, NULL);
+    g_return_val_if_fail (error == NULL || *error == NULL, NULL);
 
-	file = g_file_new_for_commandline_arg (path);
+    file = g_file_new_for_commandline_arg (path);
 
-	inner_error = NULL;
-	success = g_file_load_contents (file,
-	                                NULL,
-	                                &contents,
-	                                &length,
-	                                NULL,
-	                                &inner_error);
+    inner_error = NULL;
+    success = g_file_load_contents (file,
+                                    NULL,
+                                    &contents,
+                                    &length,
+                                    NULL,
+                                    &inner_error);
 
-	if (!success)
-	{
-		g_propagate_error (error,
-		                   inner_error);
+    if (!success)
+    {
+        g_propagate_error (error,
+                           inner_error);
 
-		g_object_unref (file);
+        g_object_unref (file);
 
-		return NULL;
-	}
+        return NULL;
+    }
 
-	start = (gint8 *) contents;
+    start = (gint8 *) contents;
 
-	/* Skip the sha-bang line if present */
-	if (length >= 2 && contents[0] == '#' && contents[1] == '!')
-	{
-		while (length > 0 && start[0] != '\n')
-		{
-			start++;
-			length--;
-		}
-	}
+    /* Skip the sha-bang line if present */
+    if (length >= 2 && contents[0] == '#' && contents[1] == '!')
+    {
+        while (length > 0 && start[0] != '\n')
+        {
+            start++;
+            length--;
+        }
+    }
 
-	buffer = cattle_buffer_new (length);
+    buffer = cattle_buffer_new (length);
 
-	if (length > 0)
-	{
-		cattle_buffer_set_contents (buffer, start);
-	}
+    if (length > 0)
+    {
+        cattle_buffer_set_contents (buffer, start);
+    }
 
-	g_free (contents);
-	g_object_unref (file);
+    g_free (contents);
+    g_object_unref (file);
 
-	return buffer;
+    return buffer;
 }

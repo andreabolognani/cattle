@@ -102,20 +102,20 @@ cattle_check_version (guint required_major,
                       guint required_minor,
                       guint required_micro)
 {
-	if (cattle_major_version > required_major) {
-		return TRUE;
-	}
-	if (cattle_major_version == required_major &&
+    if (cattle_major_version > required_major) {
+        return TRUE;
+    }
+    if (cattle_major_version == required_major &&
         cattle_minor_version > required_minor)
-	{
-		return TRUE;
-	}
-	if (cattle_major_version == required_major &&
-	    cattle_minor_version == required_minor &&
-	    cattle_micro_version >= required_micro)
-	{
-		return TRUE;
-	}
+    {
+        return TRUE;
+    }
+    if (cattle_major_version == required_major &&
+        cattle_minor_version == required_minor &&
+        cattle_micro_version >= required_micro)
+    {
+        return TRUE;
+    }
 
-	return FALSE;
+    return FALSE;
 }

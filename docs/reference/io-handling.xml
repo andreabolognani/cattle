@@ -5,329 +5,329 @@
 ]>
 <refentry id="io-handling">
 
-	<refmeta>
-		<refentrytitle>I/O Handling</refentrytitle>
-		<manvolnum>3</manvolnum>
-		<refmiscinfo>CATTLE Library</refmiscinfo>
-	</refmeta>
-
-	<refnamediv>
-		<refname>I/O Handling</refname>
-		<refpurpose>
-			Explanation of the way Cattle performs I/O
-		</refpurpose>
-	</refnamediv>
-
-	<refsect2>
-
-		<title>I/O Basics</title>
-
-		<para>
-			Cattle uses an I/O mechanism which allows for a huge degree
-			of flexibility while remaining relatively simple.
-		</para>
-
-		<para>
-			The I/O mechanism is based on callbacks: every time a
-			<link linkend="CattleInterpreter">CattleInterpreter</link>
-			executes a Brainfuck instruction which requires some sort of
-			I/O, it invokes a user provided handler, and expects it to
-			perform the I/O operation.
-		</para>
-
-		<para>
-			Default I/O handlers are built into Cattle, so usually there
-			is no need to define a custom handler.
-		</para>
-
-	</refsect2>
-
-	<refsect2>
-
-		<title>Error reporting</title>
-
-		<para>
-			Since I/O is not guaranteed to always be succesful, handlers
-			are provided a mean to report errors to the caller.
-		</para>
-
-		<para>
-			All handlers are passed a <link linkend="GError">GError</link>
-			as last argument: if a handler fails, it is required to return
-			<link linkend="FALSE:CAPS">FALSE</link> and to fill the
-			error with detailed information.
-		</para>
-
-		<para>
-			If the hanler returns <link linkend="TRUE:CAPS">TRUE</link>, but
-			the error is set, the operation is not considered succesful;
-			this is because handlers written in languages other than C might
-			not be able to both return a value and fill the error at the
-			same time.
-		</para>
-
-	</refsect2>
-
-	<refsect2>
-
-		<title>Output handler</title>
-
-		<para>
-			Implementing an output handler is pretty straightforward: the
-			handler is passed a single <link linkend="gint8">gint8</link>
-			and has to display it to the user in some way.
-		</para>
-
-		<para>
-			As an example, here is an handler which shows the output of
-			a Brainfuck program on a
-			<link linkend="GtkTextView">GtkTextView</link>:
-		</para>
-
-		<informalexample><programlisting>
-			gboolean
-			output_handler (CattleInterpreter  *interpreter,
-			                gint8               output,
-			                gpointer            data,
-			                GError            **error)
-			{
-				GtkTextView   *view;
-				GtkTextBuffer *buffer;
-				GtkTextIter    iter;
-				gchar          text[2];
-
-				view = GTK_TEXT_VIEW (data);
-
-				/* Get the buffer used by the GtkTextView */
-				buffer = gtk_text_view_get_buffer (view);
-				g_object_ref (buffer);
-
-				/* Get a reference to the end of the buffer */
-				gtk_text_buffer_get_end_iter (buffer, &amp;iter);
-
-				/* Create a string */
-				text[0] = (gchat) output;
-				text[1] = '\0';
-
-				/* Insert the char at the end of the buffer */
-				gtk_text_buffer_insert (buffer, &amp;iter, text, 1);
-
-				g_object_unref (buffer);
-
-				return TRUE;
-			}
-		</programlisting></informalexample>
-
-		<para>
-			The code assumes a <link linkend="GtkTextView">GtkTextView</link>
-			has been provided when the signal handler has been assigned to
-			the interpreter, like in the following code:
-		</para>
-
-		<informalexample><programlisting>
-				CattleInterpreter *interpreter;
-				GtkWidget         *view;
-
-				interpreter = cattle_interpreter_new ();
-				view = gtk_text_view_new ();
-
-				cattle_interpreter_set_output_handler (interpreter,
-				                                       output_handler,
-				                                       (gpointer) view);
-		</programlisting></informalexample>
-
-		<para>
-			Depending on the case, it may make sense for the application
-			to buffer an entire line of output, or even the whole output,
-			before sending it to its intended destination.
-		</para>
-
-	</refsect2>
-
-	<refsect2>
-
-		<title>Input handler</title>
-
-		<para>
-			Here is an input handler which uses readline to fetch input
-			from the user:
-		</para>
-
-		<informalexample><programlisting>
-			gboolean
-			input_handler (CattleInterpreter  *interpreter,
-			               gpointer            data,
-			               GError            **error)
-			{
-				CattleBuffer *buffer;
-				gchar        *input;
-				gulong        size;
-
-				/* Read an input line using readline (no prompt) */
-				input = readline (NULL);
-
-				if (input != NULL)
-				{
-					/* A line of input has been read successfully, but it
-					 * needs to be copied into a CattleBuffer before
-					 * feeding it to the interpreter. */
-
-					/* Calculate the size of the CattleBuffer. readline
-					 * returns a null-terminated string with the trailing
-					 * newline stripped; a CattleBuffer doesn't need to be
-					 * null-terminated, but stripping the newline would mean
-					 * losing part of the input. We can just create a
-					 * CattleBuffer as big as the string, and replace the
-					 * trailing null byte with a newline. */
-					size = strlen (input) + 1;
-
-					buffer = cattle_buffer_new (size);
-					cattle_buffer_set_contents (buffer, input);
-					cattle_buffer_set_value (buffer, size - 1, '\n');
-
-					/* The CattleBuffer now contains a copy of the input, so
-					 * the string returned by readline can be safely freed */
-					free (input);
-
-					cattle_interpreter_feed (interpreter, buffer);
-				}
-				else
-				{
-					/* readline returns NULL when the end of input has
-					 * been reached; to let the interpreter know no more
-					 * input is available, feed it an empty buffer */
-
-					buffer = cattle_buffer_new (0);
-
-					cattle_interpreter_feed (interpreter, buffer);
-				}
-
-				g_object_unref (buffer);
-
-				return TRUE;
-			}
-		</programlisting></informalexample>
-
-		<para>
-			Input works on a per-line basis: the handler must retrieve
-			a full line of input, including the trailing newline character,
-			and feed it to the interpreter.
-		</para>
-
-		<para>
-			If it is not possible to retrieve the whole line in a single
-			step, a part of it can be passed to the interpreter.
-		</para>
-
-		<para>
-			When the whole input has been consumed, the handler must feed
-			the interpreter an empty
-			<link linkend="CattleBuffer">CattleBuffer</link> to let it
-			know no more input is available.
-		</para>
-
-	</refsect2>
-
-	<refsect2>
-
-		<title>Debug</title>
-
-		<para>
-			The debug handler is called whenever a <code>#</code>
-			instruction is executed; the interpreter can be configured
-			to ignore this instruction, since it's not (strictly
-			speaking) part of the Brainfuck language.
-		</para>
-
-		<para>
-			The handler must display useful debugging information to
-			the developer; usually, this means dumping the contents of
-			the memory tape.
-		</para>
-
-		<para>
-			The following handler appends the contents of the tape to
-			a log file:
-		</para>
-
-		<informalexample><programlisting>
-			gboolean
-			debug_handler (CattleInterpreter  *interpreter,
-			               gpointer            data,
-			               GError            **error)
-			{
-				CattleTape *tape;
-				gint8       value;
-				FILE*       fp;
-
-				tape = cattle_interpreter_get_tape (interpreter);
-
-				/* Save the current tape position */
-				cattle_tape_push_bookmark (tape);
-
-				fp = fopen (LOG_FILE, "a");
-
-				if (fp == NULL) {
-
-					/* Set the error, release resources and return */
-					g_set_error_literal (error,
-					                     CATTLE_INTERPRETER_ERROR,
-					                     CATTLE_INTERPRETER_ERROR_IO,
-					                     strerror (errno));
-					cattle_tape_pop_bookmark (tape);
-					g_object_unref (tape);
-
-					return FALSE;
-				}
-
-				/* Rewind to the beginning of the tape */
-				while (!cattle_tape_is_at_beginning (tape)) {
-
-					cattle_tape_move_left (tape);
-				}
-
-				fprintf (fp, "[ ");
-
-				/* Repeat until the end of the tape is reached */
-				while (!cattle_tape_is_at_end (tape)) {
-
-					/* Get the current value */
-					value = cattle_tape_get_current_value (tape);
-
-					/* Show printable values directly and non-printable
-					 * values as their decimal ASCII value */
-					if (value &gt;= 33 &amp;&amp; value &lt;= 126) {
-						fprintf (fp, "%c ", value);
-					}
-					else {
-						fprintf (fp, "\\%d ", (gint) value);
-					}
-
-					cattle_tape_move_right (tape);
-				}
-
-				fprintf (fp, "]\n");
-				fclose (fp);
-
-				/* Restore the original tape position */
-				cattle_tape_pop_bookmark (tape);
-
-				g_object_unref (tape);
-
-				return TRUE;
-			}
-		</programlisting></informalexample>
-
-		<para>
-			After the handler has run, the tape must be in the same exact
-			state it was before the signal emission, including the
-			position. The best way to ensure it is to use
-			<link linkend="cattle-tape-push-bookmark">cattle_tape_push_bookmark()</link>
-			at the beginning of the handler and
-			<link linkend="cattle-tape-pop-bookmark">cattle_tape_pop_bookmark()</link>
-			at the end.
-		</para>
-
-	</refsect2>
+    <refmeta>
+        <refentrytitle>I/O Handling</refentrytitle>
+        <manvolnum>3</manvolnum>
+        <refmiscinfo>CATTLE Library</refmiscinfo>
+    </refmeta>
+
+    <refnamediv>
+        <refname>I/O Handling</refname>
+        <refpurpose>
+            Explanation of the way Cattle performs I/O
+        </refpurpose>
+    </refnamediv>
+
+    <refsect2>
+
+        <title>I/O Basics</title>
+
+        <para>
+            Cattle uses an I/O mechanism which allows for a huge degree
+            of flexibility while remaining relatively simple.
+        </para>
+
+        <para>
+            The I/O mechanism is based on callbacks: every time a
+            <link linkend="CattleInterpreter">CattleInterpreter</link>
+            executes a Brainfuck instruction which requires some sort of
+            I/O, it invokes a user provided handler, and expects it to
+            perform the I/O operation.
+        </para>
+
+        <para>
+            Default I/O handlers are built into Cattle, so usually there
+            is no need to define a custom handler.
+        </para>
+
+    </refsect2>
+
+    <refsect2>
+
+        <title>Error reporting</title>
+
+        <para>
+            Since I/O is not guaranteed to always be succesful, handlers
+            are provided a mean to report errors to the caller.
+        </para>
+
+        <para>
+            All handlers are passed a <link linkend="GError">GError</link>
+            as last argument: if a handler fails, it is required to return
+            <link linkend="FALSE:CAPS">FALSE</link> and to fill the
+            error with detailed information.
+        </para>
+
+        <para>
+            If the hanler returns <link linkend="TRUE:CAPS">TRUE</link>, but
+            the error is set, the operation is not considered succesful;
+            this is because handlers written in languages other than C might
+            not be able to both return a value and fill the error at the
+            same time.
+        </para>
+
+    </refsect2>
+
+    <refsect2>
+
+        <title>Output handler</title>
+
+        <para>
+            Implementing an output handler is pretty straightforward: the
+            handler is passed a single <link linkend="gint8">gint8</link>
+            and has to display it to the user in some way.
+        </para>
+
+        <para>
+            As an example, here is an handler which shows the output of
+            a Brainfuck program on a
+            <link linkend="GtkTextView">GtkTextView</link>:
+        </para>
+
+        <informalexample><programlisting>
+            gboolean
+            output_handler (CattleInterpreter  *interpreter,
+                            gint8               output,
+                            gpointer            data,
+                            GError            **error)
+            {
+                GtkTextView   *view;
+                GtkTextBuffer *buffer;
+                GtkTextIter    iter;
+                gchar          text[2];
+
+                view = GTK_TEXT_VIEW (data);
+
+                /* Get the buffer used by the GtkTextView */
+                buffer = gtk_text_view_get_buffer (view);
+                g_object_ref (buffer);
+
+                /* Get a reference to the end of the buffer */
+                gtk_text_buffer_get_end_iter (buffer, &amp;iter);
+
+                /* Create a string */
+                text[0] = (gchat) output;
+                text[1] = '\0';
+
+                /* Insert the char at the end of the buffer */
+                gtk_text_buffer_insert (buffer, &amp;iter, text, 1);
+
+                g_object_unref (buffer);
+
+                return TRUE;
+            }
+        </programlisting></informalexample>
+
+        <para>
+            The code assumes a <link linkend="GtkTextView">GtkTextView</link>
+            has been provided when the signal handler has been assigned to
+            the interpreter, like in the following code:
+        </para>
+
+        <informalexample><programlisting>
+                CattleInterpreter *interpreter;
+                GtkWidget         *view;
+
+                interpreter = cattle_interpreter_new ();
+                view = gtk_text_view_new ();
+
+                cattle_interpreter_set_output_handler (interpreter,
+                                                       output_handler,
+                                                       (gpointer) view);
+        </programlisting></informalexample>
+
+        <para>
+            Depending on the case, it may make sense for the application
+            to buffer an entire line of output, or even the whole output,
+            before sending it to its intended destination.
+        </para>
+
+    </refsect2>
+
+    <refsect2>
+
+        <title>Input handler</title>
+
+        <para>
+            Here is an input handler which uses readline to fetch input
+            from the user:
+        </para>
+
+        <informalexample><programlisting>
+            gboolean
+            input_handler (CattleInterpreter  *interpreter,
+                           gpointer            data,
+                           GError            **error)
+            {
+                CattleBuffer *buffer;
+                gchar        *input;
+                gulong        size;
+
+                /* Read an input line using readline (no prompt) */
+                input = readline (NULL);
+
+                if (input != NULL)
+                {
+                    /* A line of input has been read successfully, but it
+                     * needs to be copied into a CattleBuffer before
+                     * feeding it to the interpreter. */
+
+                    /* Calculate the size of the CattleBuffer. readline
+                     * returns a null-terminated string with the trailing
+                     * newline stripped; a CattleBuffer doesn't need to be
+                     * null-terminated, but stripping the newline would mean
+                     * losing part of the input. We can just create a
+                     * CattleBuffer as big as the string, and replace the
+                     * trailing null byte with a newline. */
+                    size = strlen (input) + 1;
+
+                    buffer = cattle_buffer_new (size);
+                    cattle_buffer_set_contents (buffer, input);
+                    cattle_buffer_set_value (buffer, size - 1, '\n');
+
+                    /* The CattleBuffer now contains a copy of the input, so
+                     * the string returned by readline can be safely freed */
+                    free (input);
+
+                    cattle_interpreter_feed (interpreter, buffer);
+                }
+                else
+                {
+                    /* readline returns NULL when the end of input has
+                     * been reached; to let the interpreter know no more
+                     * input is available, feed it an empty buffer */
+
+                    buffer = cattle_buffer_new (0);
+
+                    cattle_interpreter_feed (interpreter, buffer);
+                }
+
+                g_object_unref (buffer);
+
+                return TRUE;
+            }
+        </programlisting></informalexample>
+
+        <para>
+            Input works on a per-line basis: the handler must retrieve
+            a full line of input, including the trailing newline character,
+            and feed it to the interpreter.
+        </para>
+
+        <para>
+            If it is not possible to retrieve the whole line in a single
+            step, a part of it can be passed to the interpreter.
+        </para>
+
+        <para>
+            When the whole input has been consumed, the handler must feed
+            the interpreter an empty
+            <link linkend="CattleBuffer">CattleBuffer</link> to let it
+            know no more input is available.
+        </para>
+
+    </refsect2>
+
+    <refsect2>
+
+        <title>Debug</title>
+
+        <para>
+            The debug handler is called whenever a <code>#</code>
+            instruction is executed; the interpreter can be configured
+            to ignore this instruction, since it's not (strictly
+            speaking) part of the Brainfuck language.
+        </para>
+
+        <para>
+            The handler must display useful debugging information to
+            the developer; usually, this means dumping the contents of
+            the memory tape.
+        </para>
+
+        <para>
+            The following handler appends the contents of the tape to
+            a log file:
+        </para>
+
+        <informalexample><programlisting>
+            gboolean
+            debug_handler (CattleInterpreter  *interpreter,
+                           gpointer            data,
+                           GError            **error)
+            {
+                CattleTape *tape;
+                gint8       value;
+                FILE*       fp;
+
+                tape = cattle_interpreter_get_tape (interpreter);
+
+                /* Save the current tape position */
+                cattle_tape_push_bookmark (tape);
+
+                fp = fopen (LOG_FILE, "a");
+
+                if (fp == NULL) {
+
+                    /* Set the error, release resources and return */
+                    g_set_error_literal (error,
+                                         CATTLE_INTERPRETER_ERROR,
+                                         CATTLE_INTERPRETER_ERROR_IO,
+                                         strerror (errno));
+                    cattle_tape_pop_bookmark (tape);
+                    g_object_unref (tape);
+
+                    return FALSE;
+                }
+
+                /* Rewind to the beginning of the tape */
+                while (!cattle_tape_is_at_beginning (tape)) {
+
+                    cattle_tape_move_left (tape);
+                }
+
+                fprintf (fp, "[ ");
+
+                /* Repeat until the end of the tape is reached */
+                while (!cattle_tape_is_at_end (tape)) {
+
+                    /* Get the current value */
+                    value = cattle_tape_get_current_value (tape);
+
+                    /* Show printable values directly and non-printable
+                     * values as their decimal ASCII value */
+                    if (value &gt;= 33 &amp;&amp; value &lt;= 126) {
+                        fprintf (fp, "%c ", value);
+                    }
+                    else {
+                        fprintf (fp, "\\%d ", (gint) value);
+                    }
+
+                    cattle_tape_move_right (tape);
+                }
+
+                fprintf (fp, "]\n");
+                fclose (fp);
+
+                /* Restore the original tape position */
+                cattle_tape_pop_bookmark (tape);
+
+                g_object_unref (tape);
+
+                return TRUE;
+            }
+        </programlisting></informalexample>
+
+        <para>
+            After the handler has run, the tape must be in the same exact
+            state it was before the signal emission, including the
+            position. The best way to ensure it is to use
+            <link linkend="cattle-tape-push-bookmark">cattle_tape_push_bookmark()</link>
+            at the beginning of the handler and
+            <link linkend="cattle-tape-pop-bookmark">cattle_tape_pop_bookmark()</link>
+            at the end.
+        </para>
+
+    </refsect2>
 
 </refentry>

@@ -45,13 +45,13 @@ typedef struct _CattleInterpreterPrivate CattleInterpreterPrivate;
 
 struct _CattleInterpreter
 {
-	GObject parent;
-	CattleInterpreterPrivate *priv;
+    GObject parent;
+    CattleInterpreterPrivate *priv;
 };
 
 struct _CattleInterpreterClass
 {
-	GObjectClass parent;
+    GObjectClass parent;
 };
 
 typedef gboolean (*CattleInputHandler)  (CattleInterpreter  *interpreter,

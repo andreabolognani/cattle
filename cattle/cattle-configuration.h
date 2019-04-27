@@ -38,9 +38,9 @@ G_BEGIN_DECLS
 
 typedef enum
 {
-	CATTLE_END_OF_INPUT_ACTION_STORE_ZERO,
-	CATTLE_END_OF_INPUT_ACTION_STORE_EOF,
-	CATTLE_END_OF_INPUT_ACTION_DO_NOTHING
+    CATTLE_END_OF_INPUT_ACTION_STORE_ZERO,
+    CATTLE_END_OF_INPUT_ACTION_STORE_EOF,
+    CATTLE_END_OF_INPUT_ACTION_DO_NOTHING
 } CattleEndOfInputAction;
 
 typedef struct _CattleConfiguration        CattleConfiguration;
@@ -49,13 +49,13 @@ typedef struct _CattleConfigurationPrivate CattleConfigurationPrivate;
 
 struct _CattleConfiguration
 {
-	GObject parent;
-	CattleConfigurationPrivate *priv;
+    GObject parent;
+    CattleConfigurationPrivate *priv;
 };
 
 struct _CattleConfigurationClass
 {
-	GObjectClass parent;
+    GObjectClass parent;
 };
 
 CattleConfiguration*    cattle_configuration_new                     (void);

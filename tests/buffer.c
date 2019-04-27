@@ -30,12 +30,12 @@
 static void
 test_buffer_empty (void)
 {
-	CattleBuffer *buffer;
+    CattleBuffer *buffer;
 
-	buffer = cattle_buffer_new (0);
-	g_assert (cattle_buffer_get_size (buffer) == 0);
+    buffer = cattle_buffer_new (0);
+    g_assert (cattle_buffer_get_size (buffer) == 0);
 
-	g_object_unref (buffer);
+    g_object_unref (buffer);
 }
 
 /**
@@ -46,12 +46,12 @@ test_buffer_empty (void)
 static void
 test_buffer_create (void)
 {
-	CattleBuffer *buffer;
+    CattleBuffer *buffer;
 
-	buffer = cattle_buffer_new (42);
-	g_assert (cattle_buffer_get_size (buffer) == 42);
+    buffer = cattle_buffer_new (42);
+    g_assert (cattle_buffer_get_size (buffer) == 42);
 
-	g_object_unref (buffer);
+    g_object_unref (buffer);
 }
 
 /**
@@ -62,16 +62,16 @@ test_buffer_create (void)
 void
 test_buffer_get_value (void)
 {
-	CattleBuffer *buffer;
+    CattleBuffer *buffer;
 
-	buffer = cattle_buffer_new (3);
-	g_assert (cattle_buffer_get_size (buffer) == 3);
+    buffer = cattle_buffer_new (3);
+    g_assert (cattle_buffer_get_size (buffer) == 3);
 
-	g_assert (cattle_buffer_get_value (buffer, 0) == 0);
-	g_assert (cattle_buffer_get_value (buffer, 1) == 0);
-	g_assert (cattle_buffer_get_value (buffer, 2) == 0);
+    g_assert (cattle_buffer_get_value (buffer, 0) == 0);
+    g_assert (cattle_buffer_get_value (buffer, 1) == 0);
+    g_assert (cattle_buffer_get_value (buffer, 2) == 0);
 
-	g_object_unref (buffer);
+    g_object_unref (buffer);
 }
 
 /**
@@ -82,27 +82,27 @@ test_buffer_get_value (void)
 void
 test_buffer_set_contents_array (void)
 {
-	CattleBuffer *buffer;
-	gint8 values[5];
-	gint i;
+    CattleBuffer *buffer;
+    gint8 values[5];
+    gint i;
 
-	buffer = cattle_buffer_new (3);
-	g_assert (cattle_buffer_get_size (buffer) == 3);
+    buffer = cattle_buffer_new (3);
+    g_assert (cattle_buffer_get_size (buffer) == 3);
 
-	values[0] = G_MININT8;
-	values[1] = 0;
-	values[2] = 10;
-	values[3] = -5;
-	values[4] = G_MAXINT8;
+    values[0] = G_MININT8;
+    values[1] = 0;
+    values[2] = 10;
+    values[3] = -5;
+    values[4] = G_MAXINT8;
 
-	cattle_buffer_set_contents (buffer, values);
+    cattle_buffer_set_contents (buffer, values);
 
-	for (i = 0; i < 3; i++)
-	{
-		g_assert (cattle_buffer_get_value (buffer, i) == values[i]);
-	}
+    for (i = 0; i < 3; i++)
+    {
+        g_assert (cattle_buffer_get_value (buffer, i) == values[i]);
+    }
 
-	g_object_unref (buffer);
+    g_object_unref (buffer);
 }
 
 /**
@@ -113,18 +113,18 @@ test_buffer_set_contents_array (void)
 void
 test_buffer_set_contents_string (void)
 {
-	CattleBuffer *buffer;
+    CattleBuffer *buffer;
 
-	buffer = cattle_buffer_new (3);
-	g_assert (cattle_buffer_get_size (buffer) == 3);
+    buffer = cattle_buffer_new (3);
+    g_assert (cattle_buffer_get_size (buffer) == 3);
 
-	cattle_buffer_set_contents (buffer, (gint8 *) "abcd");
+    cattle_buffer_set_contents (buffer, (gint8 *) "abcd");
 
-	g_assert (cattle_buffer_get_value (buffer, 0) == 'a');
-	g_assert (cattle_buffer_get_value (buffer, 1) == 'b');
-	g_assert (cattle_buffer_get_value (buffer, 2) == 'c');
+    g_assert (cattle_buffer_get_value (buffer, 0) == 'a');
+    g_assert (cattle_buffer_get_value (buffer, 1) == 'b');
+    g_assert (cattle_buffer_get_value (buffer, 2) == 'c');
 
-	g_object_unref (buffer);
+    g_object_unref (buffer);
 }
 
 /**
@@ -136,48 +136,48 @@ test_buffer_set_contents_string (void)
 void
 test_buffer_set_value (void)
 {
-	CattleBuffer *buffer;
-	gint8 values[3];
-	gint i;
+    CattleBuffer *buffer;
+    gint8 values[3];
+    gint i;
 
-	buffer = cattle_buffer_new (3);
-	g_assert (cattle_buffer_get_size (buffer) == 3);
+    buffer = cattle_buffer_new (3);
+    g_assert (cattle_buffer_get_size (buffer) == 3);
 
-	values[0] = 0;
-	values[1] = G_MAXINT8;
-	values[2] = 0;
+    values[0] = 0;
+    values[1] = G_MAXINT8;
+    values[2] = 0;
 
-	cattle_buffer_set_value (buffer, 1, G_MAXINT8);
+    cattle_buffer_set_value (buffer, 1, G_MAXINT8);
 
-	for (i = 0; i < 3; i++)
-	{
-		g_assert (cattle_buffer_get_value (buffer, i) == values[i]);
-	}
+    for (i = 0; i < 3; i++)
+    {
+        g_assert (cattle_buffer_get_value (buffer, i) == values[i]);
+    }
 
-	g_object_unref (buffer);
+    g_object_unref (buffer);
 }
 
 gint
 main (gint argc, gchar **argv)
 {
 #if !GLIB_CHECK_VERSION(2, 36, 0)
-	g_type_init ();
+    g_type_init ();
 #endif
 
-	g_test_init (&argc, &argv, NULL);
+    g_test_init (&argc, &argv, NULL);
 
-	g_test_add_func ("/buffer/empty",
-	                 test_buffer_empty);
-	g_test_add_func ("/buffer/create",
-	                 test_buffer_create);
-	g_test_add_func ("/buffer/get-value",
-	                 test_buffer_get_value);
-	g_test_add_func ("/buffer/set-contents-array",
-	                 test_buffer_set_contents_array);
-	g_test_add_func ("/buffer/set-contents-string",
-	                 test_buffer_set_contents_string);
-	g_test_add_func ("/buffer/set-value",
-	                 test_buffer_set_value);
+    g_test_add_func ("/buffer/empty",
+                     test_buffer_empty);
+    g_test_add_func ("/buffer/create",
+                     test_buffer_create);
+    g_test_add_func ("/buffer/get-value",
+                     test_buffer_get_value);
+    g_test_add_func ("/buffer/set-contents-array",
+                     test_buffer_set_contents_array);
+    g_test_add_func ("/buffer/set-contents-string",
+                     test_buffer_set_contents_string);
+    g_test_add_func ("/buffer/set-value",
+                     test_buffer_set_value);
 
-	return g_test_run ();
+    return g_test_run ();
 }

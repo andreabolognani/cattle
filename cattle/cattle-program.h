@@ -44,13 +44,13 @@ typedef struct _CattleProgramPrivate CattleProgramPrivate;
 
 struct _CattleProgram
 {
-	GObject parent;
-	CattleProgramPrivate *priv;
+    GObject parent;
+    CattleProgramPrivate *priv;
 };
 
 struct _CattleProgramClass
 {
-	GObjectClass parent;
+    GObjectClass parent;
 };
 
 CattleProgram*     cattle_program_new              (void);
