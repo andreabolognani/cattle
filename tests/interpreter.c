@@ -36,6 +36,8 @@ input_success (CattleInterpreter  *interpreter,
 
     cattle_interpreter_feed (interpreter, input);
 
+    g_object_unref (input);
+
     return TRUE;
 }
 
@@ -61,6 +63,8 @@ input_utf8 (CattleInterpreter  *interpreter,
 
     cattle_interpreter_feed (interpreter, input);
 
+    g_object_unref (input);
+
     return TRUE;
 }
 
@@ -77,6 +81,8 @@ input_invalid_utf8 (CattleInterpreter  *interpreter,
 
     /* Return some malformed UTF-8 */
     cattle_interpreter_feed (interpreter, input);
+
+    g_object_unref (input);
 
     return TRUE;
 }

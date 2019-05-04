@@ -62,6 +62,7 @@ test_program_load_unbalanced_brackets (void)
     g_object_unref (instruction);
     g_object_unref (buffer);
     g_object_unref (program);
+    g_error_free (error);
 }
 
 /**
