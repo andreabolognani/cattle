@@ -28,16 +28,16 @@
 static void
 minimize (CattleProgram *program)
 {
-    CattleInstruction *first;
-    CattleInstruction *current;
-    CattleInstruction *next;
-    CattleBuffer      *input;
-    GSList            *stack;
-    gchar              value;
-    gulong             quantity;
-    gulong             position;
-    gulong             size;
-    gulong             i;
+    CattleInstruction        *first;
+    CattleInstruction        *current;
+    CattleInstruction        *next;
+    g_autoptr (CattleBuffer)  input = NULL;
+    g_autoptr (GSList)        stack = NULL;
+    gchar                     value;
+    gulong                    quantity;
+    gulong                    position;
+    gulong                    size;
+    gulong                    i;
 
     stack = NULL;
     position = 0;
@@ -121,18 +121,15 @@ minimize (CattleProgram *program)
             g_print ("%c", value);
         }
     }
-
-    g_object_unref (input);
-    g_slist_free (stack);
 }
 
 gint
 main (gint    argc,
       gchar **argv)
 {
-    CattleProgram *program;
-    CattleBuffer  *buffer;
-    GError        *error;
+    g_autoptr (CattleProgram) program = NULL;
+    g_autoptr (CattleBuffer)  buffer = NULL;
+    g_autoptr (GError)        error = NULL;
 
     g_set_prgname ("minimize");
 
@@ -151,8 +148,6 @@ main (gint    argc,
     {
         g_warning ("%s: %s", argv[1], error->message);
 
-        g_error_free (error);
-
         return 1;
     }
 
@@ -164,18 +159,11 @@ main (gint    argc,
     {
         g_warning ("Load error: %s", error->message);
 
-        g_error_free (error);
-        g_object_unref (buffer);
-        g_object_unref (program);
-
         return 1;
     }
 
     /* Run minimization */
     minimize (program);
-
-    g_object_unref (buffer);
-    g_object_unref (program);
 
     return 0;
 }

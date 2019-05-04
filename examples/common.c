@@ -25,13 +25,13 @@ CattleBuffer*
 read_file_contents (const gchar  *path,
                     GError      **error)
 {
-    CattleBuffer *buffer;
-    GFile        *file;
-    GError       *inner_error;
-    gchar        *contents;
-    gint8        *start;
-    gsize         length;
-    gboolean      success;
+    CattleBuffer      *buffer;
+    g_autoptr (GFile)  file = NULL;
+    g_autofree gchar  *contents = NULL;
+    GError            *inner_error;
+    gint8             *start;
+    gsize              length;
+    gboolean           success;
 
     g_return_val_if_fail (path != NULL, NULL);
     g_return_val_if_fail (error == NULL || *error == NULL, NULL);
@@ -50,8 +50,6 @@ read_file_contents (const gchar  *path,
     {
         g_propagate_error (error,
                            inner_error);
-
-        g_object_unref (file);
 
         return NULL;
     }
@@ -74,9 +72,6 @@ read_file_contents (const gchar  *path,
     {
         cattle_buffer_set_contents (buffer, start);
     }
-
-    g_free (contents);
-    g_object_unref (file);
 
     return buffer;
 }

@@ -27,10 +27,10 @@ gint
 main (gint    argc,
       gchar **argv)
 {
-    CattleInterpreter *interpreter;
-    CattleProgram     *program;
-    CattleBuffer      *buffer;
-    GError            *error;
+    g_autoptr (CattleInterpreter) interpreter = NULL;
+    g_autoptr (CattleProgram)     program = NULL;
+    g_autoptr (CattleBuffer)      buffer = NULL;
+    g_autoptr (GError)            error = NULL;
 
     g_set_prgname ("run");
 
@@ -48,8 +48,6 @@ main (gint    argc,
     {
         g_warning ("%s: %s", argv[1], error->message);
 
-        g_error_free (error);
-
         return 1;
     }
 
@@ -64,11 +62,6 @@ main (gint    argc,
     {
         g_warning ("Load error: %s", error->message);
 
-        g_error_free (error);
-        g_object_unref (buffer);
-        g_object_unref (program);
-        g_object_unref (interpreter);
-
         return 1;
     }
 
@@ -78,17 +71,8 @@ main (gint    argc,
     {
         g_warning ("Runtime error: %s", error->message);
 
-        g_error_free (error);
-        g_object_unref (buffer);
-        g_object_unref (program);
-        g_object_unref (interpreter);
-
         return 1;
     }
-
-    g_object_unref (buffer);
-    g_object_unref (program);
-    g_object_unref (interpreter);
 
     return 0;
 }

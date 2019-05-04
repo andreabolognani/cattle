@@ -26,19 +26,18 @@
 static void
 indent (CattleProgram *program)
 {
-    CattleInstruction      *first;
-    CattleInstruction      *current;
-    CattleInstruction      *next;
-    CattleInstructionValue  value;
-    CattleBuffer           *input;
-    GSList                 *stack;
-    gulong                  level;
-    gulong                  quantity;
-    gulong                  size;
-    gulong                  i;
+    CattleInstruction        *first;
+    CattleInstruction        *current;
+    CattleInstruction        *next;
+    CattleInstructionValue    value;
+    g_autoptr (CattleBuffer)  input = NULL;
+    g_autoptr (GSList)        stack = NULL;
+    gulong                    level;
+    gulong                    quantity;
+    gulong                    size;
+    gulong                    i;
 
-    /* Initialize instruction stack, start at indentation level 0 */
-    stack = NULL;
+    /* Start at indentation level 0 */
     level = 0;
 
     first = cattle_program_get_instructions (program);
@@ -132,18 +131,15 @@ indent (CattleProgram *program)
             g_print ("%c", value);
         }
     }
-
-    g_object_unref (input);
-    g_slist_free (stack);
 }
 
 gint
 main (gint    argc,
       gchar **argv)
 {
-    CattleProgram *program;
-    CattleBuffer  *buffer;
-    GError        *error;
+    g_autoptr (CattleProgram) program = NULL;
+    g_autoptr (CattleBuffer)  buffer = NULL;
+    g_autoptr (GError)        error = NULL;
 
     g_set_prgname ("indent");
 
@@ -161,8 +157,6 @@ main (gint    argc,
     {
         g_warning ("%s: %s", argv[1], error->message);
 
-        g_error_free (error);
-
         return 1;
     }
 
@@ -175,18 +169,11 @@ main (gint    argc,
     {
         g_warning ("Load error: %s", error->message);
 
-        g_error_free (error);
-        g_object_unref (buffer);
-        g_object_unref (program);
-
         return 1;
     }
 
     /* Indent the program */
     indent (program);
-
-    g_object_unref (buffer);
-    g_object_unref (program);
 
     return 0;
 }
