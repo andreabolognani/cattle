@@ -66,6 +66,8 @@ CattleBuffer*      cattle_program_get_input        (CattleProgram      *program)
 
 GType              cattle_program_get_type         (void) G_GNUC_CONST;
 
+G_DEFINE_AUTOPTR_CLEANUP_FUNC (CattleProgram, g_object_unref)
+
 G_END_DECLS
 
 #endif /* __CATTLE_PROGRAM_H__ */

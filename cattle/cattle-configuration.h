@@ -68,6 +68,8 @@ gboolean                cattle_configuration_get_debug_is_enabled    (CattleConf
 
 GType                   cattle_configuration_get_type                (void) G_GNUC_CONST;
 
+G_DEFINE_AUTOPTR_CLEANUP_FUNC (CattleConfiguration, g_object_unref)
+
 G_END_DECLS
 
 #endif /* __CATTLE_CONFIGURATION_H__ */

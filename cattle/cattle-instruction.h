@@ -81,6 +81,8 @@ CattleInstruction*     cattle_instruction_get_loop     (CattleInstruction      *
 
 GType                  cattle_instruction_get_type     (void) G_GNUC_CONST;
 
+G_DEFINE_AUTOPTR_CLEANUP_FUNC (CattleInstruction, g_object_unref)
+
 G_END_DECLS
 
 #endif /* __CATTLE_INSTRUCTION_H__ */

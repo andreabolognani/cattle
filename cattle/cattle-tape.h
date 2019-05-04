@@ -74,6 +74,8 @@ gboolean    cattle_tape_pop_bookmark              (CattleTape *tape);
 
 GType       cattle_tape_get_type                  (void) G_GNUC_CONST;
 
+G_DEFINE_AUTOPTR_CLEANUP_FUNC (CattleTape, g_object_unref)
+
 G_END_DECLS
 
 #endif /* __CATTLE_TAPE_H__ */

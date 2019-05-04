@@ -91,6 +91,8 @@ void                 cattle_interpreter_set_debug_handler  (CattleInterpreter   
 
 GType                cattle_interpreter_get_type          (void) G_GNUC_CONST;
 
+G_DEFINE_AUTOPTR_CLEANUP_FUNC (CattleInterpreter, g_object_unref)
+
 G_END_DECLS
 
 #endif /* __CATTLE_INTERPRETER_H__ */
