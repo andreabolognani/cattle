@@ -65,7 +65,7 @@ dnl **********************
 dnl *** Check for GLib ***
 dnl **********************
 
-GLIB_REQUIRED_VERSION=2.32.0
+GLIB_REQUIRED_VERSION=2.38.0
 
 PKG_CHECK_MODULES([GLIB], [glib-2.0 >= $GLIB_REQUIRED_VERSION
                            gobject-2.0 >= $GLIB_REQUIRED_VERSION

@@ -142,10 +142,6 @@ main (gint    argc,
     CattleBuffer  *buffer;
     GError        *error;
 
-#if !GLIB_CHECK_VERSION(2, 36, 0)
-    g_type_init ();
-#endif
-
     g_set_prgname ("indent");
 
     if (argc != 2)
