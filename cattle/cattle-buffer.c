@@ -30,7 +30,7 @@
  * CattleBuffer:
  *
  * Opaque data structure representing a memory buffer. It should never
- * be accessed directly; use the methods below instead.
+ * be accessed directly.
  */
 
 struct _CattleBufferPrivate

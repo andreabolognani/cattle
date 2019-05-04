@@ -50,7 +50,7 @@
  * CattleInterpreter:
  *
  * Opaque data structure representing an interpreter. It should never be
- * accessed directly; use the methods below instead.
+ * accessed directly.
  */
 
 struct _CattleInterpreterPrivate

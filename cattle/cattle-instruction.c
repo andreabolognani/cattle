@@ -79,7 +79,7 @@
  * CattleInstruction:
  *
  * Opaque data structure representing an instruction. It should never be
- * accessed directly; use the methods below instead.
+ * accessed directly.
  */
 
 struct _CattleInstructionPrivate

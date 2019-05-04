@@ -44,7 +44,7 @@
  * CattleTape:
  *
  * Opaque data structure representing a memory tape. It should never
- * be accessed directly; use the methods below instead.
+ * be accessed directly.
  */
 
 struct _CattleTapePrivate

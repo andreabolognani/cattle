@@ -43,7 +43,7 @@
  * CattleConfiguration:
  *
  * Opaque data structure representing a configuration. It should never
- * be accessed directly; use the methods below instead.
+ * be accessed directly.
  */
 
 struct _CattleConfigurationPrivate

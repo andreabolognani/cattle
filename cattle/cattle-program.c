@@ -48,7 +48,7 @@
  * CattleProgram:
  *
  * Opaque data structure representing a program. It should never be
- * accessed directly; use the methods below instead.
+ * accessed directly.
  */
 
 struct _CattleProgramPrivate
