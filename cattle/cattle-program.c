@@ -44,16 +44,12 @@
  * are also considered part of the input.
  */
 
-G_DEFINE_TYPE (CattleProgram, cattle_program, G_TYPE_OBJECT)
-
 /**
  * CattleProgram:
  *
  * Opaque data structure representing a program. It should never be
  * accessed directly; use the methods below instead.
  */
-
-#define CATTLE_PROGRAM_GET_PRIVATE(object) (G_TYPE_INSTANCE_GET_PRIVATE ((object), CATTLE_TYPE_PROGRAM, CattleProgramPrivate))
 
 struct _CattleProgramPrivate
 {
@@ -62,6 +58,9 @@ struct _CattleProgramPrivate
     CattleInstruction *instructions;
     CattleBuffer      *input;
 };
+
+G_DEFINE_TYPE_WITH_CODE (CattleProgram, cattle_program, G_TYPE_OBJECT,
+                         G_ADD_PRIVATE (CattleProgram))
 
 /* Properties */
 enum
@@ -86,7 +85,7 @@ cattle_program_init (CattleProgram *self)
 {
     CattleProgramPrivate *priv;
 
-    priv = CATTLE_PROGRAM_GET_PRIVATE (self);
+    priv = cattle_program_get_instance_private (self);
 
     priv->instructions = cattle_instruction_new ();
     priv->input = cattle_buffer_new (0);
@@ -631,7 +630,4 @@ cattle_program_class_init (CattleProgramClass *self)
     g_object_class_install_property (object_class,
                                      PROP_INPUT,
                                      pspec);
-
-    g_type_class_add_private (object_class,
-                              sizeof (CattleProgramPrivate));
 }

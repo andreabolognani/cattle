@@ -46,16 +46,12 @@
  * automatically cleared between executions.
  */
 
-G_DEFINE_TYPE (CattleInterpreter, cattle_interpreter, G_TYPE_OBJECT)
-
 /**
  * CattleInterpreter:
  *
  * Opaque data structure representing an interpreter. It should never be
  * accessed directly; use the methods below instead.
  */
-
-#define CATTLE_INTERPRETER_GET_PRIVATE(object) (G_TYPE_INSTANCE_GET_PRIVATE ((object), CATTLE_TYPE_INTERPRETER, CattleInterpreterPrivate))
 
 struct _CattleInterpreterPrivate
 {
@@ -79,6 +75,9 @@ struct _CattleInterpreterPrivate
     gulong               input_offset;
     gboolean             end_of_input_reached;
 };
+
+G_DEFINE_TYPE_WITH_CODE (CattleInterpreter, cattle_interpreter, G_TYPE_OBJECT,
+                         G_ADD_PRIVATE (CattleInterpreter))
 
 /* Properties */
 enum
@@ -106,7 +105,7 @@ static gboolean default_debug_handler  (CattleInterpreter  *interpreter,
 static void
 cattle_interpreter_init (CattleInterpreter *self)
 {
-    self->priv = CATTLE_INTERPRETER_GET_PRIVATE (self);
+    self->priv = cattle_interpreter_get_instance_private (self);
 
     self->priv->configuration = cattle_configuration_new ();
     self->priv->program = cattle_program_new ();
@@ -1317,7 +1316,4 @@ cattle_interpreter_class_init (CattleInterpreterClass *self)
     g_object_class_install_property (object_class,
                                      PROP_TAPE,
                                      pspec);
-
-    g_type_class_add_private (object_class,
-                              sizeof (CattleInterpreterPrivate));
 }

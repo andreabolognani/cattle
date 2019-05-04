@@ -52,8 +52,6 @@
  * instruction in the loop.
  */
 
-G_DEFINE_TYPE (CattleInstruction, cattle_instruction, G_TYPE_OBJECT)
-
 /**
  * CattleInstructionValue:
  * @CATTLE_INSTRUCTION_NONE: Do nothing
@@ -84,8 +82,6 @@ G_DEFINE_TYPE (CattleInstruction, cattle_instruction, G_TYPE_OBJECT)
  * accessed directly; use the methods below instead.
  */
 
-#define CATTLE_INSTRUCTION_GET_PRIVATE(object) (G_TYPE_INSTANCE_GET_PRIVATE ((object), CATTLE_TYPE_INSTRUCTION, CattleInstructionPrivate))
-
 struct _CattleInstructionPrivate
 {
     gboolean                disposed;
@@ -96,6 +92,9 @@ struct _CattleInstructionPrivate
     CattleInstruction      *next;
     CattleInstruction      *loop;
 };
+
+G_DEFINE_TYPE_WITH_CODE (CattleInstruction, cattle_instruction, G_TYPE_OBJECT,
+                         G_ADD_PRIVATE (CattleInstruction))
 
 /* Properties */
 enum
@@ -112,7 +111,7 @@ cattle_instruction_init (CattleInstruction *self)
 {
     CattleInstructionPrivate *priv;
 
-    priv = CATTLE_INSTRUCTION_GET_PRIVATE (self);
+    priv = cattle_instruction_get_instance_private (self);
 
     priv->value = CATTLE_INSTRUCTION_NONE;
     priv->quantity = 1;
@@ -600,7 +599,4 @@ cattle_instruction_class_init (CattleInstructionClass *self)
     g_object_class_install_property (object_class,
                                      PROP_LOOP,
                                      pspec);
-
-    g_type_class_add_private (object_class,
-                              sizeof (CattleInstructionPrivate));
 }

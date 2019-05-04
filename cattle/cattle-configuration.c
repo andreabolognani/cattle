@@ -28,8 +28,6 @@
  * #CattleInterpreter.
  */
 
-G_DEFINE_TYPE (CattleConfiguration, cattle_configuration, G_TYPE_OBJECT)
-
 /**
  * CattleEndOfInputAction:
  * @CATTLE_END_OF_INPUT_ACTION_STORE_ZERO: Store a zero in the current cell. This is
@@ -48,8 +46,6 @@ G_DEFINE_TYPE (CattleConfiguration, cattle_configuration, G_TYPE_OBJECT)
  * be accessed directly; use the methods below instead.
  */
 
-#define CATTLE_CONFIGURATION_GET_PRIVATE(object) (G_TYPE_INSTANCE_GET_PRIVATE ((object), CATTLE_TYPE_CONFIGURATION, CattleConfigurationPrivate))
-
 struct _CattleConfigurationPrivate
 {
     gboolean               disposed;
@@ -57,6 +53,9 @@ struct _CattleConfigurationPrivate
     CattleEndOfInputAction end_of_input_action;
     gboolean               debug_is_enabled;
 };
+
+G_DEFINE_TYPE_WITH_CODE (CattleConfiguration, cattle_configuration, G_TYPE_OBJECT,
+                         G_ADD_PRIVATE (CattleConfiguration))
 
 /* Properties */
 enum
@@ -71,7 +70,7 @@ cattle_configuration_init (CattleConfiguration *self)
 {
     CattleConfigurationPrivate *priv;
 
-    priv = CATTLE_CONFIGURATION_GET_PRIVATE (self);
+    priv = cattle_configuration_get_instance_private (self);
 
     priv->end_of_input_action = CATTLE_END_OF_INPUT_ACTION_STORE_ZERO;
     priv->debug_is_enabled = FALSE;
@@ -344,7 +343,4 @@ cattle_configuration_class_init (CattleConfigurationClass *self)
     g_object_class_install_property (object_class,
                                      PROP_DEBUG_IS_ENABLED,
                                      pspec);
-
-    g_type_class_add_private (object_class,
-                              sizeof (CattleConfigurationPrivate));
 }

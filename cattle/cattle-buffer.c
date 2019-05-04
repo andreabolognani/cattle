@@ -26,16 +26,12 @@
  * A #CattleBuffer represents a memory buffer.
  */
 
-G_DEFINE_TYPE (CattleBuffer, cattle_buffer, G_TYPE_OBJECT)
-
 /**
  * CattleBuffer:
  *
  * Opaque data structure representing a memory buffer. It should never
  * be accessed directly; use the methods below instead.
  */
-
-#define CATTLE_BUFFER_GET_PRIVATE(object) (G_TYPE_INSTANCE_GET_PRIVATE ((object), CATTLE_TYPE_BUFFER, CattleBufferPrivate))
 
 struct _CattleBufferPrivate
 {
@@ -44,6 +40,9 @@ struct _CattleBufferPrivate
     gint8    *data;
     gulong    size;
 };
+
+G_DEFINE_TYPE_WITH_CODE (CattleBuffer, cattle_buffer, G_TYPE_OBJECT,
+                         G_ADD_PRIVATE (CattleBuffer))
 
 /* Properties */
 enum {
@@ -56,7 +55,7 @@ cattle_buffer_init (CattleBuffer *self)
 {
     CattleBufferPrivate *priv;
 
-    priv = CATTLE_BUFFER_GET_PRIVATE (self);
+    priv = cattle_buffer_get_instance_private (self);
 
     priv->data = NULL;
     priv->size = 1;
@@ -360,7 +359,4 @@ cattle_buffer_class_init (CattleBufferClass *self)
     g_object_class_install_property (object_class,
                                      PROP_SIZE,
                                      pspec);
-
-    g_type_class_add_private (object_class,
-                              sizeof (CattleBufferPrivate));
 }

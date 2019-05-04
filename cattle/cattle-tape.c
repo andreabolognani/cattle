@@ -40,16 +40,12 @@
  * cattle_tape_is_at_beginning() and cattle_tape_is_at_end().
  */
 
-G_DEFINE_TYPE (CattleTape, cattle_tape, G_TYPE_OBJECT)
-
 /**
  * CattleTape:
  *
  * Opaque data structure representing a memory tape. It should never
  * be accessed directly; use the methods below instead.
  */
-
-#define CATTLE_TAPE_GET_PRIVATE(object) (G_TYPE_INSTANCE_GET_PRIVATE ((object), CATTLE_TYPE_TAPE, CattleTapePrivate))
 
 struct _CattleTapePrivate
 {
@@ -66,6 +62,9 @@ struct _CattleTapePrivate
 
     GSList   *bookmarks;   /* Bookmarks stack */
 };
+
+G_DEFINE_TYPE_WITH_CODE (CattleTape, cattle_tape, G_TYPE_OBJECT,
+                         G_ADD_PRIVATE (CattleTape))
 
 /* Properties */
 enum {
@@ -89,7 +88,7 @@ cattle_tape_init (CattleTape *self)
 {
     CattleTapePrivate *priv;
 
-    priv = CATTLE_TAPE_GET_PRIVATE (self);
+    priv = cattle_tape_get_instance_private (self);
 
     priv->head = NULL;
     priv->current = NULL;
@@ -685,7 +684,4 @@ cattle_tape_class_init (CattleTapeClass *self)
     g_object_class_install_property (object_class,
                                      PROP_CURRENT_VALUE,
                                      pspec);
-
-    g_type_class_add_private (object_class,
-                              sizeof (CattleTapePrivate));
 }
