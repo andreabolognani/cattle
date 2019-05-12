@@ -223,10 +223,11 @@ test_program_load_double_loop (void)
 {
     CattleProgram          *program;
     CattleBuffer           *buffer;
-    CattleInstruction      *current;
-    CattleInstruction      *outer_loop;
-    CattleInstruction      *inner_loop;
-    CattleInstruction      *next;
+    CattleInstruction      *outer_begin;
+    CattleInstruction      *inner_begin;
+    CattleInstruction      *inner_end;
+    CattleInstruction      *outer_end;
+    CattleInstruction      *nothing;
     CattleInstructionValue  value;
     GError                 *error;
     gint                    quantity;
@@ -244,74 +245,68 @@ test_program_load_double_loop (void)
     g_assert (error == NULL);
 
     /* First instruction: [ */
-    outer_loop = cattle_program_get_instructions (program);
-    current = outer_loop;
+    outer_begin = cattle_program_get_instructions (program);
 
-    g_assert (current != NULL);
+    g_assert (outer_begin != NULL);
 
-    value = cattle_instruction_get_value (current);
-    quantity = cattle_instruction_get_quantity (current);
+    value = cattle_instruction_get_value (outer_begin);
+    quantity = cattle_instruction_get_quantity (outer_begin);
 
     g_assert (value == CATTLE_INSTRUCTION_LOOP_BEGIN);
     g_assert (quantity == 1);
 
     /* Enter the outer loop: [ */
-    inner_loop = cattle_instruction_get_loop (current);
-    current = inner_loop;
+    inner_begin = cattle_instruction_get_loop (outer_begin);
 
-    g_assert (current != NULL);
+    g_assert (inner_begin != NULL);
 
-    value = cattle_instruction_get_value (current);
-    quantity = cattle_instruction_get_quantity (current);
+    value = cattle_instruction_get_value (inner_begin);
+    quantity = cattle_instruction_get_quantity (inner_begin);
 
     g_assert (value == CATTLE_INSTRUCTION_LOOP_BEGIN);
     g_assert (quantity == 1);
 
     /* Enter the inner loop: ] */
-    next = cattle_instruction_get_loop (current);
-    current = next;
+    inner_end = cattle_instruction_get_loop (inner_begin);
 
-    g_assert (current != NULL);
+    g_assert (inner_end != NULL);
 
-    value = cattle_instruction_get_value (current);
-    quantity = cattle_instruction_get_quantity (current);
+    value = cattle_instruction_get_value (inner_end);
+    quantity = cattle_instruction_get_quantity (inner_end);
 
     g_assert (value == CATTLE_INSTRUCTION_LOOP_END);
     g_assert (quantity == 1);
 
     /* Inner loop is over */
-    next = cattle_instruction_get_next (current);
-    current = next;
+    nothing = cattle_instruction_get_next (inner_end);
 
-    g_assert (current == NULL);
+    g_assert (nothing == NULL);
 
     /* After the inner loop: ] */
-    next = cattle_instruction_get_next (inner_loop);
-    g_object_unref (inner_loop);
-    current = next;
+    outer_end = cattle_instruction_get_next (inner_begin);
 
-    g_assert (current != NULL);
+    g_assert (outer_end != NULL);
 
-    value = cattle_instruction_get_value (current);
-    quantity = cattle_instruction_get_quantity (current);
+    value = cattle_instruction_get_value (outer_end);
+    quantity = cattle_instruction_get_quantity (outer_end);
 
     g_assert (value == CATTLE_INSTRUCTION_LOOP_END);
     g_assert (quantity == 1);
 
     /* Outer loop is over */
-    next = cattle_instruction_get_next (current);
-    g_object_unref (current);
-    current = next;
+    nothing = cattle_instruction_get_next (outer_end);
 
-    g_assert (current == NULL);
+    g_assert (nothing == NULL);
 
     /* After the outer loop */
-    next = cattle_instruction_get_next (outer_loop);
-    g_object_unref (outer_loop);
-    current = next;
+    nothing = cattle_instruction_get_next (outer_begin);
 
-    g_assert (current == NULL);
+    g_assert (nothing == NULL);
 
+    g_object_unref (outer_begin);
+    g_object_unref (inner_begin);
+    g_object_unref (inner_end);
+    g_object_unref (outer_end);
     g_object_unref (buffer);
     g_object_unref (program);
 }
