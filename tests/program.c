@@ -31,19 +31,18 @@
 static void
 test_program_load_unbalanced_brackets (void)
 {
-    CattleProgram          *program;
-    CattleBuffer           *buffer;
-    CattleInstruction      *instruction;
-    CattleInstructionValue  value;
-    GError                 *error;
-    gboolean                success;
+    g_autoptr (CattleProgram)     program = NULL;
+    g_autoptr (CattleBuffer)      buffer = NULL;
+    g_autoptr (CattleInstruction) instruction = NULL;
+    g_autoptr (GError)            error = NULL;
+    CattleInstructionValue        value;
+    gboolean                      success;
 
     program = cattle_program_new ();
 
     buffer = cattle_buffer_new (2);
     cattle_buffer_set_contents (buffer, (gint8 *) "[");
 
-    error = NULL;
     success = cattle_program_load (program, buffer, &error);
 
     g_assert (!success);
@@ -58,11 +57,6 @@ test_program_load_unbalanced_brackets (void)
     value = cattle_instruction_get_value (instruction);
 
     g_assert (value == CATTLE_INSTRUCTION_NONE);
-
-    g_object_unref (instruction);
-    g_object_unref (buffer);
-    g_object_unref (program);
-    g_error_free (error);
 }
 
 /**
@@ -75,18 +69,17 @@ test_program_load_unbalanced_brackets (void)
 static void
 test_program_load_empty (void)
 {
-    CattleProgram          *program;
-    CattleBuffer           *buffer;
-    CattleInstruction      *instruction;
-    CattleInstructionValue  value;
-    GError                 *error;
-    gboolean                success;
+    g_autoptr (CattleProgram)     program = NULL;
+    g_autoptr (CattleBuffer)      buffer = NULL;
+    g_autoptr (CattleInstruction) instruction = NULL;
+    g_autoptr (GError)            error = NULL;
+    CattleInstructionValue        value;
+    gboolean                      success;
 
     program = cattle_program_new ();
 
     buffer = cattle_buffer_new (0);
 
-    error = NULL;
     success = cattle_program_load (program, buffer, &error);
 
     g_assert (success);
@@ -101,10 +94,6 @@ test_program_load_empty (void)
     value = cattle_instruction_get_value (instruction);
 
     g_assert (value == CATTLE_INSTRUCTION_NONE);
-
-    g_object_unref (instruction);
-    g_object_unref (buffer);
-    g_object_unref (program);
 }
 
 /**
@@ -115,21 +104,20 @@ test_program_load_empty (void)
 static void
 test_program_load_without_input (void)
 {
-    CattleProgram          *program;
-    CattleBuffer           *buffer;
-    CattleInstruction      *instructions;
-    CattleBuffer           *input;
-    CattleInstructionValue  value;
-    GError                 *error;
-    gulong                  quantity;
-    gboolean                success;
+    g_autoptr (CattleProgram)     program = NULL;
+    g_autoptr (CattleBuffer)      buffer = NULL;
+    g_autoptr (CattleInstruction) instructions = NULL;
+    g_autoptr (CattleBuffer)      input = NULL;
+    g_autoptr (GError)            error = NULL;
+    CattleInstructionValue        value;
+    gulong                        quantity;
+    gboolean                      success;
 
     program = cattle_program_new ();
 
     buffer = cattle_buffer_new (9);
     cattle_buffer_set_contents (buffer, (gint8 *) "+++>-<[-]");
 
-    error = NULL;
     success = cattle_program_load (program, buffer, &error);
 
     g_assert (success);
@@ -148,11 +136,6 @@ test_program_load_without_input (void)
     g_assert (quantity == 3);
 
     g_assert (cattle_buffer_get_size (input) == 0);
-
-    g_object_unref (input);
-    g_object_unref (instructions);
-    g_object_unref (buffer);
-    g_object_unref (program);
 }
 
 /**
@@ -163,22 +146,21 @@ test_program_load_without_input (void)
 static void
 test_program_load_with_input (void)
 {
-    CattleProgram          *program;
-    CattleInstruction      *instructions;
-    CattleBuffer           *buffer;
-    CattleBuffer           *expected;
-    CattleBuffer           *actual;
-    CattleInstructionValue  instruction_value;
-    gulong                  i;
-    GError                 *error;
-    gboolean                success;
+    g_autoptr (CattleProgram)     program = NULL;
+    g_autoptr (CattleInstruction) instructions = NULL;
+    g_autoptr (CattleBuffer)      buffer = NULL;
+    g_autoptr (CattleBuffer)      expected = NULL;
+    g_autoptr (CattleBuffer)      actual = NULL;
+    g_autoptr (GError)            error = NULL;
+    CattleInstructionValue        instruction_value;
+    gulong                        i;
+    gboolean                      success;
 
     program = cattle_program_new ();
 
     buffer = cattle_buffer_new (17);
     cattle_buffer_set_contents (buffer, (gint8 *) ",[+.,]!some input");
 
-    error = NULL;
     success = cattle_program_load (program, buffer, &error);
 
     g_assert (success);
@@ -206,12 +188,6 @@ test_program_load_with_input (void)
 
     instruction_value = cattle_instruction_get_value (instructions);
     g_assert (instruction_value == CATTLE_INSTRUCTION_READ);
-
-    g_object_unref (actual);
-    g_object_unref (expected);
-    g_object_unref (buffer);
-    g_object_unref (instructions);
-    g_object_unref (program);
 }
 
 /**
@@ -222,24 +198,23 @@ test_program_load_with_input (void)
 static void
 test_program_load_double_loop (void)
 {
-    CattleProgram          *program;
-    CattleBuffer           *buffer;
-    CattleInstruction      *outer_begin;
-    CattleInstruction      *inner_begin;
-    CattleInstruction      *inner_end;
-    CattleInstruction      *outer_end;
-    CattleInstruction      *nothing;
-    CattleInstructionValue  value;
-    GError                 *error;
-    gint                    quantity;
-    gboolean                success;
+    g_autoptr (CattleProgram)     program = NULL;
+    g_autoptr (CattleBuffer)      buffer = NULL;
+    g_autoptr (CattleInstruction) outer_begin = NULL;
+    g_autoptr (CattleInstruction) inner_begin = NULL;
+    g_autoptr (CattleInstruction) inner_end = NULL;
+    g_autoptr (CattleInstruction) outer_end = NULL;
+    g_autoptr (CattleInstruction) nothing = NULL;
+    g_autoptr (GError)            error = NULL;
+    CattleInstructionValue        value;
+    gint                          quantity;
+    gboolean                      success;
 
     program = cattle_program_new ();
 
     buffer = cattle_buffer_new (4);
     cattle_buffer_set_contents (buffer, (gint8 *) "[[]]");
 
-    error = NULL;
     success = cattle_program_load (program, buffer, &error);
 
     g_assert (success);
@@ -303,13 +278,6 @@ test_program_load_double_loop (void)
     nothing = cattle_instruction_get_next (outer_begin);
 
     g_assert (nothing == NULL);
-
-    g_object_unref (outer_begin);
-    g_object_unref (inner_begin);
-    g_object_unref (inner_end);
-    g_object_unref (outer_end);
-    g_object_unref (buffer);
-    g_object_unref (program);
 }
 
 gint

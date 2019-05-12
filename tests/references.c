@@ -55,9 +55,9 @@ check_refcount (CattleInstruction *instruction)
 static void
 test_references_single_reference (void)
 {
-    CattleProgram     *program;
-    CattleInstruction *instruction;
-    CattleBuffer      *buffer;
+    g_autoptr (CattleProgram)  program = NULL;
+    g_autoptr (CattleBuffer)   buffer = NULL;
+    CattleInstruction         *instruction;
 
     program = cattle_program_new ();
 
@@ -68,9 +68,6 @@ test_references_single_reference (void)
 
     instruction = cattle_program_get_instructions (program);
     check_refcount (instruction);
-
-    g_object_unref (buffer);
-    g_object_unref (program);
 }
 
 

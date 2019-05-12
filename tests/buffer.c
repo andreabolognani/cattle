@@ -30,12 +30,10 @@
 static void
 test_buffer_empty (void)
 {
-    CattleBuffer *buffer;
+    g_autoptr (CattleBuffer) buffer = NULL;
 
     buffer = cattle_buffer_new (0);
     g_assert (cattle_buffer_get_size (buffer) == 0);
-
-    g_object_unref (buffer);
 }
 
 /**
@@ -46,12 +44,10 @@ test_buffer_empty (void)
 static void
 test_buffer_create (void)
 {
-    CattleBuffer *buffer;
+    g_autoptr (CattleBuffer) buffer = NULL;
 
     buffer = cattle_buffer_new (42);
     g_assert (cattle_buffer_get_size (buffer) == 42);
-
-    g_object_unref (buffer);
 }
 
 /**
@@ -62,7 +58,7 @@ test_buffer_create (void)
 void
 test_buffer_get_value (void)
 {
-    CattleBuffer *buffer;
+    g_autoptr (CattleBuffer) buffer = NULL;
 
     buffer = cattle_buffer_new (3);
     g_assert (cattle_buffer_get_size (buffer) == 3);
@@ -70,8 +66,6 @@ test_buffer_get_value (void)
     g_assert (cattle_buffer_get_value (buffer, 0) == 0);
     g_assert (cattle_buffer_get_value (buffer, 1) == 0);
     g_assert (cattle_buffer_get_value (buffer, 2) == 0);
-
-    g_object_unref (buffer);
 }
 
 /**
@@ -82,9 +76,9 @@ test_buffer_get_value (void)
 void
 test_buffer_set_contents_array (void)
 {
-    CattleBuffer *buffer;
-    gint8 values[5];
-    gint i;
+    g_autoptr (CattleBuffer) buffer = NULL;
+    gint8                    values[5];
+    gint                     i;
 
     buffer = cattle_buffer_new (3);
     g_assert (cattle_buffer_get_size (buffer) == 3);
@@ -101,8 +95,6 @@ test_buffer_set_contents_array (void)
     {
         g_assert (cattle_buffer_get_value (buffer, i) == values[i]);
     }
-
-    g_object_unref (buffer);
 }
 
 /**
@@ -113,7 +105,7 @@ test_buffer_set_contents_array (void)
 void
 test_buffer_set_contents_string (void)
 {
-    CattleBuffer *buffer;
+    g_autoptr (CattleBuffer) buffer = NULL;
 
     buffer = cattle_buffer_new (3);
     g_assert (cattle_buffer_get_size (buffer) == 3);
@@ -123,8 +115,6 @@ test_buffer_set_contents_string (void)
     g_assert (cattle_buffer_get_value (buffer, 0) == 'a');
     g_assert (cattle_buffer_get_value (buffer, 1) == 'b');
     g_assert (cattle_buffer_get_value (buffer, 2) == 'c');
-
-    g_object_unref (buffer);
 }
 
 /**
@@ -136,9 +126,9 @@ test_buffer_set_contents_string (void)
 void
 test_buffer_set_value (void)
 {
-    CattleBuffer *buffer;
-    gint8 values[3];
-    gint i;
+    g_autoptr (CattleBuffer) buffer = NULL;
+    gint8                    values[3];
+    gint                     i;
 
     buffer = cattle_buffer_new (3);
     g_assert (cattle_buffer_get_size (buffer) == 3);
@@ -153,8 +143,6 @@ test_buffer_set_value (void)
     {
         g_assert (cattle_buffer_get_value (buffer, i) == values[i]);
     }
-
-    g_object_unref (buffer);
 }
 
 gint
