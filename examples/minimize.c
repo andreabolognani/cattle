@@ -121,6 +121,9 @@ minimize (CattleProgram *program)
             g_print ("%c", value);
         }
     }
+
+    g_object_unref (input);
+    g_slist_free (stack);
 }
 
 gint
