@@ -24,6 +24,11 @@ run()
     fi
 }
 
+curdir=$(pwd)
+srcdir=$(dirname "$0")
+
+cd "$srcdir" || exit 1
+
 run "$GTKDOCIZE"
 run "$LIBTOOLIZE"
 run "$ACLOCAL"
@@ -31,6 +36,8 @@ run "$AUTOHEADER"
 run "$AUTOCONF"
 run "$AUTOMAKE"
 
-./configure "$@" || exit $?
+cd "$curdir" || exit 1
+
+"$srcdir/configure" "$@" || exit $?
 
 exit 0
