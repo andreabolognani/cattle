@@ -47,9 +47,7 @@ test_program_load_unbalanced_brackets (void)
     success = cattle_program_load (program, buffer, &error);
 
     g_assert (!success);
-    g_assert (error != NULL);
-    g_assert (error->domain == CATTLE_ERROR);
-    g_assert (error->code == CATTLE_ERROR_UNBALANCED_BRACKETS);
+    g_assert (g_error_matches (error, CATTLE_ERROR, CATTLE_ERROR_UNBALANCED_BRACKETS));
 
     instruction = cattle_program_get_instructions (program);
 
