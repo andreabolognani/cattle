@@ -270,7 +270,7 @@ load (CattleBuffer       *buffer,
     {
         if (i < size)
         {
-            *input = cattle_buffer_new (size - i + 1);
+            *input = cattle_buffer_new (size - i);
 
             c = 0;
             while (i < size)
