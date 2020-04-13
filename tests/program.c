@@ -153,6 +153,8 @@ test_program_load_with_input (void)
     g_autoptr (CattleBuffer)      actual = NULL;
     g_autoptr (GError)            error = NULL;
     CattleInstructionValue        instruction_value;
+    gulong                        expected_size;
+    gulong                        actual_size;
     gulong                        i;
     gboolean                      success;
 
@@ -176,6 +178,12 @@ test_program_load_with_input (void)
      * for comparison's purposes */
     expected = cattle_buffer_new (10);
     cattle_buffer_set_contents (expected, (gint8 *) "some input");
+
+    /* Check whether the size of the buffers match */
+    expected_size = cattle_buffer_get_size (expected);
+    actual_size = cattle_buffer_get_size (actual);
+
+    g_assert (actual_size == expected_size);
 
     /* Match the parsed input with the expected one */
     for (i = 0; i < 10; i++)
