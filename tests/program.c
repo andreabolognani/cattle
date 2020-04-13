@@ -22,6 +22,8 @@
 #include <glib-object.h>
 #include <cattle/cattle.h>
 
+#define PROGRAM_UNBALANCED_BRACKETS "["
+
 /**
  * test_program_load_unbalanced_brackets:
  *
@@ -40,8 +42,8 @@ test_program_load_unbalanced_brackets (void)
 
     program = cattle_program_new ();
 
-    buffer = cattle_buffer_new (2);
-    cattle_buffer_set_contents (buffer, (gint8 *) "[");
+    buffer = cattle_buffer_new (strlen (PROGRAM_UNBALANCED_BRACKETS));
+    cattle_buffer_set_contents (buffer, (gint8 *) PROGRAM_UNBALANCED_BRACKETS);
 
     success = cattle_program_load (program, buffer, &error);
 
@@ -96,6 +98,8 @@ test_program_load_empty (void)
     g_assert (value == CATTLE_INSTRUCTION_NONE);
 }
 
+#define PROGRAM_WITHOUT_INPUT "+++>-<[-]"
+
 /**
  * test_program_load_without_input:
  *
@@ -115,8 +119,8 @@ test_program_load_without_input (void)
 
     program = cattle_program_new ();
 
-    buffer = cattle_buffer_new (9);
-    cattle_buffer_set_contents (buffer, (gint8 *) "+++>-<[-]");
+    buffer = cattle_buffer_new (strlen (PROGRAM_WITHOUT_INPUT));
+    cattle_buffer_set_contents (buffer, (gint8 *) PROGRAM_WITHOUT_INPUT);
 
     success = cattle_program_load (program, buffer, &error);
 
@@ -137,6 +141,9 @@ test_program_load_without_input (void)
 
     g_assert (cattle_buffer_get_size (input) == 0);
 }
+
+#define PROGRAM_INPUT "some input"
+#define PROGRAM_WITH_INPUT ",[+.,]!" PROGRAM_INPUT
 
 /**
  * test_program_load_with_input:
@@ -160,8 +167,8 @@ test_program_load_with_input (void)
 
     program = cattle_program_new ();
 
-    buffer = cattle_buffer_new (17);
-    cattle_buffer_set_contents (buffer, (gint8 *) ",[+.,]!some input");
+    buffer = cattle_buffer_new (strlen (PROGRAM_WITH_INPUT));
+    cattle_buffer_set_contents (buffer, (gint8 *) PROGRAM_WITH_INPUT);
 
     success = cattle_program_load (program, buffer, &error);
 
@@ -176,8 +183,8 @@ test_program_load_with_input (void)
 
     /* Create a new buffer containing just the input,
      * for comparison's purposes */
-    expected = cattle_buffer_new (10);
-    cattle_buffer_set_contents (expected, (gint8 *) "some input");
+    expected = cattle_buffer_new (strlen (PROGRAM_INPUT));
+    cattle_buffer_set_contents (expected, (gint8 *) PROGRAM_INPUT);
 
     /* Check whether the size of the buffers match */
     expected_size = cattle_buffer_get_size (expected);
@@ -186,7 +193,7 @@ test_program_load_with_input (void)
     g_assert (actual_size == expected_size);
 
     /* Match the parsed input with the expected one */
-    for (i = 0; i < 10; i++)
+    for (i = 0; i < actual_size; i++)
     {
         gint8 expected_value = cattle_buffer_get_value (expected, i);
         gint8 actual_value = cattle_buffer_get_value (actual, i);
@@ -197,6 +204,8 @@ test_program_load_with_input (void)
     instruction_value = cattle_instruction_get_value (instructions);
     g_assert (instruction_value == CATTLE_INSTRUCTION_READ);
 }
+
+#define PROGRAM_DOUBLE_LOOP "[[]]"
 
 /**
  * test_program_load_double_loop:
@@ -220,8 +229,8 @@ test_program_load_double_loop (void)
 
     program = cattle_program_new ();
 
-    buffer = cattle_buffer_new (4);
-    cattle_buffer_set_contents (buffer, (gint8 *) "[[]]");
+    buffer = cattle_buffer_new (strlen (PROGRAM_DOUBLE_LOOP));
+    cattle_buffer_set_contents (buffer, (gint8 *) PROGRAM_DOUBLE_LOOP);
 
     success = cattle_program_load (program, buffer, &error);
 
