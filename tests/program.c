@@ -165,11 +165,11 @@ static void
 test_program_load_with_input (void)
 {
     CattleProgram          *program;
-    CattleBuffer           *buffer;
     CattleInstruction      *instructions;
-    CattleBuffer           *input;
+    CattleBuffer           *buffer;
+    CattleBuffer           *expected;
+    CattleBuffer           *actual;
     CattleInstructionValue  instruction_value;
-    gint8                   buffer_value;
     gulong                  i;
     GError                 *error;
     gboolean                success;
@@ -186,30 +186,32 @@ test_program_load_with_input (void)
     g_assert (error == NULL);
 
     instructions = cattle_program_get_instructions (program);
-    input = cattle_program_get_input (program);
+    actual = cattle_program_get_input (program);
 
     g_assert (instructions != NULL);
-    g_assert (input != NULL);
+    g_assert (actual != NULL);
 
     /* Create a new buffer containing just the input,
      * for comparison's purposes */
-    g_object_unref (buffer);
-    buffer = cattle_buffer_new (10);
-    cattle_buffer_set_contents (buffer, (gint8 *) "some input");
+    expected = cattle_buffer_new (10);
+    cattle_buffer_set_contents (expected, (gint8 *) "some input");
 
     /* Match the parsed input with the expected one */
     for (i = 0; i < 10; i++)
     {
-        buffer_value = cattle_buffer_get_value (input, i);
-        g_assert (buffer_value == cattle_buffer_get_value (buffer, i));
+        gint8 expected_value = cattle_buffer_get_value (expected, i);
+        gint8 actual_value = cattle_buffer_get_value (actual, i);
+
+        g_assert (actual_value == expected_value);
     }
 
     instruction_value = cattle_instruction_get_value (instructions);
     g_assert (instruction_value == CATTLE_INSTRUCTION_READ);
 
-    g_object_unref (input);
-    g_object_unref (instructions);
+    g_object_unref (actual);
+    g_object_unref (expected);
     g_object_unref (buffer);
+    g_object_unref (instructions);
     g_object_unref (program);
 }
 
