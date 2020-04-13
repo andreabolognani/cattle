@@ -290,7 +290,9 @@ test_interpreter_failed_input (void)
     CattleInterpreter *interpreter;
     CattleProgram     *program;
     CattleBuffer      *buffer;
-    GError            *error;
+    GError            *error1;
+    GError            *error2;
+    GError            *error3;
     gboolean           success;
 
     interpreter = cattle_interpreter_new ();
@@ -307,37 +309,35 @@ test_interpreter_failed_input (void)
                                           input_fail_set_error,
                                           NULL);
 
-    error = NULL;
-    success = cattle_interpreter_run (interpreter, &error);
+    error1 = NULL;
+    success = cattle_interpreter_run (interpreter, &error1);
     g_assert (!success);
-    g_assert (g_error_matches (error, CATTLE_ERROR, CATTLE_ERROR_IO));
-
-    g_error_free (error);
+    g_assert (g_error_matches (error1, CATTLE_ERROR, CATTLE_ERROR_IO));
 
     /* Replace the signal handler */
     cattle_interpreter_set_input_handler (interpreter,
                                           input_fail_no_set_error,
                                           NULL);
 
-    error = NULL;
-    success = cattle_interpreter_run (interpreter, &error);
+    error2 = NULL;
+    success = cattle_interpreter_run (interpreter, &error2);
     g_assert (!success);
-    g_assert (g_error_matches (error, CATTLE_ERROR, CATTLE_ERROR_IO));
-
-    g_error_free (error);
+    g_assert (g_error_matches (error2, CATTLE_ERROR, CATTLE_ERROR_IO));
 
     /* Replace the signal handler */
     cattle_interpreter_set_input_handler (interpreter,
                                           input_fail_only_error,
                                           NULL);
 
-    error = NULL;
-    success = cattle_interpreter_run (interpreter, &error);
+    error3 = NULL;
+    success = cattle_interpreter_run (interpreter, &error3);
     g_assert (!success);
-    g_assert (g_error_matches (error, CATTLE_ERROR, CATTLE_ERROR_IO));
+    g_assert (g_error_matches (error3, CATTLE_ERROR, CATTLE_ERROR_IO));
 
-    g_error_free (error);
     g_object_unref (interpreter);
+    g_error_free (error1);
+    g_error_free (error2);
+    g_error_free (error3);
 }
 
 
@@ -354,7 +354,9 @@ test_interpreter_failed_output (void)
     CattleInterpreter *interpreter;
     CattleProgram     *program;
     CattleBuffer      *buffer;
-    GError            *error;
+    GError            *error1;
+    GError            *error2;
+    GError            *error3;
     gboolean           success;
 
     interpreter = cattle_interpreter_new ();
@@ -369,40 +371,37 @@ test_interpreter_failed_output (void)
                                            output_fail_set_error,
                                            NULL);
 
-    error = NULL;
-    success = cattle_interpreter_run (interpreter, &error);
+    error1 = NULL;
+    success = cattle_interpreter_run (interpreter, &error1);
     g_assert (!success);
-    g_assert (g_error_matches (error, CATTLE_ERROR, CATTLE_ERROR_IO));
-
-    g_error_free (error);
+    g_assert (g_error_matches (error1, CATTLE_ERROR, CATTLE_ERROR_IO));
 
     /* Replace the signal handler */
     cattle_interpreter_set_output_handler (interpreter,
                                            output_fail_no_set_error,
                                            NULL);
 
-    error = NULL;
-    success = cattle_interpreter_run (interpreter, &error);
+    error2 = NULL;
+    success = cattle_interpreter_run (interpreter, &error2);
     g_assert (!success);
-    g_assert (g_error_matches (error, CATTLE_ERROR, CATTLE_ERROR_IO));
-
-    g_error_free (error);
+    g_assert (g_error_matches (error2, CATTLE_ERROR, CATTLE_ERROR_IO));
 
     /* Replace the signal handler */
     cattle_interpreter_set_output_handler (interpreter,
                                            output_fail_only_error,
                                            NULL);
 
-    error = NULL;
-    success = cattle_interpreter_run (interpreter, &error);
+    error3 = NULL;
+    success = cattle_interpreter_run (interpreter, &error3);
     g_assert (!success);
-    g_assert (g_error_matches (error, CATTLE_ERROR, CATTLE_ERROR_IO));
-
-    g_error_free (error);
+    g_assert (g_error_matches (error3, CATTLE_ERROR, CATTLE_ERROR_IO));
 
     g_object_unref (buffer);
     g_object_unref (program);
     g_object_unref (interpreter);
+    g_error_free (error1);
+    g_error_free (error2);
+    g_error_free (error3);
 }
 
 /**
@@ -419,7 +418,9 @@ test_interpreter_failed_debug (void)
     CattleConfiguration *configuration;
     CattleProgram       *program;
     CattleBuffer        *buffer;
-    GError              *error;
+    GError              *error1;
+    GError              *error2;
+    GError              *error3;
     gboolean             success;
 
     interpreter = cattle_interpreter_new ();
@@ -438,40 +439,37 @@ test_interpreter_failed_debug (void)
                                           debug_fail_set_error,
                                           NULL);
 
-    error = NULL;
-    success = cattle_interpreter_run (interpreter, &error);
+    error1 = NULL;
+    success = cattle_interpreter_run (interpreter, &error1);
     g_assert (!success);
-    g_assert (g_error_matches (error, CATTLE_ERROR, CATTLE_ERROR_IO));
-
-    g_error_free (error);
+    g_assert (g_error_matches (error1, CATTLE_ERROR, CATTLE_ERROR_IO));
 
     /* Replace the signal handler */
     cattle_interpreter_set_debug_handler (interpreter,
                                           debug_fail_no_set_error,
                                           NULL);
 
-    error = NULL;
-    success = cattle_interpreter_run (interpreter, &error);
+    error2 = NULL;
+    success = cattle_interpreter_run (interpreter, &error2);
     g_assert (!success);
-    g_assert (g_error_matches (error, CATTLE_ERROR, CATTLE_ERROR_IO));
-
-    g_error_free (error);
+    g_assert (g_error_matches (error2, CATTLE_ERROR, CATTLE_ERROR_IO));
 
     /* Replace the signal handler */
     cattle_interpreter_set_debug_handler (interpreter,
                                           debug_fail_only_error,
                                           NULL);
 
-    error = NULL;
-    success = cattle_interpreter_run (interpreter, &error);
+    error3 = NULL;
+    success = cattle_interpreter_run (interpreter, &error3);
     g_assert (!success);
-    g_assert (g_error_matches (error, CATTLE_ERROR, CATTLE_ERROR_IO));
-
-    g_error_free (error);
+    g_assert (g_error_matches (error3, CATTLE_ERROR, CATTLE_ERROR_IO));
 
     g_object_unref (buffer);
     g_object_unref (program);
     g_object_unref (interpreter);
+    g_error_free (error1);
+    g_error_free (error2);
+    g_error_free (error3);
 }
 
 /**
@@ -601,7 +599,8 @@ test_interpreter_unbalanced_brackets (void)
     CattleInstruction *instructions;
     CattleInstruction *next;
     CattleTape        *tape;
-    GError            *error;
+    GError            *error1;
+    GError            *error2;
     gboolean           success;
 
     interpreter = cattle_interpreter_new ();
@@ -630,25 +629,25 @@ test_interpreter_unbalanced_brackets (void)
     cattle_tape_set_current_value (tape, 42);
     g_object_unref (tape);
 
-    error = NULL;
-    success = cattle_interpreter_run (interpreter, &error);
+    error1 = NULL;
+    success = cattle_interpreter_run (interpreter, &error1);
     g_assert (!success);
-    g_assert (g_error_matches (error, CATTLE_ERROR, CATTLE_ERROR_UNBALANCED_BRACKETS));
-
-    g_error_free (error);
+    g_assert (g_error_matches (error1, CATTLE_ERROR, CATTLE_ERROR_UNBALANCED_BRACKETS));
 
     /* Now make the start of loop instruction an end of loop instruction:
      * the program is now ]+++ */
     cattle_instruction_set_value (instructions,
                                   CATTLE_INSTRUCTION_LOOP_END);
 
-    error = NULL;
-    success = cattle_interpreter_run (interpreter, &error);
+    error2 = NULL;
+    success = cattle_interpreter_run (interpreter, &error2);
     g_assert (!success);
-    g_assert (g_error_matches (error, CATTLE_ERROR, CATTLE_ERROR_UNBALANCED_BRACKETS));
+    g_assert (g_error_matches (error2, CATTLE_ERROR, CATTLE_ERROR_UNBALANCED_BRACKETS));
 
     g_object_unref (instructions);
     g_object_unref (interpreter);
+    g_error_free (error1);
+    g_error_free (error2);
 }
 
 gint
