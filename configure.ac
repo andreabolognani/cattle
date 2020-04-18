@@ -46,28 +46,29 @@ AC_PROG_MAKE_SET
 AC_PROG_INSTALL
 AC_PROG_LIBTOOL
 
+AC_PATH_PROGS([GLIB_MKENUMS], [glib-mkenums])
+if test -z "$GLIB_MKENUMS"
+then
+    AC_MSG_ERROR([glib-mkenums not found])
+fi
+
 dnl ********************************************
 dnl *** Check for header files and functions ***
 dnl ********************************************
 
 AC_HEADER_STDC
 
-dnl ***************************************
-dnl *** Check for required GLib modules ***
-dnl ***************************************
+dnl **********************
+dnl *** Check for GLib ***
+dnl **********************
 
 GLIB_REQUIRED_VERSION=2.32.0
-GLIB_REQUIRED_MODULES="gobject"
 
-AM_PATH_GLIB_2_0([$GLIB_REQUIRED_VERSION],
-                 [],
-                 [AC_MSG_ERROR([GLib version $GLIB_REQUIRED_VERSION required])],
-                 [$GLIB_REQUIRED_MODULES])
-
-# GIO is only required for the example programs
-PKG_CHECK_MODULES([GIO], [gio-2.0 >= $GLIB_REQUIRED_VERSION])
-AC_SUBST([GIO_CFLAGS])
-AC_SUBST([GIO_LIBS])
+PKG_CHECK_MODULES([GLIB], [glib-2.0 >= $GLIB_REQUIRED_VERSION
+                           gobject-2.0 >= $GLIB_REQUIRED_VERSION
+                           gio-2.0 >= $GLIB_REQUIRED_VERSION])
+AC_SUBST([GLIB_CFLAGS])
+AC_SUBST([GLIB_LIBS])
 
 dnl ***************************************
 dnl *** Check for GObject Introspection ***
