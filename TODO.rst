@@ -1,24 +1,30 @@
+To-do list for Cattle
+=====================
+
+This document lists plans and ideas for further development.
+
+
 Ongoing
 -------
 
-* Performance improvements
+* Performance improvements.
 
-* Extensive test suite
+* Extensive test suite.
 
 
 Planned
 -------
 
-* Step-by-step execution
+* Step-by-step execution.
 
 
 Under consideration
 -------------------
 
-* Fixed-sized tape as an alternative
+* Fixed-sized tape as an alternative.
 
-  - Bound checking
+  - Bound checking.
 
-* Enable/disable left growth of the tape
+* Enable/disable left growth of the tape.
 
-* Compile Brainfuck to C
+* Compile Brainfuck to C.

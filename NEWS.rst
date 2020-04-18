@@ -1,19 +1,26 @@
+Release notes for Cattle
+========================
+
+This document briefly describes the user-visible changes introduced
+in each release of Cattle.
+
+
 Cattle 1.2.2 (2017-01-11)
 -------------------------
 
-* Enable compiler warnings
+* Enable compiler warnings.
 
-  - Fix code quality issues uncovered by doing so
+  - Fix code quality issues uncovered by doing so.
 
 
 Cattle 1.2.1 (2016-09-11)
 -------------------------
 
-* Fix compilation with Clang (Baptiste Fontaine)
+* Fix compilation with Clang (Baptiste Fontaine).
 
-* Install ``cattle-enums.h``
+* Install ``cattle-enums.h``.
 
-* Build system cleanups and improvements
+* Build system cleanups and improvements.
 
 
 Cattle 1.2.0 (2014-10-21)
@@ -79,9 +86,9 @@ Cattle 0.9.4 (2010-12-04)
 
 * ``CattleInstruction``:
 
-  - rename ``CATTLE_INSTRUCTION_DUMP_TAPE`` to ``CATTLE_INSTRUCTION_DEBUG``,
-    since the corresponding handler might do more than dumping the
-    tape's contents.
+  - rename ``CATTLE_INSTRUCTION_DUMP_TAPE`` to
+    ``CATTLE_INSTRUCTION_DEBUG``, since the corresponding handler
+    might do more than dumping the tape's contents.
 
 * ``CattleTape``:
 
@@ -117,7 +124,8 @@ Cattle 0.9.3 (2009-05-05)
 
 * ``CattleProgram``:
 
-  - use a single error code for both unmatched and unbalanced brackets.
+  - use a single error code for both unmatched and unbalanced
+    brackets.
 
 * The caller owns the object returned by a method call, and must
   unreference it when finished to avoid memory leaks.
@@ -138,8 +146,9 @@ Cattle 0.9.2 (2008-10-02)
 
 * ``CattleInterpreter``:
 
-  - add the ``CattleInterpreter::debug-request`` signal, which behaves like
-    the existing I/O signals and obsoletes the ``CattleTape.dump()`` method.
+  - add the ``CattleInterpreter::debug-request`` signal, which
+    behaves like the existing I/O signals and obsoletes the
+    ``CattleTape.dump()`` method.
 
 * Cache the object's private structure, to avoid looking it up for
   every single method call.
