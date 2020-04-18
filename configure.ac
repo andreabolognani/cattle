@@ -13,10 +13,10 @@ CATTLE_MINOR_VERSION=2
 CATTLE_MICRO_VERSION=2
 CATTLE_VERSION=$CATTLE_MAJOR_VERSION.$CATTLE_MINOR_VERSION.$CATTLE_MICRO_VERSION
 
-AC_SUBST(CATTLE_MAJOR_VERSION)
-AC_SUBST(CATTLE_MINOR_VERSION)
-AC_SUBST(CATTLE_MICRO_VERSION)
-AC_SUBST(CATTLE_VERSION)
+AC_SUBST([CATTLE_MAJOR_VERSION])
+AC_SUBST([CATTLE_MINOR_VERSION])
+AC_SUBST([CATTLE_MICRO_VERSION])
+AC_SUBST([CATTLE_VERSION])
 
 dnl ***********************
 dnl *** Libtool version ***
@@ -31,9 +31,9 @@ CATTLE_REVISION=4
 dnl Increment on interface addition. Reset on removal.
 CATTLE_AGE=0
 
-AC_SUBST(CATTLE_CURRENT)
-AC_SUBST(CATTLE_REVISION)
-AC_SUBST(CATTLE_AGE)
+AC_SUBST([CATTLE_CURRENT])
+AC_SUBST([CATTLE_REVISION])
+AC_SUBST([CATTLE_AGE])
 
 dnl ********************************
 dnl *** Check for basic programs ***
@@ -59,14 +59,15 @@ dnl ***************************************
 GLIB_REQUIRED_VERSION=2.32.0
 GLIB_REQUIRED_MODULES="gobject"
 
-AM_PATH_GLIB_2_0($GLIB_REQUIRED_VERSION,,
-                 AC_MSG_ERROR([GLib version $GLIB_REQUIRED_VERSION required]),
-                 $GLIB_REQUIRED_MODULES)
+AM_PATH_GLIB_2_0([$GLIB_REQUIRED_VERSION],
+                 [],
+                 [AC_MSG_ERROR([GLib version $GLIB_REQUIRED_VERSION required])],
+                 [$GLIB_REQUIRED_MODULES])
 
 # GIO is only required for the example programs
-PKG_CHECK_MODULES(GIO, gio-2.0 >= $GLIB_REQUIRED_VERSION)
-AC_SUBST(GIO_CFLAGS)
-AC_SUBST(GIO_LIBS)
+PKG_CHECK_MODULES([GIO], [gio-2.0 >= $GLIB_REQUIRED_VERSION])
+AC_SUBST([GIO_CFLAGS])
+AC_SUBST([GIO_LIBS])
 
 dnl ***************************************
 dnl *** Check for GObject Introspection ***
@@ -86,7 +87,7 @@ dnl ***********************************
 
 WARN_CFLAGS="-Wall -Wextra"
 
-AC_SUBST(WARN_CFLAGS)
+AC_SUBST([WARN_CFLAGS])
 
 dnl *******************************
 dnl *** Create the output files ***
