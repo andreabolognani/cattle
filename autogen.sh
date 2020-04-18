@@ -11,11 +11,11 @@ run()
 {
     command="$1"
 
-    output=$( $command 2>&1 )
+    output=$($command 2>&1)
 
-    if [ $? -ne 0 ]
+    if test $? -ne 0
     then
-        command=$( echo "$command" | cut -d ' ' -f 1)
+        command=$(echo "$command" | cut -d ' ' -f 1)
 
         echo "$command failed:" >&2
         echo "$output" >&2
