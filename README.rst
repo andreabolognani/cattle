@@ -50,7 +50,7 @@ provides are worth the performance hit.
 Resources
 ---------
 
-The [project's website][1] contains pointers to the canonical Git
+The project's `website`_ contains pointers to the canonical Git
 repository, which you should clone if you're interested in hacking on
 Cattle, and the official release archives, which you should use otherwise.
 
@@ -68,4 +68,4 @@ the Free Software Foundation; either version 2 of the License, or
 (at your option) any later version.
 
 
-[1]: https://kiyuko.org/software/cattle
+.. _website: https://kiyuko.org/software/cattle

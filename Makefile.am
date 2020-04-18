@@ -14,15 +14,15 @@ nodist_pkgconfig_DATA = \
 
 docdir = $(datarootdir)/doc/cattle-1.0
 dist_doc_DATA = \
-	AUTHORS.markdown \
+	AUTHORS.rst \
 	COPYING \
-	NEWS.markdown \
-	README.markdown \
-	TODO.markdown \
+	NEWS.rst \
+	README.rst \
+	TODO.rst \
 	$(NULL)
 
 EXTRA_DIST = \
-	INSTALL.markdown \
+	INSTALL.rst \
 	$(NULL)
 
 DISTCHECK_CONFIGURE_FLAGS = \
