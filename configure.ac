@@ -1,4 +1,4 @@
-AC_INIT([Cattle], [1.2.2],
+AC_INIT([Cattle], [1.4.0],
         [eof@kiyuko.org], [], [https://kiyuko.org/software/cattle])
 
 AC_CONFIG_SRCDIR([configure.ac])
@@ -21,8 +21,8 @@ dnl *** Release version ***
 dnl ***********************
 
 CATTLE_MAJOR_VERSION=1
-CATTLE_MINOR_VERSION=2
-CATTLE_MICRO_VERSION=2
+CATTLE_MINOR_VERSION=4
+CATTLE_MICRO_VERSION=0
 CATTLE_VERSION=$CATTLE_MAJOR_VERSION.$CATTLE_MINOR_VERSION.$CATTLE_MICRO_VERSION
 
 AC_SUBST([CATTLE_MAJOR_VERSION])
@@ -35,13 +35,13 @@ dnl *** Libtool version ***
 dnl ***********************
 
 dnl Increment on interface add, remove, or change.
-CATTLE_CURRENT=0
+CATTLE_CURRENT=1
 
 dnl Increment on source change. Reset when CURRENT changes.
-CATTLE_REVISION=4
+CATTLE_REVISION=0
 
 dnl Increment on interface addition. Reset on removal.
-CATTLE_AGE=0
+CATTLE_AGE=1
 
 AC_SUBST([CATTLE_CURRENT])
 AC_SUBST([CATTLE_REVISION])
