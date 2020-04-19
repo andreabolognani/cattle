@@ -22,6 +22,7 @@ dist_doc_DATA = \
 	$(NULL)
 
 EXTRA_DIST = \
+	CONTRIBUTING.rst \
 	INSTALL.rst \
 	$(NULL)
 
