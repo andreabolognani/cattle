@@ -1,6 +1,7 @@
 NULL =
 
 AM_CPPFLAGS = \
+	-DG_DISABLE_DEPRECATED \
 	$(GLIB_CFLAGS) \
 	-I$(top_srcdir) \
 	-I$(top_builddir) \
