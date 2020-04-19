@@ -1,4 +1,5 @@
-AC_INIT([Cattle], [1.2.2], [eof@kiyuko.org], [])
+AC_INIT([Cattle], [1.2.2],
+        [eof@kiyuko.org], [], [https://kiyuko.org/software/cattle])
 
 AC_CONFIG_SRCDIR([configure.ac])
 AC_CONFIG_HEADERS([config.h])
