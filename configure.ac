@@ -1,8 +1,10 @@
-AC_INIT([Cattle], [1.2.2], [eof@kiyuko.org], [cattle])
-AM_CONFIG_HEADER([config.h])
-AM_INIT_AUTOMAKE
+AC_INIT([Cattle], [1.2.2], [eof@kiyuko.org], [])
 
-m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
+AC_CONFIG_SRCDIR([configure.ac])
+AC_CONFIG_HEADERS([config.h])
+
+AM_INIT_AUTOMAKE([foreign])
+AM_SILENT_RULES([yes])
 
 dnl ***********************
 dnl *** Release version ***
@@ -35,28 +37,19 @@ AC_SUBST([CATTLE_CURRENT])
 AC_SUBST([CATTLE_REVISION])
 AC_SUBST([CATTLE_AGE])
 
-dnl ********************************
-dnl *** Check for basic programs ***
-dnl ********************************
+dnl ***********************
+dnl *** Check for tools ***
+dnl ***********************
 
 AC_PROG_CC
-AM_PROG_CC_C_O
-AC_PROG_MAKE_SET
-
-AC_PROG_INSTALL
 AC_PROG_LIBTOOL
+AC_PROG_INSTALL
 
 AC_PATH_PROGS([GLIB_MKENUMS], [glib-mkenums])
 if test -z "$GLIB_MKENUMS"
 then
     AC_MSG_ERROR([glib-mkenums not found])
 fi
-
-dnl ********************************************
-dnl *** Check for header files and functions ***
-dnl ********************************************
-
-AC_HEADER_STDC
 
 dnl **********************
 dnl *** Check for GLib ***
@@ -90,9 +83,9 @@ WARN_CFLAGS="-Wall -Wextra"
 
 AC_SUBST([WARN_CFLAGS])
 
-dnl *******************************
-dnl *** Create the output files ***
-dnl *******************************
+dnl ***************************
+dnl *** Create output files ***
+dnl ***************************
 
 AC_CONFIG_FILES([Makefile
                  cattle-1.0.pc
