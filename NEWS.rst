@@ -5,6 +5,22 @@ This document briefly describes the user-visible changes introduced
 in each release of Cattle.
 
 
+Cattle 1.4.0 (2020-04-20)
+-------------------------
+
+* Add ``g_autoptr()`` support.
+
+  - All Cattle objects can now be automatically released when the
+    scope they've been declared in terminates.
+
+* Fix off-by-one error in ``cattle_program_load()``.
+
+  - The ``CattleBuffer`` returned by ``cattle_program_get_input()``
+    is now the correct size.
+
+* Various cleanups and improvements.
+
+
 Cattle 1.2.2 (2017-01-11)
 -------------------------
 
