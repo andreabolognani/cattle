@@ -59,7 +59,7 @@
         </para>
 
         <para>
-            If the hanler returns <link linkend="TRUE:CAPS">TRUE</link>, but
+            If the handler returns <link linkend="TRUE:CAPS">TRUE</link>, but
             the error is set, the operation is not considered succesful;
             this is because handlers written in languages other than C might
             not be able to both return a value and fill the error at the
